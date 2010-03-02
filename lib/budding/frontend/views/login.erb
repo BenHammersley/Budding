@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Budding &raquo; Login</title>
+    <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
+  </head>
+  <body>
+    <h1>Budding</h1>
+    <% if defined?(:error) %>
+      <div id="warn"><%= @error %></div>
+    <% end%>
+    <form method="post">
+      <fieldset>
+        <legend>Login</legend>
+
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email">
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password">
+        <input type="submit" value="Login">
+      </fieldset>
+    </form>
+    <form method="post" action="/signup">
+      <fieldset>
+        <legend>Sign up</legend>
+
+        <label for="signup_email">Email</label>
+        <input type="text" name="signup_email" id="signup_email">
+
+        <label for="signup_password">Password</label>
+        <input type="password" name="signup_password" id="signup_password">
+        <label for="password_verifier">Verify your password</label>
+        <input type="password" name="password_verifier" id="password_verifier">
+        <input type="submit" value="Enroll me">
+      </fieldset>
+    </form>
+  </body>
+</html>
