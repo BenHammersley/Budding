@@ -1,0 +1,5 @@
+username: j0hn
+password: cl33se
+hostname: 127.0.0.1
+database: budding
+adapter: mysql
