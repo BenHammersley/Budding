@@ -84,6 +84,7 @@ module Budding
       end
     end
     class User < Sequel::Model
+      one_to_many :documents
       def before_create
         self.password = BCrypt::Password.create(self.password)
         super()

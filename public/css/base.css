@@ -10,6 +10,10 @@ body {
     margin: 10px;
 }
 
+h1 {
+    margin: 10px;
+}
+
 fieldset {
     margin: 10px auto;
     width: 500px;

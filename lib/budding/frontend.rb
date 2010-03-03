@@ -26,7 +26,7 @@ module Budding
       @user = User.filter(:email => params[:email]).first
       unless @user.nil?
         if @user.login(params[:email], params[:password])
-          #session[:user] = @user
+          session[:user] = @user.user_id
           redirect '/dashboard'
         else
           @error = "Email and password combination provided don't match."
@@ -41,13 +41,14 @@ module Budding
       @error = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
       if @error.nil?
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-        #session[:user] = @user
+        session[:user] = @user.user_id
         redirect '/dashboard'
       else
         erb :login
       end
     end
     get '/dashboard' do
+      @documents = User.find(:user_id => session[:user]).documents
       erb :dashboard
     end
   end
