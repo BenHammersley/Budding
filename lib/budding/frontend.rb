@@ -13,7 +13,6 @@ module Budding
     enable :static
     enable :sessions
     set :root, BUDDING_ROOT
-    set :public, "public"
     set :views, File.join(BUDDING_ROOT, 'lib/budding/frontend/views')
     get '/' do
       #@now = Time.now
@@ -27,7 +26,7 @@ module Budding
       @user = User.filter(:email => params[:email]).first
       unless @user.nil?
         if @user.login(params[:email], params[:password])
-          session[:user] = @user
+          #session[:user] = @user
           redirect '/dashboard'
         else
           @error = "Email and password combination provided don't match."
@@ -40,9 +39,9 @@ module Budding
     post '/signup' do
       @error = "Password and password verifier don't match." if params[:signup_password] != params[:password_verifier]
       @error = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
-      unless defined?(:error)
+      if @error.nil?
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-        session[:user] = @user
+        #session[:user] = @user
         redirect '/dashboard'
       else
         erb :login

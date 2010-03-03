@@ -84,9 +84,9 @@ module Budding
       end
     end
     class User < Sequel::Model
-      def initialize(*args)
-        args[0][:password] = BCrypt::Password.create(args[0][:password]) if args[0].include?(:password)
-        super(*args)
+      def before_create
+        self.password = BCrypt::Password.create(self.password)
+        super()
       end
       def login(email, password)
         self.email == email and BCrypt::Password.new(self.password) == password

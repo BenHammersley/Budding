@@ -20,8 +20,8 @@ task :reset_full do
 end
 
 task :reset do
-  db = Sequel.connect(BUDDING_ROOT::DBPARAMS)
-  for table in db["show tables;"].all.collect { |t| t["Tables_in_#{Budding::DBPARAMS['database']}".to_sym] }
+  db = Sequel.connect(Budding::CONFIG[:dbparams])
+  for table in db["show tables;"].all.collect { |t| t["Tables_in_#{Budding::CONFIG[:dbparams][:database]}".to_sym] }
     db.run("drop table #{table};")
   end
 end
