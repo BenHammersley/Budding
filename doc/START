@@ -2,7 +2,11 @@
   Getting started
   ---------------
   
-  sudo gem install rake sinatra sequel sinatra-sequel
+  sudo gem install rake sinatra sequel sinatra-sequel yaml
   cd ~/code/benh/budding
   rake web # will make site available at http://localhost:8080/
-  
+
+  # Routines for database creation and setup
+  mysql -u root -p -e "drop database if exists budding; create database budding character set = 'utf8';"
+  mysql -u root -p -e "drop user 'j0hn'@'localhost'; create user 'j0hn'@'localhost' identified by 'cl33se';"
+  mysql -u root -p -e "grant all privileges on budding.* to 'j0hn'@'localhost'; flush privileges;"

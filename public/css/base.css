@@ -1,0 +1,50 @@
+/* Basic style definitions so prototype doesn't look so ugly */
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Georgia, "Trebuchet MS", Times;
+}
+
+body {
+    text-align: center;
+    margin: 10px;
+}
+
+fieldset {
+    margin: 10px auto;
+    width: 500px;
+    padding: 10px;
+    border: 2px solid #ececec;
+}
+
+fieldset:hover {
+    border: 2px solid green;
+    background-color: #f8fff8;
+}
+
+legend {
+    font-variant: small-caps;
+    font-size: 21px;
+    text-align: center;
+    padding: 10px;
+}
+
+label {
+	margin: 0;
+    display: block;
+}
+
+label:after {
+    content: ":";
+}
+
+input {
+	margin: 10px auto;
+    font-size: 31px;
+    display: block;
+}
+
+#warn {
+	margin: 10px;
+    color: red;
+}
