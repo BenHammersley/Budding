@@ -3,19 +3,20 @@
   <head>
     <title>Budding &raquo; Dashboard</title>
     <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
+    <meta http-equiv="content-type" value="text/html; charset=utf-8">
   </head>
   <body>
     <h1><a href="/">Budding</a> &raquo; <a href="#">Dashboard</a></h1>
     <div>
       <% if @documents.empty? %>
-        <p>You do not have any documents yet. <a href="/create/document">Start now and create a new one</a>.</p>
+        <p>You do not have any documents yet. <a href="/document/create">Start now and create a new one</a>.</p>
       <% else %>
         <ul>
           <% for document in @documents %>
             <li>
               <span title="Document title"><%= document.title %></span>
               ·
-              <span title="When the document was created"><%= document.created_on %></span>
+              <span title="When the document was created"><%= document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></span>
             </li>
           <% end %>
         </ul>

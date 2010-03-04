@@ -51,5 +51,28 @@ module Budding
       @documents = User.find(:user_id => session[:user]).documents
       erb :dashboard
     end
+    get '/document/create' do
+      @languages = Language.all
+      erb :"document/create"
+    end
+    post '/document/create' do
+      document_data = {
+        :user_id => session[:user],
+        :title => params[:title],
+        :short_summary => params[:summary],
+        :teaser => params[:teaser],
+        :story => params[:story],
+        :locations => params[:locations],
+        :people => params[:people],
+        :companies => params[:companies],
+        :keywords => params[:keywords],
+        :language_id => params[:language]
+      }
+      if Document.new(document_data).save
+        redirect '/dashboard'
+      else
+        'Error'
+      end
+    end
   end
 end

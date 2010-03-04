@@ -97,6 +97,9 @@ module Budding
     class Document < Sequel::Model
       many_to_one :user
       many_to_one :language
+      def before_create
+        self.created_on = Time.now
+      end
     end
   end
 end
