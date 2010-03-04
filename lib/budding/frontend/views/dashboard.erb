@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" value="text/html; charset=utf-8">
   </head>
   <body>
-    <h1><a href="/">Budding</a> &raquo; <a href="#">Dashboard</a></h1>
+    <h1><a href="/">Budding</a> &raquo; <a href="/dashboard">Dashboard</a></h1>
     <div>
       <% if @documents.empty? %>
         <p>You do not have any documents yet. <a href="/document/create">Start now and create a new one</a>.</p>
@@ -14,7 +14,7 @@
         <ul>
           <% for document in @documents %>
             <li>
-              <span title="Document title"><%= document.title %></span>
+              <a title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
               ·
               <span title="When the document was created"><%= document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></span>
             </li>

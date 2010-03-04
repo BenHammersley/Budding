@@ -51,7 +51,7 @@ module Budding
         end
         database.create_table :languages do
           primary_key :language_id, :type => Integer
-          String :language
+          String :name
         end
         database.create_table :documents do
             primary_key :document_id, :type => Bignum
@@ -79,7 +79,7 @@ module Budding
           "Swahili", "Swedish", "Tamil", "Telugu", "Thai", "Tagalog", "Turkish",
           "Ukrainian", "Urdu", "Welsh", "Basque", "Esperanto", "Gaelic", "Japanese",
           "Javanese", "Serbian", "Kannada"].each do |lang|
-            database[:languages].insert(:language => lang)
+            database[:languages].insert(:name => lang)
           end
       end
     end
@@ -93,7 +93,9 @@ module Budding
         self.email == email and BCrypt::Password.new(self.password) == password
       end
     end
-    class Language < Sequel::Model; end
+    class Language < Sequel::Model
+      one_to_many :document
+    end
     class Document < Sequel::Model
       many_to_one :user
       many_to_one :language

@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
   </head>
   <body>
-    <h1><a href="/">Budding</a> &raquo; <a href="#">Dashboard</a> &raquo; New document</h1>
+    <h1><a href="/">Budding</a> &raquo; <a href="/dashboard">Dashboard</a> &raquo; New document</h1>
     <div>
       <form method="post">
         <fieldset class="large">
@@ -32,7 +32,7 @@
           <label for="language">Language</label>
           <select name="language" id="language">
             <% for language in @languages %>
-              <%= "<option value=\"#{language.language_id}\">#{language.language}</option>" %>
+              <%= "<option value=\"#{language.language_id}\">#{language.name}</option>" %>
             <% end %>
           </select>
           <input type="submit" value="Save">

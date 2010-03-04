@@ -74,5 +74,15 @@ module Budding
         'Error'
       end
     end
+    get '/document/open/:id' do
+      @document = Document.find(:document_id => params[:id])
+      unless @document.nil?
+        @lang = @document.language.name
+        erb :"document/open"
+      else
+        #erb :"document/not_found"
+        not_found()
+      end
+    end
   end
 end
