@@ -59,7 +59,7 @@ input.large, textarea, select {
     width: 95%;
 }
 
-input[type="submit"] {
+input[type="submit"].fixed {
 	position: fixed;
     bottom: 10px;
     right: 10px;
@@ -68,7 +68,7 @@ input[type="submit"] {
     padding: 2px;
 }
 
-input[type="submit"]:hover {
+input[type="submit"].fixed:hover {
     background-color: #d0ffc7;
 }
 

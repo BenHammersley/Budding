@@ -23,7 +23,7 @@ module Budding
       erb :login
     end
     post '/login' do
-      @user = User.filter(:email => params[:email]).first
+      @user = User.find(:email => params[:email])
       unless @user.nil?
         if @user.login(params[:email], params[:password])
           session[:user] = @user.user_id
@@ -68,8 +68,9 @@ module Budding
         :keywords => params[:keywords],
         :language_id => params[:language]
       }
-      if Document.new(document_data).save
-        redirect '/dashboard'
+      doc = Document.new(document_data)
+      if doc.save
+        redirect "/document/open/#{doc.document_id}"
       else
         'Error'
       end
@@ -81,7 +82,37 @@ module Budding
         erb :"document/open"
       else
         #erb :"document/not_found"
-        not_found()
+        raise ::Sinatra::NotFound
+      end
+    end
+    get '/document/edit/:id' do
+      @document = Document.find(:document_id => params[:id])
+      @languages = Language.all
+      unless @document.nil?
+        erb :"document/edit"
+      else
+        #erb :"document/not_found"
+        raise ::Sinatra::NotFound
+      end
+    end
+    post '/document/edit/:id' do
+      document_data = {
+        :user_id => session[:user],
+        :title => params[:title],
+        :short_summary => params[:summary],
+        :teaser => params[:teaser],
+        :story => params[:story],
+        :locations => params[:locations],
+        :people => params[:people],
+        :companies => params[:companies],
+        :keywords => params[:keywords],
+        :language_id => params[:language]
+      }
+      doc = Document.find(:document_id => params[:id]).update(document_data)
+      if doc.save
+        redirect "/document/open/#{doc.document_id}"
+      else
+        'Error'
       end
     end
   end

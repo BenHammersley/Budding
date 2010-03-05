@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Budding &raquo; Dashboard &raquo; <%= @document.title %></title>
+    <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
+  </head>
+  <body>
+    <h1>
+      <a href="/">Budding</a> &raquo;
+      <a href="/dashboard">Dashboard</a> &raquo;
+      <%= "<a href=\"/document/open/#{@document.document_id}\">#{@document.title}</a>" %>
+    </h1>
+    <div>
+      <form method="post">
+        <fieldset class="large">
+          <legend>Document</legend>
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" class="large" value="<%= @document.title %>">
+          <label for="summary">Short summary</label>
+          <textarea name="summary" id="summary"><%= @document.short_summary %></textarea>
+          <label for="teaser">Teaser</label>
+          <textarea name="teaser" id="teaser"><%= @document.teaser %></textarea>
+          <label for="story">Complete copy</label>
+          <textarea name="story" id="story"><%= @document.story %></textarea>
+        </fieldset>
+        <fieldset class="large">
+          <legend>Metadata</legend>
+          <label for="locations">Locations</label>
+          <textarea name="locations" id="location"><%= @document.locations %></textarea>
+          <label for="people">People</label>
+          <textarea name="people" id="people"><%= @document.people %></textarea>
+          <label for="companies">Companies</label>
+          <textarea name="companies" id="companies"><%= @document.companies %></textarea>
+          <label for="keywords">Keywords</label>
+          <textarea name="keywords" id="keywords"><%= @document.keywords %></textarea>
+          <label for="language">Language</label>
+          <select name="language" id="language">
+            <% for language in @languages %>
+              <% if @document.language == language; selected = "selected"; else selected = ""; end %>
+              <%= "<option #{selected} value=\"#{language.language_id}\">#{language.name}</option>" %>
+            <% end %>
+          </select>
+          <input type="submit" value="Save" class="fixed">
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>

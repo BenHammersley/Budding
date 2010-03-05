@@ -11,6 +11,7 @@
       <% if @documents.empty? %>
         <p>You do not have any documents yet. <a href="/document/create">Start now and create a new one</a>.</p>
       <% else %>
+        <p><a href="/document/create">Create a new document</a>.</p>
         <ul>
           <% for document in @documents %>
             <li>
