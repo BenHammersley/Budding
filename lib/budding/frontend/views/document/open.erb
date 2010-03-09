@@ -3,6 +3,7 @@
   <head>
     <title>Budding &raquo; Dashboard &raquo; <%= @document.title %></title>
     <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
+    <meta http-equiv="content-type" value="text/html; charset=utf-8">
   </head>
   <body>
     <h1>
@@ -23,6 +24,7 @@
           <p><strong>Language:</strong> <%= @document.locations %></p>
           <p>Created on <%= @document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></p>
           <p><a href="/document/edit/<%= @document.document_id %>">Edit this document</a>.</p>
+          <p><a href="/document/pdf/<%= @document.document_id %>">Download this document as PDF</a>.</p>
     </div>
   </body>
 </html>
