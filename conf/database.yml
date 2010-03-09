@@ -3,3 +3,4 @@ password: b0dd!ng
 hostname: 127.0.0.1
 database: budding
 adapter: mysql
+encoding: utf8

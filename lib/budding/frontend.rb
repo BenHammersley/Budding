@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra'
+require 'prawn'
 
 unless Object.const_defined?(:BUDDING_ROOT)
   BUDDING_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
@@ -77,9 +78,19 @@ module Budding
     end
     get '/document/open/:id' do
       @document = Document.find(:document_id => params[:id])
-      unless @document.nil?
+      unless @document.user.user_id != session[:user] or @document.nil?
         @lang = @document.language.name
         erb :"document/open"
+      else
+        #erb :"document/not_found"
+        raise ::Sinatra::NotFound
+      end
+    end
+    get '/document/pdf/:id' do
+      @document = Document.find(:document_id => params[:id])
+      unless @document.user.user_id != session[:user] or @document.nil?
+        content_type "application/pdf"
+        erb :"document/pdf"
       else
         #erb :"document/not_found"
         raise ::Sinatra::NotFound

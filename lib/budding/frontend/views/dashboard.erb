@@ -16,6 +16,7 @@
           <% for document in @documents %>
             <li>
               <a title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
+              <a title="Download the document in pdf" href="/document/pdf/<%= document.document_id %>">pdf</a>
               ·
               <span title="When the document was created"><%= document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></span>
             </li>

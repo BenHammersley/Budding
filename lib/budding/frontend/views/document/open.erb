@@ -21,6 +21,7 @@
           <p><strong>Companies:</strong> <%= @document.companies %></p>
           <p><strong>Keywords:</strong> <%= @document.keywords %></p>
           <p><strong>Language:</strong> <%= @document.locations %></p>
+          <p>Created on <%= @document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></p>
           <p><a href="/document/edit/<%= @document.document_id %>">Edit this document</a>.</p>
     </div>
   </body>
