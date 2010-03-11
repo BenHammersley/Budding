@@ -90,6 +90,8 @@ module Budding
       @document = Document.find(:document_id => params[:id])
       unless @document.user.user_id != session[:user] or @document.nil?
         content_type "application/pdf"
+        response['Content-Disposition'] = 'inline; filename="%s"' %
+                                          Rack::Utils.escape_html(@document.title)
         erb :"document/pdf"
       else
         #erb :"document/not_found"
