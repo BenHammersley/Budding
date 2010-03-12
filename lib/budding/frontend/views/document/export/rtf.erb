@@ -1,0 +1,50 @@
+<%
+  doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+
+  metadata_info = {
+    :author => @document.user.email,
+    :title => @document.title,
+    :company => "Dangerous Precedent",
+    :creation => @document.created_on
+  }
+  metadata = RTF::Information.new(metadata_info)
+
+  style = {}
+  style[:centre_alignment] = RTF::ParagraphStyle.new
+  style[:centre_alignment].justification = RTF::ParagraphStyle::CENTER_JUSTIFY
+  style[:bold] = RTF::CharacterStyle.new
+  style[:bold].bold = true
+  style[:fontsize_big] = RTF::CharacterStyle.new
+  style[:fontsize_big].font_size = "32px"
+  style[:fontsize_medium] = RTF::CharacterStyle.new
+  style[:fontsize_medium].font_size = "28px"
+  style[:fontsize_small] = RTF::CharacterStyle.new
+  style[:fontsize_small].font_size = "24px"
+
+  doc.paragraph(style[:centre_alignment]).apply(style[:bold])\
+      .apply(style[:fontsize_big]) do |title|
+        title << @document.title
+  end
+  headers = [
+    "Summary: %s\n" % @document.short_summary,
+    "Teaser: %s\n\n" % @document.teaser
+  ]
+  headers.each do |p|
+    doc.paragraph(style[:bold]).apply(style[:fontsize_medium]) << p
+  end
+  data = [
+    @document.story,
+    "Locations: %s" % @document.locations,
+    "People: %s" % @document.people,
+    "Companies: %s" % @document.companies,
+    "Keywords: %s" % @document.keywords,
+    "Language: %s" % @document.language.name,
+  ]
+  data.each do |p|
+    doc.paragraph(style[:fontsize_small]) << p
+  end
+  doc.paragraph << @document.story
+  # RTF gem doesn't seem to support UTF8
+  # doc.character_set = :pc
+  return doc.to_rtf
+%>

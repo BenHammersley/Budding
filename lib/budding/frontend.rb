@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'prawn'
+require 'rtf'
 
 unless Object.const_defined?(:BUDDING_ROOT)
   BUDDING_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
@@ -86,23 +87,18 @@ module Budding
         raise ::Sinatra::NotFound
       end
     end
-    get '/document/pdf/:id' do
+    get '/document/export/:filetype/:id' do
+      mime_type = {
+        "pdf" => "application/pdf",
+        "rtf" => "application/rtf",
+        "txt" => "text/plain"
+      }
       @document = Document.find(:document_id => params[:id])
       unless @document.user != session[:user] or @document.nil?
-        content_type "application/pdf"
-        response['Content-Disposition'] = 'inline; filename="%s"' %
-                                          Rack::Utils.escape_html(@document.title)
-        erb :"document/pdf"
-      else
-        #erb :"document/not_found"
-        raise ::Sinatra::NotFound
-      end
-    end
-    get '/document/plaintext/:id' do
-      @document = Document.find(:document_id => params[:id])
-      unless @document.user != session[:user] or @document.nil?
-        content_type "text/plain; charset=utf-8"
-        erb :"document/plaintext"
+        content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
+        response['Content-Disposition'] = 'inline; filename="%s.%s"' %
+                                          [Rack::Utils.escape_html(@document.title), params[:filetype]]
+        erb :"document/export/#{params[:filetype]}"
       else
         #erb :"document/not_found"
         raise ::Sinatra::NotFound
