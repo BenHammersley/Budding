@@ -27,29 +27,29 @@ module Budding
       @user = User.find(:email => params[:email])
       unless @user.nil?
         if @user.login(params[:email], params[:password])
-          session[:user] = @user.user_id
+          session[:user] = @user
           redirect '/dashboard'
         else
-          @error = "Email and password combination provided don't match."
+          @error_msg = "Email and password combination provided don't match."
         end
       else
-        @error = "User not registered. Do you want to sign up?"
+        @error_msg = "User not registered. Do you want to sign up?"
       end
       erb :login
     end
     post '/signup' do
-      @error = "Password and password verifier don't match." if params[:signup_password] != params[:password_verifier]
-      @error = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
-      if @error.nil?
+      @error_msg = "Password and password verifier don't match." if params[:signup_password] != params[:password_verifier]
+      @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
+      if @error_msg.nil?
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-        session[:user] = @user.user_id
+        session[:user] = @user
         redirect '/dashboard'
       else
         erb :login
       end
     end
     get '/dashboard' do
-      @documents = User.find(:user_id => session[:user]).documents
+      @documents = session[:user].documents
       erb :dashboard
     end
     get '/document/create' do
@@ -58,7 +58,7 @@ module Budding
     end
     post '/document/create' do
       document_data = {
-        :user_id => session[:user],
+        :user_id => session[:user].user_id,
         :title => params[:title],
         :short_summary => params[:summary],
         :teaser => params[:teaser],
@@ -78,7 +78,7 @@ module Budding
     end
     get '/document/open/:id' do
       @document = Document.find(:document_id => params[:id])
-      unless @document.user.user_id != session[:user] or @document.nil?
+      unless @document.user != session[:user] or @document.nil?
         @lang = @document.language.name
         erb :"document/open"
       else
@@ -88,7 +88,7 @@ module Budding
     end
     get '/document/pdf/:id' do
       @document = Document.find(:document_id => params[:id])
-      unless @document.user.user_id != session[:user] or @document.nil?
+      unless @document.user != session[:user] or @document.nil?
         content_type "application/pdf"
         response['Content-Disposition'] = 'inline; filename="%s"' %
                                           Rack::Utils.escape_html(@document.title)
@@ -110,7 +110,7 @@ module Budding
     end
     post '/document/edit/:id' do
       document_data = {
-        :user_id => session[:user],
+        :user_id => session[:user].user_id,
         :title => params[:title],
         :short_summary => params[:summary],
         :teaser => params[:teaser],

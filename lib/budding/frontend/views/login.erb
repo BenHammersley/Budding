@@ -6,8 +6,8 @@
   </head>
   <body>
     <h1>Budding</h1>
-    <% if defined?(:error) %>
-      <div id="warn"><%= @error %></div>
+    <% if defined?(:error_msg) %>
+      <div id="warn"><%= @error_msg %></div>
     <% end%>
     <form method="post">
       <fieldset>
