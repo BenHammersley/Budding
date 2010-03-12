@@ -98,6 +98,16 @@ module Budding
         raise ::Sinatra::NotFound
       end
     end
+    get '/document/plaintext/:id' do
+      @document = Document.find(:document_id => params[:id])
+      unless @document.user != session[:user] or @document.nil?
+        content_type "text/plain; charset=utf-8"
+        erb :"document/plaintext"
+      else
+        #erb :"document/not_found"
+        raise ::Sinatra::NotFound
+      end
+    end
     get '/document/edit/:id' do
       @document = Document.find(:document_id => params[:id])
       @languages = Language.all

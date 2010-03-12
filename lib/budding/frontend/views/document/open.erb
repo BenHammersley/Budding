@@ -25,6 +25,7 @@
           <p>Created on <%= @document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></p>
           <p><a href="/document/edit/<%= @document.document_id %>">Edit this document</a>.</p>
           <p><a href="/document/pdf/<%= @document.document_id %>">Download this document as PDF</a>.</p>
+          <p><a href="/document/plaintext/<%= @document.document_id %>">Download this document as plain text</a>.</p>
     </div>
   </body>
 </html>
