@@ -13,9 +13,13 @@ end
 
 task :reset_full do
   db = Sequel.connect(:username => 'root', :password => '', :hostname => '127.0.0.1', :adapter => 'mysql')
-  db.run("drop database if exists budding;")
-  db.run("create database budding character set = 'utf8';")
-  db.run("grant all privileges on budding.* to 'j0hn'@'localhost' identified by 'b0dd\!ng';")
+  dbparams = Budding::CONFIG[:dbparams]
+  db.run("drop database if exists %s;" % dbparams[:database])
+  if dbparams[:encoding]
+    db.run("create database budding character set = '%s';" % dbparams[:encoding])
+  end
+  dbauth = [dbparams[:database], dbparams[:username], dbparams[:hostname], dbparams[:password]]
+  db.run("grant all privileges on %s.* to '%s'@'%s' identified by '%s';" % dbauth)
   db.run("flush privileges;")
 end
 
