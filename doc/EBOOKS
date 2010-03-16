@@ -1,0 +1,336 @@
+
+  E-Books – The Bigger Problem, Part One of Three.
+  ------------------------------------------------
+  Ben Hammersley, January 5, 2010
+  
+  I think we’re missing a trick here. With 2010 being the Year of the e-Book, 
+  (or, at least, the Year of the Please Apple Release The Tablet Please We Beg 
+  You), most of the design work that is doing the rounds is around the 
+  interface: BERG’s beautiful work for Bonnier is a great example. We know 
+  that a device with a colour HD screen, an always-on connection, GPS, sound, 
+  video and so on will give magazine designers all sorts of new toys to play 
+  with. From a content-designer’s point of view, I couldn’t be more excited.
+
+  From a publishing standpoint, too, e-books are thrilling: the dirty jobs of 
+  printing and distribution fall away, replaced with an upload to the iTunes 
+  store – or the publisher’s own – and a direct billing relationship with the 
+  client. For advertisers it will offer all of the advantages of web 
+  advertising with the rich-media and contextual advantages of appearing 
+  within a publication, so for a skilled ad-sales team it’s sure thing, and 
+  with the Great Media Crisis entering its second decade that sort of talk is 
+  catnip to a big media company like Bonnier, or (the one I work for more 
+  often) Condé Nast.
+
+  But while BERG’s work, and other pieces like it, are beautiful to see, they 
+  leave me very frustrated. The client-side development is very exciting to do 
+  – especially the systems-thinking that you need to do to take the entire 
+  customer journey from browsing to buying to backing-up – but the harder 
+  work, the more fundamental work, isn’t done. I’m talking about the editorial 
+  workflow. Bear with me.
+
+  At the moment, the average magazine is made from a combination of Microsoft 
+  Word, Photoshop, In-Design, shared-drives, and PDFs sent to the repro house. 
+  As each step of the analogue production process has been replaced by a 
+  digital version (film photography to digital, for example) that bit has been 
+  swapped out and replaced. The upshot is that we have accidentally efficient 
+  production processes that are optimised to getting a print magazine out of 
+  the door every four weeks or so. When you then try to put that magazine onto 
+  the web, as we do with WIRED every month, the process is mostly c
+  ut-and-paste. This is one of the reasons why magazine websites aren’t very 
+  good: you lose so much simply because of the way you have to get the content 
+  from one medium to the other. The rest of the content you never had in the 
+  first place (for example because the original copy wasn’t written in HTML, 
+  and so doesn’t have links in it.)
+
+  With e-books, and especially with e-book concepts, the stories are published 
+  with the implication that the system knows a whole load of stuff that a 
+  print magazine doesn’t. The articles are written in hypertext, they have 
+  location data and subject cataloging, there is associated video and audio 
+  and additional photography, and so on. For a magazine title that is made 
+  entirely and exclusively for the e-book format, that’s not a problem. For an 
+  existing title trying to make the transition from paper through web to 
+  specialised digital device, it’s a show-stopper: the workflow at British 
+  Vogue, say, can’t handle it today. Neither could WIRED.
+
+  So a real design challenge for e-books isn’t to design the user experience 
+  (which is dependent at the end of the day on the device capabilities anyway, 
+  which are pretty much unknown) but rather on designing a system that would 
+  allow existing publishers to transition their operations from ramshackle 
+  print to All Knowing Digital. We already know much of this: you can take the 
+  lessons from blogging CMSs, add in photography handling from places like 
+  Photoshelter, combine metadata collection from sources like Google Maps and 
+  OpenCalais, and version control from Git, and you’re halfway there. Combine 
+  it with process changes, where you require writers to file direct to a 
+  system that forces them to add in metadata for example, and you’re closer 
+  still. Of course, in two sentences I’ve described a process that really 
+  encompasses the whole old-media crisis, but I do think it’s a challenge that 
+  can be met. In later posts, I’ll talk about how.
+
+
+  E-Books – The Bigger Problem, Part Two of Three.
+  ------------------------------------------------
+  Ben Hammersley, January 5, 2010
+
+  In the first part of this three-parter, I started making suggestions about 
+  the internal changes needed to a magazine editorial process to make it ready 
+  for ebooks. Here I’ll go further. But first, let me make some starting 
+  assumptions.
+
+  1. The ebook (or emagazine, or whatever you want to call it) will not simply 
+  consist of a monthly edition of a collection of pages, each made of words 
+  and pictures – it will more likely be a rolling collection of pages and 
+  services. The traditional monthly magazine cycle being more related to 
+  distribution rhythms than anything. Indeed, why do we keep to a regular 
+  monthly cycle in print anyway? Why not, say, every three weeks in the 
+  winter, every five in the summer? I digress, but.
+
+  2. But for the sake of simplicity we’ll call each logical block of meaning a 
+  “story”, whether it is a traditional 4000 word prose piece, a slideshow, a 
+  video, a graphic, an interactive something or other, a subject-specific 
+  chatbot, or something machine-written, or a combination of all of the above.
+
+  3. That every medium – magazine, newsprint, iPhone, desktop web, tablet, 
+  projector, tv, parchment – is uniquely gifted in a particular way. So while 
+  the text and the meaning of the “story” might well be the same, the 
+  graphical language at least will be different. This means that at some point 
+  the art department and the production department for each medium must become 
+  separate from the editorial department, and from each other. It’s right here 
+  that the tensions occur within an editorial operation: one of the media will 
+  get ignored or sidelined for the sake of another. (How many TV shows have 
+  websites, compared to how many websites have TV shows, compared to how many 
+  website & tv show properties are there? Compare WIRED in print to WIRED 
+  online. And so on.)
+
+  4. If you’re going to produce content for more than one medium, therefore, 
+  you need to commission content in a strange and abstract way. The story 
+  creator’s work for print will be flat text; For an e-book, hypertext; For a 
+  web service, hypertext and perhaps an interactive graphic. And more, and so 
+  on. This means that the author has to hand in copy that is much much more 
+  than a flat text file circa 800 words. It needs to be annotated. It needs to 
+  be hyperlinked. It needs to have underlying data. It needs all of this and 
+  more to allow the art and production departments of each medium to produce 
+  the very best representation they can of the story within their own medium, 
+  otherwise their medium will come across as half-arsed. Half-arsed is worse 
+  than not doing it at all.
+
+  5. Existing content management systems can’t do this. Existing magazine 
+  workflows can’t do this either.
+
+  The perfect case in point is that of metadata. There’s a word you hear a lot 
+  on the web. It means the data about the data – the author’s name, the date 
+  it was written, and so on. In its purest and perfect sense, any story has an 
+  infinite amount of metadata: this piece you’re reading now was written by 
+  me, on my macbook air, on the 29th December 2009, in London, in part in 
+  Whitehall, in part in the Milk Bar, Soho, and in part in my office in 
+  Notting Hill, this paragraph being written with an ambient temperature of 
+  about 20 degrees c, while the local weather was cold and rainy, etc etc etc. 
+  It concerns electronic publishing, and refers to…and is classified as…and is 
+  linked to…and is part of a collection called…and is built on thinking done 
+  in…
+
+  You can go on and on.
+
+  The problem is that metadata is incredibly fragile. If you don’t capture it 
+  when you can, it is lost forever. The date you wrote that piece? The 
+  websites you looked at when you were researching it? The music playing 
+  during that photoshoot? You didn’t write it down? Ah, then it’s gone.
+
+  Even more upsettingly, the way that we file our copy today necessitates 
+  losing all the metadata we can. Emailed word documents, or plain text files, 
+  contain virtually none of the metadata we could use: stuff that we get for 
+  free simply by the passage of the creative process itself is instantly 
+  thrown away by the workflow. The only times many reporters have to hand in 
+  their metadata is when they’re being sued – but even if they were willing, 
+  the content management systems don’t have a place for it. This we’ll come 
+  back to.
+
+  The necessity above all else of keeping your metadata might seem like a 
+  geeky affectation – something that is really only of interest to librarians   
+  (itself not a bad reason) or trainspotterish data-completists – but it is in 
+  fact the simplest and cheapest route for a publisher to future-proof their 
+  business. Your revenue depends on it. Remember, we’re talking about a 
+  business sector whose incumbents are trying to transition from having an 
+  advantage regarding printing and distribution, to having an advantage 
+  regarding content. In other words, Vogue’s printing presses and relationship 
+  with COMAG are both lovely, but in a digital world ultimately worthless: 
+  it’s the combination of the creative and ad-sales teams upstairs and the 
+  rights-owned archive in the basement that gives it value now and in the 
+  future. Only one of these things is replicable by others.
+
+  So why do everything you can to keep metadata intact? Because it’s from this 
+  information that new products can be automatically created, at a scale and 
+  rapidity that would be impossible otherwise. With every piece of metadata 
+  that you don’t throw away, you gain a factor more potential ways of slicing 
+  through your content and delivering it as a separate product, simply as a 
+  result of a database lookup. In the case of Vogue today, say, commissioning 
+  an editorial product that simply shows every dress designed by Christian 
+  Dior that appears in the archive would involve weeks of intern-work, 
+  instantly making it unprofitable or too late. A metadata-complete archive in 
+  the future would give you that with a single line of code. As an example, 
+  here is a sentence that will be spoken in a newsroom sometime this coming 
+  decade:
+
+  “Right then, website people. Fidel is finally dead, so I need a special page 
+  with everything we’ve ever written about Castro, plus any travel writing 
+  we’ve had from Cuba, and all the pictures we have from the region mapped by 
+  place and time, and everything we wrote about JFK and the Bay of Pigs, and I 
+  need it online in an hour. Go.”
+
+  The reaction to this request is solely a function of the content management 
+  system the newsroom uses. You simply can’t do this in a sane or profitable
+  way without an archive with all the metadata preserved. You could do it 
+  slowly, sure, with brute force and interns, but who will have those? More to 
+  the point, who will have those and still be able to compete in terms of both 
+  cost and speed with those that don’t bother with interns and excessive staff 
+  in fancy buildings but instead have a workflow designed with the future in 
+  mind?
+
+  There is immense potential for new editorial products being created by being 
+  able to slice through your existing content in new and interesting ways. 
+  Personalisation and location-based services are dependent on this; 
+  collaborative filtering works better when you have it; APIs get 
+  exponentially richer the more data you have to expose. But without an 
+  underlying library of your content complete with metadata, you can’t do any 
+  of it very well. If you’re going to rock a multi-outlet, multimedia world, 
+  you need to have stories whose parts are way more than their sum. This is 
+  new, and in part three, I’ll talk about what this means for journalists, for 
+  publishers, and for people designing the systems that use.
+  
+  E-Books – The Bigger Problem, Part Two Point Five of Three
+  ----------------------------------------------------------
+  Ben Hammersley, January 30, 2010
+
+  An example, then. One of my basic points is that having lots of metadata 
+  means you can do lots of really nice stuff when you transition from print to 
+  online, or print to multimedia. But that metadata needs to be captured and 
+  stored as close to the original author as you can. The moment when you can 
+  write this stuff down and store it is fleeting, and once it has passed, it 
+  has passed forever, for profitable values of forever at least.
+
+  One solution is to have your writers mark-up their copy. As an example, 
+  here’s the first bit of something I wrote for WIRED last year:
+
+  It’s the hot design company hired by Apple to create its first mouse, (and 
+  by Microsoft to create its second), by the Post Office to rework the 
+  postbox, by Muji to create its wall-mounted CD player and by Procter & 
+  Gamble to reinvent toothpaste tubes. It made the Nokia N-gage, the Palm V 
+  and the Head Airflow tennis racquet. Now IDEO is being retained by Barack 
+  Obama’s White House to help to reinvigorate the American civil service; by 
+  the government of Iceland to help the country to innovate its way out of 
+  financial crisis; and by the Kellogg Foundation to reinvent education.
+
+  That sits, now, in a few versions. The webpage linked to above, the print 
+  copy (in various states of disarray, all over the world), in a few versions 
+  of Word docs on the shared drive at WIRED HQ, on my laptop, and inside 
+  Gmail. It lived first as a text file, then a word doc, then an InDesign 
+  file, then a PDF, then cut and pasted into a web CMS, then as HTML. Apart 
+  from the words, it contains nothing useful whatsoever. (obvious gag insert 
+  here)
+
+  Imagine, however, that instead of a Word doc I had submitted a marked-up 
+  document in a flavour of XML, like the following. Read through this, even if 
+  it looks weird to you. (And for the semantic web people in the audience, 
+  it’s pseudocode. Chill.):
+
+  <subject identifier=”Design”/>
+
+  <subject identifier=”Industrial Design”/>
+
+  <subject identifier=”Bill Moggridge”/>
+
+  <subject identifier=”IDEO”/>
+
+  It’s the hot design company hired by <company 
+  identifier=”APPL”>Apple</company> to create its first mouse, (and by 
+  <company identifier=”MSFT”>Microsoft</company> to create its second), by the 
+  <company identifier=”UKPO”>Post Office</company> to rework the postbox, by 
+  <company identifier=”MUJI”>Muji</company> to create its wall-mounted CD 
+  player and by <company identifier=”PANDG”>Procter & Gamble</company> to 
+  reinvent toothpaste tubes. It made the <company 
+  identifier=”NOKIA”>Nokia</company> N-gage, the <product 
+  identifier=”PALMV”>Palm V</product> and the <product 
+  identifier=”HEADAIRFLOW”>Head Airflow</product> tennis racquet. Now <company 
+  identifier=”IDEO”>IDEO</company> is being retained by <person 
+  identifier=”Barack Obama POTUS”>Barack Obama</person>’s White House to help 
+  to reinvigorate the American civil service; by the government of <country 
+  identifier=”ICELAND”>Iceland</country> to help the country to innovate its 
+  way out of <newsevent identifier=”2008-9FinancialCrisis”>financial 
+  crisis</newevent>; and by the <company identifier=”KLLGF”>Kellogg 
+  Foundation</company> to reinvent education.
+
+  Now think of all of the stuff in that we can index against. No use at all 
+  for the print magazine, but once you come to put it into digital form an 
+  archive full of typescripts like this would be so full of options it starts 
+  to get giddy. Give me a thoughtfully built mark-up standard and a year’s 
+  worth of, say, Vogue, and I’ll break your heart with beauty.
+
+  Now, is this silly? Is it naive to ask writers to submit copy in a marked-up 
+  format instead of just typed English? No. People write in marked-up text all 
+  the time. Indeed, with blogging, I’d bet that more people write marked-up 
+  than not, even without tools to help them. There’s a whole generation used 
+  to writing with angle-brackets that wouldn’t blink at the idea that to 
+  submit copy you have to submit it in a marked-up format. Tools to 
+  pre-validate it could easily be rolled into a publishing workflow too.
+  
+  E-Books – The Bigger Problem, Part Two Point Five Point One of Three
+  --------------------------------------------------------------------
+  Ben Hammersley, January 30, 2010
+
+  As I wrote in part 2.5, if you were designing a new generation of content 
+  management systems (which you’ll be shocked to hear I am), it would not be 
+  unreasonable to ask for journalists to include markup in their typescripts. 
+  It seems to me to be the simplest way to get preserve as much data as 
+  possible as close to the original sources as possible – something that I’ve 
+  described as utterly necessary for a multi-outlet world.
+
+  Having to learn to write in markup isn’t an imposition, any more than having 
+  to learn shorthand or telegraphese. And as with learning any new language, 
+  you gain a new soul: writing in markup would allow you to embed code.
+
+  The ability to embed code within a story gives us whole new realms of 
+  possibilities for journalism and publishing. Digital platforms are connected 
+  and location aware, so why not use that? At the moment the answer is 
+  “because your infrastructure won’t let you,” but if it could, the potential 
+  is extraordinary.
+
+  Pseudocode Example – you could use it to display live data:
+
+  As the temperature in Central London hits <data feed=”London Temp”/>…
+
+  Or location:
+
+  As the temperature in <data feed=”Device Location Town”/> hits…
+
+  Or live forex:
+
+  The hotel’s rooms cost a reasonable 5000 Pesos (<data feed=”UKP/Pesos” 
+  amount=”5000″/>)…
+
+  Or:
+
+  The quickest way there is <data feed=”Routing” start=”<DeviceLocation>” 
+  end=”Carnegie Hall” />
+
+  Or even putting in logic blocks like this:
+
+  <IF $UKGovernment = “Tory AND Litigious” THEN unpublish;>
+
+  One of the rumours I recent heard about…
+
+  We have heard, during the endless discussions of the death of journalism
+  over the past few years, of many new forms of reporting just ready to save 
+  us: database journalism, ambient data journalism, sensor-driven-city 
+  journalism, interactive infographic journalism. At the same time, if it can 
+  be measured chances are there’s a feed for it somewhere online. The world is 
+  monitored, live, in millions of internet-addressable ways.
+
+  But today there’s no method to bring the world of live data to the 
+  multi-outlet publishing world. By allowing a journalist to embed live data 
+  and logic into a piece, however, you give them this whole new palette. Yes, 
+  live data doesn’t work in a print product directly, and more thought is 
+  needed for a variety of issues (such as archiving), and, yes, journalists 
+  will have one more set of skills to learn – but digital platforms require us 
+  to stop thinking that submitting a flat 800 words of English prose is 
+  enough. For publishers and editors to base their expectations of submitted 
+  content on the restrictions of paper seems foolish, and yet they are forced 
+  to by their systems. That must change.
