@@ -1,0 +1,41 @@
+
+  v0.1
+  ----
+  
+  To start with, I’m looking for a very simple framework that allows an 
+  account creation, a document to be created, saved into the account, and then 
+  exported in a choice of formats. Four screens to the app, then:
+
+  1. Login screen
+    – User account creation
+  
+  2. User document repository
+    – List of all documents in their account – “Create a new document”
+
+  3. Document creation screen
+    – TEXTAREAS for
+      – Title
+      – Short summary
+      – Teaser
+      – Complete Copy
+    - TEXTAREAS which will eventually be replaced with something else for
+      – Locations
+      – People
+      – Companies
+      – Keywords
+    - Dropdown menus
+      – Language written in
+    - Save button
+      - To be eventually made irrelevant with auto-saving
+  
+  4. Export story page
+    - Page for each story to export story in:
+      – Plain text
+      – Word Doc
+      – PDF
+
+    Each of these pages will get more complicated as we go along, but I’d like 
+    to get the Simplest Possible Thing up over the next few days, and then we 
+    can move on with a shared language. Make sense?
+
+    All of these pages should be unstyled HTML.
