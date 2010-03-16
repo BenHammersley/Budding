@@ -1,0 +1,34 @@
+
+  Development notes
+  -----------------
+  
+  We do Rakefile-driven programming. We don’t use Test::Unit, rspec or 
+  anything fancy. We write adhoc Rake tasks to test the code we’re writing. 
+  The main Rake task is try(), which is where you should the test code for 
+  whatever bit of code you’re working on at the moment. Never commit the 
+  Rakefile when there’s code inside try(). try() is for local, immediate work 
+  only and once you’re done with it, you rename it to something else and leave 
+  try() empty.
+
+  Workflow, then, is reduced to typing two commands on the shell:
+
+  rake try (“tries” whatever it is that you’re working on)
+  rake web (starts the Sinatra built-in webserver)
+
+  Eventually, as we’re working towards defining the schema, we will add a 
+  reset task to completely reset the database as we iterate over code. In my 
+  experience, it’s much better to avoid dealing with migrations and such, as 
+  the schema of a database is inherently volatile in the early stages of a 
+  project. Migrations are replaced by having a script to quickly populate the 
+  database with test data so we can delete all tables and create new ones from 
+  scratch (using, ironically, sinatra-sequel’s migrate() method) quickly (in 
+  all our other projects, “rake reset” takes less than a second to run, and 
+  it’s usually made to run automatically before rake try during early-stage 
+  development).
+
+  In a production or staging environment, proper migrations start to make 
+  sense. But there’s also the possibility we end up using a schemaless 
+  database environment anyway in production. So it’s not something to be w
+  orried about just yet.
+
+  I hope that cover enough ground for now!
