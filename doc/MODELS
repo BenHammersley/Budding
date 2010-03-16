@@ -1,0 +1,27 @@
+
+  MySQL tables and resulting models
+  ---------------------------------
+  
+  users:
+    model: User()
+    attributes:
+      user_id, email{60}, password{60}
+    methods:
+      before_create() -- encrypts password with BCrypt
+      login(email, password) -- returns boolean
+      documents() -- list of documents associated to user
+  
+  documents:
+    model: Language()    
+    attributes:
+      document_id, user_id, title, short_summary, teaser, story{65535},   
+      locations, people, companies, keywords, language_id, created_on
+    methods:
+      before_create() -- assigns Time.now to created_on
+      user() - user associated to document
+      language() - language associated to document
+
+  languages:
+    mode: Language()
+    attributes:
+      language_id, name
