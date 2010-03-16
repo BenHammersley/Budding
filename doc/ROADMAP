@@ -6,13 +6,13 @@
   account creation, a document to be created, saved into the account, and then 
   exported in a choice of formats. Four screens to the app, then:
 
-  1. Login screen
+  1. Login screen [x]
     – User account creation
   
-  2. User document repository
+  2. User document repository [x]
     – List of all documents in their account – “Create a new document”
 
-  3. Document creation screen
+  3. Document creation screen [x]
     – TEXTAREAS for
       – Title
       – Short summary
@@ -28,10 +28,10 @@
     - Save button
       - To be eventually made irrelevant with auto-saving
   
-  4. Export story page
+  4. Export story page [x]
     - Page for each story to export story in:
       – Plain text
-      – Word Doc
+      – Word Doc [MISSING]
       – PDF
 
     Each of these pages will get more complicated as we go along, but I’d like 
