@@ -12,7 +12,7 @@
       documents() -- list of documents associated to user
   
   documents:
-    model: Language()    
+    model: Document()    
     attributes:
       document_id, user_id, title, short_summary, teaser, story{65535},   
       locations, people, companies, keywords, language_id, created_on
@@ -25,3 +25,17 @@
     mode: Language()
     attributes:
       language_id, name
+      
+  Document-orientation and Redis
+  ------------------------------
+  
+  First, a quick reminder about Document::story and its 64kb limit due to
+  MySQL's TEXT type. We may very well have to move to MEDIUMTEXT or BIGTEXT.
+  
+  By looking at the models above, it looks like something we could very easily
+  accomplish with Redis. Over the next few days I'll sketch out a set of keys
+  we could use to reproduce our current MySQL model in Redis. We should keep
+  such sketch updated as we move towards a more mature, post-prototyping 
+  model and be ready to make the switch somewhen in the future.
+  
+  
