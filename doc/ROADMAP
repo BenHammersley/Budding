@@ -1,4 +1,10 @@
 
+  Experimentables
+  ---------------
+  
+  * An interface for skimming through paragraphs detected names and keywords 
+  and offering quick selection and application of metadata on a side-pane. 
+
   v0.1
   ----
   

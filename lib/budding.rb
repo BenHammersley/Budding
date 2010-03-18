@@ -24,7 +24,6 @@ module Budding
     for path in ['public', 'log']
       Dir.mkdir(File.join(BUDDING_ROOT, path)) unless File.exist?(File.join(BUDDING_ROOT, path))
     end
-    Database.setup
   end
   setup_environment()
 end

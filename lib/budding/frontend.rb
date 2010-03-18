@@ -16,6 +16,11 @@ module Budding
     enable :sessions
     set :root, BUDDING_ROOT
     set :views, File.join(BUDDING_ROOT, 'lib/budding/frontend/views')
+    helpers do
+      def current_user
+        @user ||= User.find(:email => session[:user][:email])
+      end
+    end
     get '/' do
       #@now = Time.now
       #erb :index
@@ -28,7 +33,7 @@ module Budding
       @user = User.find(:email => params[:email])
       unless @user.nil?
         if @user.login(params[:email], params[:password])
-          session[:user] = @user
+          session[:user] = {:email => params[:email]}
           redirect '/dashboard'
         else
           @error_msg = "Email and password combination provided don't match."
@@ -43,14 +48,14 @@ module Budding
       @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
       if @error_msg.nil?
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-        session[:user] = @user
+        session[:user] = {:email => params[:signup_email]}
         redirect '/dashboard'
       else
         erb :login
       end
     end
     get '/dashboard' do
-      @documents = session[:user].documents
+      @documents = current_user.documents
       erb :dashboard
     end
     get '/document/create' do
@@ -59,7 +64,7 @@ module Budding
     end
     post '/document/create' do
       document_data = {
-        :user_id => session[:user].user_id,
+        :user_id => current_user.user_id,
         :title => params[:title],
         :short_summary => params[:summary],
         :teaser => params[:teaser],
@@ -79,7 +84,7 @@ module Budding
     end
     get '/document/open/:id' do
       @document = Document.find(:document_id => params[:id])
-      unless @document.user != session[:user] or @document.nil?
+      unless @document.user != current_user or @document.nil?
         @lang = @document.language.name
         erb :"document/open"
       else
@@ -94,7 +99,7 @@ module Budding
         "txt" => "text/plain"
       }
       @document = Document.find(:document_id => params[:id])
-      unless @document.user != session[:user] or @document.nil?
+      unless @document.user != current_user or @document.nil?
         content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
         response['Content-Disposition'] = 'inline; filename="%s.%s"' %
                                           [Rack::Utils.escape_html(@document.title), params[:filetype]]
@@ -116,7 +121,7 @@ module Budding
     end
     post '/document/edit/:id' do
       document_data = {
-        :user_id => session[:user].user_id,
+        :user_id => current_user.user_id,
         :title => params[:title],
         :short_summary => params[:summary],
         :teaser => params[:teaser],
