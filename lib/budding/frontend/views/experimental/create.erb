@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
+  	<title>Budding: Create Document</title>
+    <link type="text/css" href="/css/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery-1.3.2.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8rc3.custom.min.js"></script>
+    <script type="text/javascript">
+    make_fragments_clickable = function() {
+      var blocks = $('#text-block p');
+      for(var i = 0, len = blocks.length; i < len; i++) {
+        var block = $(blocks[i]);
+        var text = block.text();
+        var fragments = [];
+        var pieces = text.split(' ');
+        for(var fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
+          fragment = $('<span></span>');
+          fragment.attr('class', 'selectable');
+          fragment.text(pieces[j]);
+          fragments.push(fragment);
+          if(j != jlen-1) {
+            fragment_whitespace = $('<span>&nbsp;</span>');
+            fragments.push(fragment_whitespace);
+          }
+        }
+        block.text("");
+        block.append.apply(block, fragments);
+      }
+      $('.selectable').click(function(event) {
+        var selected_fragment = $("<span>" + $(this).text() + "</span>");
+        selected_fragment.attr('class', 'selected');
+        $('#fragments-end').before(selected_fragment);
+      });
+      $('.category-name').droppable({
+        drop: function(event, ui) {
+          $(this).append('<br>');
+          $(this).append('<span class="selected" style="margin: 3px;">' + ui.draggable.text() + '</span>');
+          ui.draggable.remove();
+        }
+      });
+    };
+    init_ui = function() {
+      $('.top-button').button();
+      $('#text-block-more').button();
+      $('.top-button').click(function(elem) {
+        window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
+      });
+      $('#text-block-more').click(function() {
+        var text = $('#text-block-ta').val();
+        var p = $('<p></p>').text(text);
+        $('#text-block-ta').before(p);
+        $('#text-block-ta').text("");
+        make_fragments_clickable();
+      });
+    }
+    $(document).ready(function(){
+      init_ui();
+      //make_link_fragments_clickable();
+    });
+    </script>
+  	<style type="text/css" media="screen">
+  	  * {
+    		margin: 0;
+    		padding: 0;
+	    }
+  		body {
+  		  width: 100%;
+  			font: normal 95% helvetica, sans-serif;
+  			color: #000;
+  			background-color: #fff;
+  		}
+  		#top {
+  		  padding: 0px;
+  		  padding-left: 20px;
+  		  padding-top: 10px;
+  		  padding-bottom: 5px;
+  		  margin: 0px;
+  		  background: #ccc;
+  		}
+  		#top h1 {
+        display: inline;
+        margin-right: 5px;
+  		}
+  		#top input.top-button {
+  		  font-size:12px;
+		  }
+  		#content {
+  		  padding: 0;
+  			margin: 20px;
+        width: 860px;
+  			margin-bottom: 10px;
+  		}
+  		#content:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }  
+  		#controls {
+  		  font-size: 14px;
+  		  padding: 0px;
+  		  padding-top: 10px;
+  		  padding-bottom: 10px;
+  		  padding-left: 20px;
+  		  margin: 0px;
+  		  background: #ececec;
+  		}
+  		#controls:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }  
+      #controls label {
+  		  font-size: 12px;
+		  }
+		  #controls ul {
+		    margin-top: 5px;
+		  }
+		  #controls li {
+		    margin-left: 25px;
+		    list-style-type: square;
+		  }
+		  #editor {
+		    width: 500px;
+		    float: left;
+	    }
+	    #fragments-container {
+	      float: left;
+	      position: relative;
+	      margin-left: 15px;
+	    }
+	    #fragments {
+	      float: left;
+	      width: 240px;
+  		  background-color: #BDBDBD;
+  		  -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+	    }
+	    #fragments p {
+	      margin-bottom: 5px;
+	    }
+	    .selected {
+	      margin-left: 3px;
+	      margin-right: 3px;
+	      padding: 1px;
+  		  -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+	      background: #778899;
+	      cursor: pointer;
+	    }
+	    .selectable {
+	      cursor: pointer;
+	      padding: 1px;
+  		  -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+	    }
+	    .selectable:hover {
+	      background: #778899;
+	    }
+      #selected-fragments {
+        padding: 5px;
+        width: 200px;
+        line-height: 1.2em;
+      }
+      #text-block-ta {
+  		  font-size: 14px;
+        width: 100%;
+        height: 70px;
+      }
+      #text-block-more {
+        margin-top: 5px;
+  		  font-size: 12px;
+  		  float: right;
+      }
+      #text-block p {
+        margin-bottom: 10px;
+      }
+  	</style>
+  </head>
+  <body>
+    <div id="top">
+      <h1>Budding</h1>
+      <input type="button" id="button-documents" class="top-button" value="Documents">
+      <input type="button" id="button-settings" class="top-button" value="Settings">
+    </div>
+    <div id="controls">
+      This is a document editor built with the specific goal of making annotation easier.
+      <ul>
+        <li>Each input box represents a block of text, click the [+] button to add more once you're done.</li>
+        <li>Click on words to add them to the sidebar for later annotation.</li>
+        <li>Press and hold <b>shift</b> to select multiple words (compose phrases).</li>
+        <li>After selecting words and phrases, use the side-bar to assign links and save.</li>
+      <ul>
+    </div>
+    <div id="content">
+      <div id="editor">
+        <div id="text-block">
+          <textarea id="text-block-ta"></textarea>
+          <input type="button" id="text-block-more" value="More">
+        </div>
+      </div>
+      <div id="fragments-container">
+        <div id="fragments">
+          <div id="selected-fragments">
+            <p align="center">Selected fragments<br>will appear here.</p>
+            <span id="fragments-end"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
