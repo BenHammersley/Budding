@@ -21,6 +21,9 @@ module Budding
         @user ||= User.find(:email => session[:user][:email])
       end
     end
+    use Rack::Auth::Basic do |username, password|
+      username == 'budding' && password == 'zomgwtfl0lz'
+    end
     get '/' do
       #@now = Time.now
       #erb :index
