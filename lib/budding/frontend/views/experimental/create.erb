@@ -46,13 +46,14 @@
         } else {
           var selected_fragment = $("<span>" + $(this).text() + "</span>");
           selected_fragment.attr('class', 'selected');
+          selected_fragment.draggable();
           $('#fragments-end').before(selected_fragment);
         }
       });
-      $('.category-name').droppable({
+      $('#wikipedia-dropbox').droppable({
         drop: function(event, ui) {
           $(this).append('<br>');
-          $(this).append('<span class="selected" style="margin: 3px;">' + ui.draggable.text() + '</span>');
+          $('#wikipedia-fragments-end').before('<span class="selected" style="margin: 2px;">' + ui.draggable.text() + '</span>');
           ui.draggable.remove();
         }
       });
@@ -63,6 +64,10 @@
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
+      $('#text-block-ta').keyup(function(e) {
+        if(e.which == 13) 
+          $('#text-block-more').click();
+      }); 
       $('#text-block-more').click(function() {
         var text = $('#text-block-ta').val();
         var p = $('<p></p>').text(text);
@@ -70,18 +75,23 @@
         $('#text-block-ta').text("");
         make_fragments_clickable();
       });
-      $('body').keydown(function(e) { budding.ui.shiftKey = e.shiftKey; });
+      $('body').keydown(function(e) { 
+        budding.ui.shiftKey = e.shiftKey;
+      });
       $('body').keyup(function() { 
         if(budding.ui.shiftKey) {
-          for(var span, i = 0, len = budding.ui.currentFragments.text.length; i < len; i++) {
-            span = $("<span>" + budding.ui.currentFragments.text[i] + "</span>");
+          if(budding.ui.currentFragments.elements.length) {
+            for(var span, i = 0, len = budding.ui.currentFragments.elements.length; i < len; i++) {
+              budding.ui.currentFragments.elements[i].css('background', '#fff');
+            }
+            span = $("<span>" + budding.ui.currentFragments.text.join(' ') + "</span>");
             span.attr('class', 'selected');
+            span.draggable();
             $('#fragments-end').before(span);
-            budding.ui.currentFragments.elements[i].css('background', '#fff');
+            budding.ui.currentFragments = {text: [], elements: []};
           }
-          budding.ui.currentFragments = [];
+          budding.ui.shiftKey = false;
         }
-        budding.ui.shiftKey = false;
       });
     }
     $(document).ready(function(){
@@ -165,10 +175,19 @@
 	      position: relative;
 	      margin-left: 15px;
 	    }
-	    #fragments {
-	      float: left;
+      #selected-fragments {
+        padding: 5px;
+        width: 220px;
+        line-height: 1.2em;
 	      width: 240px;
   		  background-color: #BDBDBD;
+  		  -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+	    }
+	    #wikipedia-dropbox {
+	      margin-top: 10px;
+	      padding: 5px;
+  		  background-color: #ADD8E6;
   		  -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
 	    }
@@ -193,11 +212,6 @@
 	    .selectable:hover {
 	      background: #778899;
 	    }
-      #selected-fragments {
-        padding: 5px;
-        width: 200px;
-        line-height: 1.2em;
-      }
       #text-block-ta {
   		  font-size: 14px;
         width: 100%;
@@ -236,11 +250,13 @@
         </div>
       </div>
       <div id="fragments-container">
-        <div id="fragments">
-          <div id="selected-fragments">
-            <p align="center">Selected fragments<br>will appear here.</p>
-            <span id="fragments-end"></span>
-          </div>
+        <div id="selected-fragments">
+          <p align="center">Selected fragments<br>will appear here.</p>
+          <span id="fragments-end"></span>
+        </div>
+        <div id="wikipedia-dropbox">
+          <p align="center">Drag fragments here<br>to turn them into<br>Wikipedia queries.</p>
+          <span id="wikipedia-fragments-end"></span>
         </div>
       </div>
     </div>
