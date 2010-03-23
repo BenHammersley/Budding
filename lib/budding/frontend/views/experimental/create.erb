@@ -19,7 +19,7 @@
           var fragment_nontext = [];
           while(piece.charAt(piece.length-1).match(/[.,;:!?]/) && piece.length) {
             fragment_nontext.push(piece.charAt(piece.length-1));
-            piece = piece.substr(piece.length-1);
+            piece = piece.substr(0, piece.length-1);
           }
           fragment = $('<span></span>');
           fragment.attr('class', 'selectable');
