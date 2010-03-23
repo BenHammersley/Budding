@@ -7,6 +7,11 @@
     <script type="text/javascript" src="/js/jquery-1.3.2.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8rc3.custom.min.js"></script>
     <script type="text/javascript">
+    budding = {
+      ui: {
+        currentFragments: {text: [], elements: []}
+      }
+    };
     make_fragments_clickable = function() {
       var blocks = $('#text-block p');
       for(var i = 0, len = blocks.length; i < len; i++) {
@@ -34,9 +39,15 @@
         block.append.apply(block, fragments);
       }
       $('.selectable').click(function(event) {
-        var selected_fragment = $("<span>" + $(this).text() + "</span>");
-        selected_fragment.attr('class', 'selected');
-        $('#fragments-end').before(selected_fragment);
+        if(budding.ui.shiftKey) {
+          budding.ui.currentFragments.elements.push($(this));
+          $(this).css('background', '#789');
+          budding.ui.currentFragments.text.push($(this).text());
+        } else {
+          var selected_fragment = $("<span>" + $(this).text() + "</span>");
+          selected_fragment.attr('class', 'selected');
+          $('#fragments-end').before(selected_fragment);
+        }
       });
       $('.category-name').droppable({
         drop: function(event, ui) {
@@ -58,6 +69,19 @@
         $('#text-block-ta').before(p);
         $('#text-block-ta').text("");
         make_fragments_clickable();
+      });
+      $('body').keydown(function(e) { budding.ui.shiftKey = e.shiftKey; });
+      $('body').keyup(function() { 
+        if(budding.ui.shiftKey) {
+          for(var span, i = 0, len = budding.ui.currentFragments.text.length; i < len; i++) {
+            span = $("<span>" + budding.ui.currentFragments.text[i] + "</span>");
+            span.attr('class', 'selected');
+            $('#fragments-end').before(span);
+            budding.ui.currentFragments.elements[i].css('background', '#fff');
+          }
+          budding.ui.currentFragments = [];
+        }
+        budding.ui.shiftKey = false;
       });
     }
     $(document).ready(function(){
