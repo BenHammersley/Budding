@@ -14,15 +14,21 @@
         var text = block.text();
         var fragments = [];
         var pieces = text.split(' ');
-        for(var fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
+        for(var piece, fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
+          piece = pieces[j];
+          var fragment_nontext = [];
+          while(piece.charAt(piece.length-1).match(/[.,;:!?]/) && piece.length) {
+            fragment_nontext.push(piece.charAt(piece.length-1));
+            piece = piece.substr(piece.length-1);
+          }
           fragment = $('<span></span>');
           fragment.attr('class', 'selectable');
           fragment.text(pieces[j]);
           fragments.push(fragment);
           if(j != jlen-1) {
-            fragment_whitespace = $('<span>&nbsp;</span>');
-            fragments.push(fragment_whitespace);
+            fragment_nontext.push(' ');
           }
+          fragments.push($('<span></span>').text(fragment_nontext.join(''));
         }
         block.text("");
         block.append.apply(block, fragments);
