@@ -2,7 +2,15 @@
   Getting started
   ---------------
   
+  sudo apt-get install curl libcurl4-openssl-dev libexpat1-dev
+  
   sudo gem install rake sinatra sequel sinatra-sequel yaml prawn rtf
+  
   cd ~/code/benh/budding
-  rake reset_ful # presumes username to local MySQL is 'root' and no password
-  rake web # will make site available at http://localhost:8080/
+  
+  rake reset_full # presumes username to local MySQL is 'root' and no password
+
+  rake setup_db # creates tables if non-existent
+  
+  BUDDING_ENV=local rake web # will make site available at http://localhost:8080/
+  BUDDING_ENV=staging rake web # will make site available at http://li147-10.members.linode.com:8080/
