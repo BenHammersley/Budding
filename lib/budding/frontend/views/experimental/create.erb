@@ -28,7 +28,7 @@
           if(j != jlen-1) {
             fragment_nontext.push(' ');
           }
-          fragments.push($('<span></span>').text(fragment_nontext.join(''));
+          fragments.push($('<span></span>').text(fragment_nontext.join('')));
         }
         block.text("");
         block.append.apply(block, fragments);
