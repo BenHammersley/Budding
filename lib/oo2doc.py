@@ -87,7 +87,7 @@ def create_document(title="Untitled", short_summary="", teaser="", story="", loc
     output = "file://%s" % path.abspath(filename())
     document.storeAsURL(output, (doc_properties,))
     document.dispose()
-    sys.stdout.write(output[7:])
+    return output[7:]
 
 def usage():
     print(__doc__)
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     else:
         remove_prefix = lambda item: (item[0].replace("--", ""), item[1])
         data = dict(map(remove_prefix, opts_list))
-        print(create_document(**data))
+        sys.stdout.write(create_document(**data))
