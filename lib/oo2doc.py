@@ -53,7 +53,7 @@ from com.sun.star.beans import PropertyValue
 
 def filename():
     rand = int(time.time())
-    return path.join("tmp", "{0}.doc".format(rand))
+    return path.join("..", "tmp", "{0}.doc".format(rand))
 
 def create_document(title="Untitled", summary="", teaser="", story="", locations="",
                     people="", companies="", keywords="", language=""):
@@ -87,7 +87,7 @@ def create_document(title="Untitled", summary="", teaser="", story="", locations
     output = "file://{0}".format(path.abspath(filename()))
     document.storeAsURL(output, (doc_properties,))
     document.dispose()
-    sys.stdout.write(output)
+    sys.stdout.write(output[7:])
 
 def usage():
     print(__doc__)

@@ -21,7 +21,7 @@ module Budding
     CONFIG[:dbparams] = YAML::load(db_config_file).inject({}) do |hash, (k, v)|
       hash.merge!({k.to_sym => v})
     end
-    for path in ['public', 'log']
+    for path in ['public', 'log', 'tmp']
       Dir.mkdir(File.join(BUDDING_ROOT, path)) unless File.exist?(File.join(BUDDING_ROOT, path))
     end
   end
