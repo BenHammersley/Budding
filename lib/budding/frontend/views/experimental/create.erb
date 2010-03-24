@@ -67,7 +67,7 @@
       $('#text-block-ta').keyup(function(e) {
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
-          if(!ta_val.match(/^\s+$/)) {
+          if(!ta_val.match(/^\s*$/)) {
             $('#text-block-more').click();
           }
         }
