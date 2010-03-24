@@ -53,7 +53,7 @@ from com.sun.star.beans import PropertyValue
 
 def filename():
     rand = int(time.time())
-    return path.join("..", "tmp", "{0}.doc".format(rand))
+    return path.join("..", "tmp", "%s.doc" % rand)
 
 def create_document(title="Untitled", summary="", teaser="", story="", locations="",
                     people="", companies="", keywords="", language=""):
@@ -80,11 +80,11 @@ def create_document(title="Untitled", summary="", teaser="", story="", locations
                 keywords language""".split()
     for section in sections:
         if doc.get(section):
-            input_ = "{0}: {1}".format(section.capitalize(), doc[section])
+            input_ = "%s: %s" % (section.capitalize(), doc[section])
             text.insertString(cursor, input_, 0)
             text.insertControlCharacter(cursor, PARAGRAPH_BREAK, 0)
 
-    output = "file://{0}".format(path.abspath(filename()))
+    output = "file://%s" % path.abspath(filename())
     document.storeAsURL(output, (doc_properties,))
     document.dispose()
     sys.stdout.write(output[7:])
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     import getopt
     arg_opts = """title short_summary teaser story locations people companies
                 keywords language""".split()
-    arg_opts = ["{0}=".format(opt) for opt in arg_opts]
+    arg_opts = ["%s=" % opt for opt in arg_opts]
     opts_list, args = getopt.getopt(sys.argv[1:], "h", arg_opts)
     if not opts_list or ("-h", "") in opts_list:
         usage()
