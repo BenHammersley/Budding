@@ -99,7 +99,8 @@ module Budding
       mime_type = {
         "pdf" => "application/pdf",
         "rtf" => "application/rtf",
-        "txt" => "text/plain"
+        "txt" => "text/plain",
+        "doc" => "application/msword"
       }
       @document = Document.find(:document_id => params[:id])
       unless @document.user != current_user or @document.nil?
