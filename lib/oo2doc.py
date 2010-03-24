@@ -40,8 +40,8 @@ import sys
 # TODO: Remove hardcoded path to PyUNO
 # In Ubuntu (Linux in general) it doesn't really matter since uno and pyuno
 # are available in PYTHONPATH
-PYUNO_LIB_LOCATION = "/Applications/OpenOffice.org.app/Contents/basis-link/program"
-sys.path.append(PYUNO_LIB_LOCATION)
+#PYUNO_LIB_LOCATION = "/Applications/OpenOffice.org.app/Contents/basis-link/program"
+#sys.path.append(PYUNO_LIB_LOCATION)
 
 import uno
 import unohelper
@@ -53,7 +53,9 @@ from com.sun.star.beans import PropertyValue
 
 def filename():
     rand = int(time.time())
-    return path.join("..", "tmp", "%s.doc" % rand)
+    cwd = path.dirname(path.abspath(__file__))
+    filename = path.join(cwd, "..", "tmp", "%s.doc" % rand)
+    return path.abspath(filename)
 
 def create_document(title="Untitled", short_summary="", teaser="", story="", locations="",
                     people="", companies="", keywords="", language=""):
@@ -84,7 +86,7 @@ def create_document(title="Untitled", short_summary="", teaser="", story="", loc
             text.insertString(cursor, input_, 0)
             text.insertControlCharacter(cursor, PARAGRAPH_BREAK, 0)
 
-    output = "file://%s" % path.abspath(filename())
+    output = "file://%s" % filename()
     document.storeAsURL(output, (doc_properties,))
     document.dispose()
     return output[7:]

@@ -7,11 +7,11 @@
   arguments << "--language=\"#{@document.language.name}\""
   file = %x(python #{python_file} #{arguments.join(" ")})
   begin
-    doc = File.read(file)
+    doc = open(file, "rb").read()
     File.delete(file)
   rescue Errno::ENOENT
     # TODO: Handle better the exception
     raise NameError, "No file found."
   end
-  doc
+  return doc
 %>
