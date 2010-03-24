@@ -65,8 +65,12 @@
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
       $('#text-block-ta').keyup(function(e) {
-        if(e.which == 13) 
-          $('#text-block-more').click();
+        if(e.which == 13) { // enter key
+          var ta_val = $('#text-block-ta').val();
+          if(!ta_val.match(/^\s+$/)) {
+            $('#text-block-more').click();
+          }
+        }
       }); 
       $('#text-block-more').click(function() {
         var text = $('#text-block-ta').val();
