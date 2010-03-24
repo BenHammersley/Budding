@@ -13,7 +13,7 @@ USAGE: Invoke oo2doc.py in the shell passing any of the following
 optional arguments.
     --title
         Title of document.
-    --summary
+    --short_summary
         A short summary of the document.
     --teaser
         A teaser for the document.
@@ -55,7 +55,7 @@ def filename():
     rand = int(time.time())
     return path.join("..", "tmp", "%s.doc" % rand)
 
-def create_document(title="Untitled", summary="", teaser="", story="", locations="",
+def create_document(title="Untitled", short_summary="", teaser="", story="", locations="",
                     people="", companies="", keywords="", language=""):
     doc = locals().copy()
 
