@@ -50,7 +50,7 @@ task :start_openoffice do
   end
 end
 
-tasl :stop_openoffice do
+task :stop_openoffice do
   oo_pid_file = File.join(BUDDING_ROOT, "conf", "oo_pid")
   oo_pid = File.read(oo_pid)
   `kill -s 9 #{oo_pid}`
