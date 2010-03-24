@@ -41,3 +41,17 @@ end
 
 task :try do
 end
+
+task :start_openoffice do
+  oo_pid = File.join(BUDDING_ROOT, "conf", "oo_pid")
+  `soffice -accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" -norestore -nofirstwizard -nologo -headless`
+  File.open(oo_pid) do |f|
+    f << $?.pid
+  end
+end
+
+tasl :stop_openoffice do
+  oo_pid_file = File.join(BUDDING_ROOT, "conf", "oo_pid")
+  oo_pid = File.read(oo_pid)
+  `kill -s 9 #{oo_pid}`
+end
