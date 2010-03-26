@@ -35,7 +35,7 @@ task :setup_db => :setup_environment do
 end
 
 task :web do
-  hostname = {'staging' => 'li147-10.members.linode.com', 'local' => 'localhost'}[ENV['BUDDING_ENV']]
+  hostname = {'staging' => 'li147-10.members.linode.com', 'local' => 'localhost'}[ENV.fetch('BUDDING_ENV', 'local')]
   Budding::Frontend::run!(:host => hostname, :port => 8080)
 end
 
