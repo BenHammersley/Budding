@@ -33,29 +33,30 @@ module Budding
       erb :login
     end
     post '/login' do
-      @user = User.find(:email => params[:email])
-      unless @user.nil?
-        if @user.login(params[:email], params[:password])
+      puts params
+      if params[:authtype] == "login"
+        @user = User.find(:email => params[:email])
+        unless @user.nil?
+          if @user.login(params[:email], params[:password])
+            session[:user] = {:email => params[:email]}
+            redirect '/dashboard'
+          else
+            @error_msg = "Email and password combination provided don't match."
+          end
+        else
+          @error_msg = "User not registered. Do you want to sign up?"
+        end
+      elsif params[:authtype] == "signup"
+        @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:email]).nil?
+        if @error_msg.nil?
+          @user = User.new({:email => params[:email], :password => params[:password]}).save
           session[:user] = {:email => params[:email]}
           redirect '/dashboard'
         else
-          @error_msg = "Email and password combination provided don't match."
+          erb :login
         end
-      else
-        @error_msg = "User not registered. Do you want to sign up?"
       end
       erb :login
-    end
-    post '/signup' do
-      @error_msg = "Password and password verifier don't match." if params[:signup_password] != params[:password_verifier]
-      @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
-      if @error_msg.nil?
-        @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-        session[:user] = {:email => params[:signup_email]}
-        redirect '/dashboard'
-      else
-        erb :login
-      end
     end
     get '/dashboard' do
       @documents = current_user.documents
