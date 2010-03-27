@@ -47,10 +47,10 @@ module Budding
           @error_msg = "User not registered. Do you want to sign up?"
         end
       elsif params[:authtype] == "signup"
-        @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:email]).nil?
+        @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
         if @error_msg.nil?
-          @user = User.new({:email => params[:email], :password => params[:password]}).save
-          session[:user] = {:email => params[:email]}
+          @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
+          session[:user] = {:email => params[:signup_email]}
           redirect '/dashboard'
         else
           erb :login

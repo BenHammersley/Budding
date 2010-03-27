@@ -19,28 +19,18 @@
       ui: {
         auth: 'signup',
         login: {
-          '#input-email': {
-            width: '140px',
-            val: 'Your email',
-            color: '#bbb'
-          },
-          '#input-password': {
-            width: '140px',
-            val: "Your password",
-            color: '#bbb'
-          }
+          '#input-email': {width: '140px', val: 'Your email', color: '#bbb', name: 'email'},
+          '#input-password': {width: '140px', val: "Your password", color: '#bbb', type: 'password', name: 'password'},
+          '#info': {
+              html: "Welcome back. If you want, we can keep you signed in for a while. " +
+                    "<input id=keep_signed_in type=checkbox class=ui-widget style=\"margin-left: 5px;\" name=keep_signed_in>" +
+                    "<label for=keep_signed_in style=\"margin-left: 5px;\">Sounds good.</label>"
+            }
         },
         signup: {
-          '#input-email': {
-            width: '220px',
-            val: 'Your email (no activation needed)',
-            color: '#bbb'
-          },
-          '#input-password': {
-            width: '150px',
-            val: "Your desired password",
-            color: '#bbb'
-          }
+          '#input-email': {width: '140px', val: 'Your email', color: '#bbb', name: 'signup_email'},
+          '#input-password': {width: '140px', val: "Your password", color: '#bbb', name: 'signup_password'},
+          '#info': {html: "Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed."}
         }
       }
     }
@@ -53,6 +43,7 @@
         $('#input-password').width(budding.ui.signup['#input-password'].width)
         $('#input-email').val(budding.ui.signup['#input-email'].val);
         $('#input-password').val(budding.ui.signup['#input-password'].val);
+        $('#info').html(budding.ui.signup['#info'].html);
         budding.ui.auth = 'signup';
       });
       $('#login-button').click(function() {
@@ -62,6 +53,16 @@
         $('#input-password').width(budding.ui.login['#input-password'].width)
         $('#input-email').val(budding.ui.login['#input-email'].val);
         $('#input-password').val(budding.ui.login['#input-password'].val);
+        $('#info').html(budding.ui.login['#info'].html);
+        $('#keep_signed_in').click(function() {
+          if($(this).is(":checked")) {
+            $('label[for=keep_signed_in]').css('font-weight', 'bold');
+            $('#authform').append('<input type=hidden name=keep_signed_in value=1>');
+          } else {
+            $('label[for=keep_signed_in]').css('font-weight', 'normal');
+            $('#authform input[name=keep_signed_in]').remove();
+          }
+        });
         budding.ui.auth = 'login';
       });
       $('#input-email').focus(function(e) {
@@ -159,10 +160,10 @@
         height: 0;  
         font-size: 0;
       }  
-      #controls input {
+      #content input {
   		  font-size: 12px;
 		  }
-      #controls label {
+      #content label {
   		  font-size: 12px;
 		  }
 		  #input-email, #input-password {
@@ -170,24 +171,20 @@
 		    height: 27px;
 		    padding: 0px 5px 0px 5px;
 		    color: #bbb;
-		  }
-		  #input-email {
-		  	width: 220px; 
-		  }
-      #input-password {
-		  	width: 150px; 
+		  	width: 140px; 
 		  }
   	  #blurb {
   	    position: fixed;
-  	    bottom: 20%;
-  	    width: 250px;
-        background: #ececec;
+  	    bottom: 25px;
         color: #F26722;
-        padding: 10px;
         font-family: times, Times New Roman, times-roman, georgia, serif;
         font-size: 18px;
 	    }
-	    #blurb a:visited {
+	    #blurb span.blurb {
+        padding: 10px;
+	      background: #ececec;
+	    }
+	    #blurb a:visited { 
         color: #F26722;
       }
   	</style>
@@ -198,20 +195,20 @@
       <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
     </div>
     <div id="controls">
-      <%= @error_msg %>
+      <span id="info">Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed.</span>
+		</div>
+    <div id="content">
 		  <div id="auth">
-		    <form action="/login" method="post">
+		    <form id="authform" action="/login" method="post" >
           <input type="radio" id="login-button" name="auth"/><label for="login-button">Login</label>
           <input type="radio" id="signup-button" name="auth" checked="true"/><label for="signup-button">Sign up</label>
-          <input type="input" name="email" id="input-email" class="ui-widget" value="Your email (no activation needed)">
-          <input type="input" name="password" id="input-password" class="ui-widget" value="Your desired password">
+          <input type="input" name="email" id="input-email" class="ui-widget" value="Your email">
+          <input type="input" name="password" id="input-password" class="ui-widget" value="Your password">
           <input type="hidden" id="auth-type" name="authtype" value="signup">
           <input type="submit" style="margin-left: 10px;" value="Go.">
 		    </form>
 		  </div>
-		</div>
-    <div id="content">
-      <div id="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</div>
+      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>
 </html>
