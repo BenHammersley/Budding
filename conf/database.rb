@@ -90,7 +90,9 @@ module Budding
         super()
       end
       def login(email, password)
-        self.email == email and BCrypt::Password.new(self.password) == password
+        unless self.email.nil? or self.password.nil?
+          self.email == email and BCrypt::Password.new(self.password) == password
+        end
       end
     end
     class Language < Sequel::Model
