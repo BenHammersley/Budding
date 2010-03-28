@@ -1,27 +1,184 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Budding &raquo; Dashboard</title>
-    <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen" title="Base layout" charset="utf-8">
-    <meta http-equiv="content-type" value="text/html; charset=utf-8">
+  	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
+  	<title><%= @title %></title>
+    <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript">
+        
+    jQuery.fn.id = function() {  
+      var ids = [];
+      this.each(function() {
+        ids.push(jQuery(this).attr('id'));
+      });
+      if(ids.length) return ids;
+      else return ids[0];
+    };
+    
+    budding = {
+      ui: {
+      }
+    }
+        
+    budding.init = function() {
+      $('#document-buttons').buttonset();
+    }
+    
+    $(document).ready(function(){
+      budding.init();
+    });
+    
+    </script>
+  	<style type="text/css" media="screen">
+  	
+  	  * {
+    		margin: 0;
+    		padding: 0;
+	    }
+  		body {
+  		  width: 100%;
+  			font: normal 95% helvetica, sans-serif;
+  			color: #000;
+  			background-color: #fff;
+  		}
+  		
+  		#top {
+  		  padding: 0px;
+  		  padding-left: 20px;
+  		  padding-top: 10px;
+  		  padding-bottom: 5px;
+  		  margin: 0px;
+  		  background: #ccc;
+  		}
+  		#top h1 {
+        display: inline;
+        margin-right: 5px;
+  		}
+  		#top input.top-button {
+  		  font-size:12px;
+		  }
+		  
+  		#content {
+  		  padding: 0;
+  			margin: 20px;
+        width: 860px;
+  			margin-bottom: 10px;
+  		}
+  		#content:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }
+      
+  		#controls {
+  		  font-size: 14px;
+  		  padding: 0px;
+  		  padding-top: 10px;
+  		  padding-bottom: 10px;
+  		  padding-left: 20px;
+  		  margin: 0px;
+  		  background: #ececec;
+  		}
+  		#controls:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }  
+      #content input {
+  		  font-size: 12px;
+		  }
+		  .foo {
+  		  font-size: 12px;		    
+  		  font-weight: bold;
+		  }
+      #content label {
+  		  font-size: 12px;
+		  }
+	    .inline-box {
+	      display: inline;
+	      background: #eee;
+	      border: 1px solid #bbb;
+	      padding: 5px;
+	    }
+	    #document-created-at, #document-title, #document-edit-button, #document-delete-button {
+	      display: block;
+	      float: left;
+	    }
+      #document-title {
+	      background: #fff;
+	      border: 1px solid #bbb;
+	      margin: 0px -2px 0px -2px;
+	      padding: 5px 10px 5px 10px;
+	      width: 645px;
+	    }
+	    #content li:after {
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+	    }  
+		  .server_error:before {
+		    content: "[!] ";
+		    font-weight: bold;
+		    color: #A52A2A;
+		    letter-spacing: 3px;
+		  }
+  	  #blurb {
+  	    position: fixed;
+  	    bottom: 25px;
+        color: #F26722;
+        font-family: times, Times New Roman, times-roman, georgia, serif;
+        font-size: 18px;
+	    }
+	    #blurb span.blurb {
+        padding: 10px;
+	      background: #ececec;
+	    }
+	    #blurb a:visited { 
+        color: #F26722;
+      }
+  	</style>
   </head>
   <body>
-    <h1><a href="/">Budding</a> &raquo; <a href="/dashboard">Dashboard</a></h1>
-    <div>
-      <% if @documents.empty? %>
-        <p>You do not have any documents yet. <a href="/document/create">Start now and create a new one</a>.</p>
+    <div id="top">
+      <h1>Budding</h1>
+      <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
+    </div>
+    <div id="controls">
+      <% if flash.info %>
+      <span id="info" class="server_error"><%= flash.info %></span>
       <% else %>
-        <p><a href="/document/create">Create a new document</a>.</p>
-        <ul>
-          <% for document in @documents %>
-            <li>
-              <a title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
-              ·
-              <span title="When the document was created"><%= document.created_on.strftime("%a, %m/%d/%Y %H:%M:%S") %></span>
-            </li>
-          <% end %>
-        </ul>
+      <span id="info">Hello there, <%= current_user.email %>. 
+        <% if @documents.empty? %>
+        You don't have any documents yet. <a href="/document/create">Should we get you started?</a>
+        <% else %>
+        Listing <%= @documents.length %> document<%= @documents.length == 1 ? '': 's' %>. <a href="/document/create">Start a new one?</a>
+        <% end %>
+      </span>
       <% end %>
+		</div>
+    <div id="content">
+    <ul style="list-style: none; padding: 0px; margin: 0px;">
+        <% for document in @documents %>
+        <li>
+          <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
+          <a id="document-title" class="inline-box" title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
+          <a id="document-edit-button" href="/document/edit/<%= document.document_id %>" class="inline-box ui-corner-left">edit</a>
+          <a id="document-delete-button" href="/document/delete/<%= document.document_id %>" class="inline-box ui-corner-right">delete</a>
+        </li>
+        <% end %>
+      </ul>
+      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>
 </html>
