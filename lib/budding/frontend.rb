@@ -9,55 +9,69 @@ unless Object.const_defined?(:BUDDING_ROOT)
   require 'budding'
 end
 
+require 'rack/flash'
+
 module Budding
   class Frontend < Sinatra::Base
+    
     include Budding::Database
+    
     enable :static
     enable :sessions
+    
     set :root, BUDDING_ROOT
     set :views, File.join(BUDDING_ROOT, 'lib/budding/frontend/views')
+    
     helpers do
       def current_user
         @user ||= User.find(:email => session[:user][:email])
       end
+      def ui_code_dump(thing)
+        %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}</pre>}
+      end
     end
+    
     use Rack::Auth::Basic do |username, password|
       username == 'budding' && password == 'zomgwtfl0lz'
     end
+    
+    use Rack::Flash, :accessorize => [:info, :form]
+
     get '/' do
-      #@now = Time.now
-      #erb :index
-      redirect '/login'
+      flash.form = 'signup' if flash.form.nil?
+      erb :index
     end
-    get '/login' do
-      erb :login
-    end
+
     post '/login' do
-      puts params
-      if params[:authtype] == "login"
-        @user = User.find(:email => params[:email])
-        unless @user.nil?
-          if @user.login(params[:email], params[:password])
-            session[:user] = {:email => params[:email]}
-            redirect '/dashboard'
-          else
-            @error_msg = "Email and password combination provided don't match."
-          end
-        else
-          @error_msg = "User not registered. Do you want to sign up?"
-        end
-      elsif params[:authtype] == "signup"
-        @error_msg = "User already exists. Maybe trying password recovery?" unless User.find(:email => params[:signup_email]).nil?
-        if @error_msg.nil?
-          @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
-          session[:user] = {:email => params[:signup_email]}
+      @user = User.find(:email => params[:email])
+      unless @user.nil?
+        if @user.login(params[:email], params[:password])
+          session[:user] = {:email => params[:email]}
           redirect '/dashboard'
         else
-          erb :login
+          flash.info = "Wrong password for <b>#{params[:email]}</b>. We sent you a reminder over e-mail."
+          flash.form = 'login'
+          redirect '/'
         end
+      else
+        flash.info = "Your e-mail is not registered yet. Signup now and we'll send you an e-mail with your password, but no activation is needed."
+        flash.form = 'signup'
+        redirect '/'
       end
-      erb :login
     end
+
+    post '/signup' do
+      unless User.find(:email => params[:signup_email]).nil?
+        flash.info = "It looks like your e-mail is already registered. We sent you a password reminder." 
+      else
+        @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
+        session[:user] = {:email => params[:signup_email]}
+        redirect '/dashboard'
+      end
+      flash.form = 'login'
+      redirect '/'
+    end
+    
     get '/dashboard' do
       @documents = current_user.documents
       erb :dashboard
