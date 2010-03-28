@@ -10,6 +10,7 @@ unless Object.const_defined?(:BUDDING_ROOT)
 end
 
 require 'rack/flash'
+require 'pony'
 
 module Budding
   class Frontend < Sinatra::Base
@@ -49,7 +50,13 @@ module Budding
           session[:user] = {:email => params[:email]}
           redirect '/dashboard'
         else
-          flash.info = "Wrong password for <b>#{params[:email]}</b>. We sent you a reminder over e-mail."
+          # Pony::mail(
+          #   :to => params[:email],
+          #   :from => 'accounts@startbudding.com', 
+          #   :subject => '[Budding] Password recovery', 
+          #   :body => ''
+          # )
+          flash.info = "Wrong password for <b>#{params[:email]}</b>. We sent you a recovery link over e-mail."
           flash.form = 'login'
           redirect '/'
         end
@@ -62,7 +69,7 @@ module Budding
 
     post '/signup' do
       unless User.find(:email => params[:signup_email]).nil?
-        flash.info = "It looks like your e-mail is already registered. We sent you a password reminder." 
+        flash.info = "It looks like your e-mail is already registered. Try logging in instead." 
       else
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
         session[:user] = {:email => params[:signup_email]}
