@@ -23,7 +23,11 @@
     }
         
     budding.init = function() {
+      $('.top-button').button();
       $('#document-buttons').buttonset();
+      $('.top-button').click(function(elem) {
+        window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
+      });
     }
     
     $(document).ready(function(){
@@ -175,7 +179,7 @@
   <body>
     <div id="top">
       <h1>Budding</h1>
-      <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
+      <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
     <div id="controls">
       <% if flash.info %>

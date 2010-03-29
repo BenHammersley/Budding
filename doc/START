@@ -4,7 +4,7 @@
   
   sudo apt-get install curl libcurl4-openssl-dev libexpat1-dev
   
-  sudo gem install rake sinatra sequel sinatra-sequel yaml prawn rtf
+  sudo gem install rake sinatra sequel sinatra-sequel yaml prawn rtf actionmailer mime-types
   
   cd ~/code/benh/budding
   

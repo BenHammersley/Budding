@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'rack'
 require 'sinatra'
 require 'prawn'
 require 'rtf'
@@ -93,6 +94,12 @@ module Budding
         flash.form = 'signup'
         redirect '/'
       end
+    end
+    
+    get '/logout' do
+      session[:user] = nil
+      flash.form = 'login'
+      redirect '/'
     end
 
     post '/signup' do
