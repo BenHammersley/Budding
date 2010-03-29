@@ -25,20 +25,48 @@
       document: {
         title: null,
         body: [],
-        next_text_block_id: 0
+        next_text_block_id: 0,
       }
     };
+    
+    budding.document.body.single_string = function() {
+      return $.map(this, function(tb) { return tb.text }).join("\n\n");
+    }
     
     budding.remove_text_block = function(id) {
       var to_be_removed = this.document.body[id];
       delete this.document.body[id];
       return to_be_removed; // whole object
     };
+    
     budding.add_text_block = function(text) {
+      text = $.trim(text);
       this.document.body[this.document.next_text_block_id] = {
         id: this.document.next_text_block_id, text: text
       };
-      return this.document.next_text_block_id++; // only id
+      var text_block_id = this.document.next_text_block_id++;
+      var p = $('<p id="text-block-' + text_block_id + '" class="text-block"></p>').text(text);
+      if(budding.document.body.length > 1) {
+        $('.text-block:last').after(p);
+      } else {
+        $('#text-block-ta').before(p);
+      }
+      $('#text-block-ta').val("");
+      budding.make_fragments_clickable();
+      $('#text-block-' + text_block_id).click(function() {
+        var text_block_ta = $('#text-block-ta').detach();
+        $(this).after(text_block_ta);
+        var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+        text_block_ta.val(budding.document.body[text_block_id].text);
+        $(this).removeClass('selectable');
+        $(this).addClass('text-block-selected');
+      });
+    };
+    
+    budding.save_story = function() {
+      $('#editor-form input[name=title]').val(this.document.title);
+      $('#editor-form input[name=story]').val(this.document.body.single_string());
+      $('#editor-form').submit();
     };
     
     budding.make_fragments_clickable = function() {
@@ -90,36 +118,24 @@
     
     budding.init = function() {
       $('.top-button').button();
-      $('#text-block-more').button();
+      $('#editor-save').button();
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
-      $('#text-block-ta').keyup(function(e) {
+      $('#text-block-ta').keydown(function(e) {
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
           if(!ta_val.match(/^\s*$/)) {
-            $('#text-block-more').trigger('click');
+            budding.add_text_block(ta_val);
           }
         }
-      }); 
-      $('#text-block-more').click(function() {
-        var text = $('#text-block-ta').val();
-        var text_block_id = budding.add_text_block(text);
-        var p = $('<p id="text-block-' + text_block_id + '" class="text-block"></p>').text(text);
-        if(budding.document.body.length > 1) {
-          $('.text-block:last').after(p);
-        } else {
-          $('#text-block-ta').before(p);
-        }
-        $('#text-block-ta').val("");
-        budding.make_fragments_clickable();
-        $('#text-block-' + text_block_id).click(function() {
-          var text_block_ta = $('#text-block-ta').detach();
-          $(this).after(text_block_ta);
-          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-          text_block_ta.val(budding.document.body[text_block_id].text);
-        });
       });
+      $('#text-block-ta').keyup(function() {
+        if($('#text-block-ta').val().match(/^\s*$/)) {
+          $('#text-block-ta').val("");
+        }
+      });
+      $('#text-block-ta').val("");
       $('body').keydown(function(e) { 
         budding.ui.shiftKey = e.shiftKey;
       });
@@ -156,7 +172,7 @@
         }        
         $("#document-title-text").show();
       });
-      $().keydown(function(e) {
+      $(document).keydown(function(e) {
         if(e.which == 13) {
           var title = $("#document-title-input").val();
           $("#document-title-input").hide();
@@ -169,6 +185,9 @@
           
           $("#document-title-text").show();
         }
+      });
+      $('#editor-save').click(function() {
+        budding.save_story();
       });
     }
     
@@ -250,7 +269,10 @@
 		    float: left;
 	    }
 	    .text-block {
-	      margin: 0px 0px 10px 0px;
+	      position: relative;
+	      font-family: Georgia, times;
+	      margin: -5px 0px 0px -5px;
+	      padding: 5px 5px 5px 5px;
 	    }
 	    .text-block:hover { 
 	      background: #F0E68C;
@@ -259,6 +281,14 @@
 	      float: left;
 	      position: relative;
 	      margin-left: 15px;
+	    }
+	    #fragments-container:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
 	    }
       #selected-fragments {
         padding: 5px;
@@ -290,16 +320,19 @@
   		  -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
 	    }
+	    .text-block-selected {
+	      background: #BDB76B;
+	    }
 	    .selectable:hover {
-	      background: #778899;
+	      background: #BDB76B;
 	    }
       #text-block-ta {
   		  font-size: 14px;
         width: 100%;
         height: 70px;
+        margin-bottom: 5px;
       }
-      #text-block-more {
-        margin-top: 5px;
+      #editor-save {
   		  font-size: 12px;
   		  float: right;
       }
@@ -324,8 +357,8 @@
 		    letter-spacing: 3px;
 		  }
   	  #blurb {
-  	    position: fixed;
-  	    bottom: 25px;
+  	    clear: both;
+  	    padding-top: 100px;
         color: #F26722;
         font-family: times, Times New Roman, times-roman, georgia, serif;
         font-size: 18px;
@@ -357,8 +390,17 @@
     <div id="content">
       <div id="editor">
         <div id="text-block">
+          <% @text_blocks.each_with_index do |value, index| %>
+          <p id="text-block-<%= index %>" class="text-block">
+          <%= escape_html(value) %>
+          </p>
+          <% end %>
           <textarea id="text-block-ta"></textarea>
-          <input type="button" id="text-block-more" value="More">
+          <input type="button" id="editor-save" value="Save">
+          <form id="editor-form" style="display: none;" method=post action=/documents>
+            <input type="hidden" name="title" value="">
+            <input type="hidden" name="story" value="">
+          </form>
         </div>
       </div>
       <div id="fragments-container">

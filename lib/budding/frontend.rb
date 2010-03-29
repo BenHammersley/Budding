@@ -23,10 +23,14 @@ module Budding
     set :root, BUDDING_ROOT
     set :views, File.join(BUDDING_ROOT, 'lib/budding/frontend/views')
     
+    helpers Rack::Utils
+    
     helpers do
+      
       def current_user
         @user ||= User.find(:email => session[:user][:email])
       end
+      
       def logged?
         if session[:user] and session[:user][:email]
           !current_user.nil?
@@ -34,9 +38,23 @@ module Budding
           false
         end
       end
+      
       def ui_code_dump(thing)
         %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}</pre>}
       end
+
+      def ui_editor()
+        @text_blocks = [] 
+        if @document
+          @title = "Budding: #{@document.title}" if @document.title
+          @text_blocks = @document.story.split("\n\n") if @document.story
+        else
+          @title = "Budding: Untitled document"
+        end
+        @languages = Language.all
+        erb :"experimental/create"
+      end
+      
     end
     
     use Rack::Auth::Basic do |username, password|
@@ -94,42 +112,46 @@ module Budding
       erb :dashboard
     end
     
-    get '/document/create' do
-      @title = "Budding: Untitled document"
-      @languages = Language.all
-      erb :"experimental/create"
+    get '/editor' do
+      @document = Document.new
+      ui_editor()
     end
-    post '/document/create' do
+    
+    post '/documents' do
       document_data = {
         :user_id => current_user.user_id,
         :title => params[:title],
-        :short_summary => params[:summary],
-        :teaser => params[:teaser],
-        :story => params[:story],
-        :locations => params[:locations],
-        :people => params[:people],
-        :companies => params[:companies],
-        :keywords => params[:keywords],
-        :language_id => params[:language]
+        :story => params[:story]
       }
+      # document_data.merge!({
+      #   :short_summary => params[:summary],
+      #   :teaser => params[:teaser],
+      #   :locations => params[:locations],
+      #   :people => params[:people],
+      #   :companies => params[:companies],
+      #   :keywords => params[:keywords],
+      #   :language_id => params[:language]
+      # })
       doc = Document.new(document_data)
       if doc.save
-        redirect "/document/open/#{doc.document_id}"
+        redirect "/documents/#{doc.document_id}"
       else
         'Error'
       end
     end
-    get '/document/open/:id' do
+    
+    get '/documents/:id' do
       @document = Document.find(:document_id => params[:id])
       unless @document.user != current_user or @document.nil?
-        @lang = @document.language.name
-        erb :"document/open"
+        @lang = @document.language.name unless @document.language.nil?
+        ui_editor()
       else
-        #erb :"document/not_found"
+        # erb :"document/not_found"
         raise ::Sinatra::NotFound
       end
     end
-    get '/document/export/:filetype/:id' do
+    
+    get '/documents/:id/as/:filetype' do
       mime_type = {
         "pdf" => "application/pdf",
         "rtf" => "application/rtf",
@@ -139,43 +161,14 @@ module Budding
       @document = Document.find(:document_id => params[:id])
       unless @document.user != current_user or @document.nil?
         content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
-        response['Content-Disposition'] = 'inline; filename="%s.%s"' %
-                                          [Rack::Utils.escape_html(@document.title), params[:filetype]]
+        content_disposition = 'inline; filename="%s.%s"' % [escape_html(@document.title), params[:filetype]]
+        response['Content-Disposition'] = content_disposition
         erb :"document/export/#{params[:filetype]}"
       else
         #erb :"document/not_found"
         raise ::Sinatra::NotFound
       end
     end
-    get '/document/edit/:id' do
-      @document = Document.find(:document_id => params[:id])
-      @languages = Language.all
-      unless @document.nil?
-        erb :"document/edit"
-      else
-        #erb :"document/not_found"
-        raise ::Sinatra::NotFound
-      end
-    end
-    post '/document/edit/:id' do
-      document_data = {
-        :user_id => current_user.user_id,
-        :title => params[:title],
-        :short_summary => params[:summary],
-        :teaser => params[:teaser],
-        :story => params[:story],
-        :locations => params[:locations],
-        :people => params[:people],
-        :companies => params[:companies],
-        :keywords => params[:keywords],
-        :language_id => params[:language]
-      }
-      doc = Document.find(:document_id => params[:id]).update(document_data)
-      if doc.save
-        redirect "/document/open/#{doc.document_id}"
-      else
-        'Error'
-      end
-    end
+        
   end
 end

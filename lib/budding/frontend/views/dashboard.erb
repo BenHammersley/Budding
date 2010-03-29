@@ -194,9 +194,9 @@
         <% for document in @documents %>
         <li>
           <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
-          <a id="document-title" class="inline-box" title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
-          <a id="document-edit-button" href="/document/edit/<%= document.document_id %>" class="inline-box">edit</a>
-          <a id="document-delete-button" href="/document/delete/<%= document.document_id %>" class="inline-box ui-corner-right">delete</a>
+          <span id="document-title" class="inline-box"><%= document.title %></span>
+          <a id="document-edit-button" href="/documents/<%= document.document_id %>" class="inline-box">edit</a>
+          <a id="document-delete-button" href="/documents/<%= document.document_id %>/delete" class="inline-box ui-corner-right">delete</a>
         </li>
         <% end %>
       </ul>
