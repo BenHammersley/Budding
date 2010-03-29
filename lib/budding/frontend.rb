@@ -47,7 +47,8 @@ module Budding
         @text_blocks = [] 
         if @document
           @title = "Budding: #{@document.title}" if @document.title
-          @text_blocks = @document.story.split("\n\n") if @document.story
+          @text_blocks = @document.story.split(/(?:\r\n)+/) if @document.story
+          puts @document.story.inspect
         else
           @title = "Budding: Untitled document"
         end

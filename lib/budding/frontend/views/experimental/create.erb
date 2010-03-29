@@ -30,7 +30,26 @@
     };
     
     budding.document.body.single_string = function() {
-      return $.map(this, function(tb) { return tb.text }).join("\n\n");
+      return $.map(this, function(tb) { return tb.text; }).join("\n");
+    }
+    
+    budding.parse_text_blocks = function() {
+      var text, blocks = $('#text-blocks p');
+      for(var i = 0, len = blocks.length; i < len; i++) {
+        text = $.trim($(blocks[i]).text());
+        this.document.body[this.document.next_text_block_id] = {
+          id: this.document.next_text_block_id, text: text
+        };
+        this.document.next_text_block_id++;
+        $(blocks[i]).click(function() {
+          $('.text-block').removeClass('text-block-selected');
+          var text_block_ta = $('#text-block-ta').detach();
+          $(this).after(text_block_ta);
+          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+          text_block_ta.val(budding.document.body[text_block_id].text);
+          $(this).addClass('text-block-selected');
+        });
+      }
     }
     
     budding.remove_text_block = function(id) {
@@ -54,6 +73,8 @@
       $('#text-block-ta').val("");
       budding.make_fragments_clickable();
       $('#text-block-' + text_block_id).click(function() {
+        $('.text-block').removeClass('text-block-selected');
+        $('.text-block').addClass('selectable');
         var text_block_ta = $('#text-block-ta').detach();
         $(this).after(text_block_ta);
         var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
@@ -70,10 +91,10 @@
     };
     
     budding.make_fragments_clickable = function() {
-      var blocks = $('#text-block p');
+      var blocks = $('#text-blocks p');
       for(var i = 0, len = blocks.length; i < len; i++) {
         var block = $(blocks[i]);
-        var text = block.text();
+        var text = $.trim(block.text());
         var fragments = [];
         var pieces = text.split(' ');
         for(var piece, fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
@@ -192,8 +213,8 @@
     }
     
     $(document).ready(function(){
+      budding.parse_text_blocks();
       budding.init();
-      budding.make_fragments_clickable();
     });
     
     </script>
@@ -328,15 +349,16 @@
 	    }
       #text-block-ta {
   		  font-size: 14px;
-        width: 100%;
+        width: 580px;
         height: 70px;
         margin-bottom: 5px;
+        padding: 5px;
       }
       #editor-save {
   		  font-size: 12px;
   		  float: right;
       }
-      #text-block p {
+      #text-blocks p {
         margin-bottom: 10px;
       }
       #document-title {
@@ -375,8 +397,7 @@
   <body>
     <div id="top">
       <h1>Budding</h1>
-      <input type="button" id="button-documents" class="top-button" value="Documents">
-      <input type="button" id="button-settings" class="top-button" value="Settings">
+      <input type="button" id="button-dashboard" class="top-button" value="Dashboard">
     </div>
     <div id="controls">
       This is a document editor built with the specific goal of making annotation easier.
@@ -389,7 +410,7 @@
     </div>
     <div id="content">
       <div id="editor">
-        <div id="text-block">
+        <div id="text-blocks">
           <% @text_blocks.each_with_index do |value, index| %>
           <p id="text-block-<%= index %>" class="text-block">
           <%= escape_html(value) %>

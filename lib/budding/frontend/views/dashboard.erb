@@ -156,7 +156,8 @@
 		    letter-spacing: 3px;
 		  }
   	  #blurb {
-  	    position: fixed;
+  	    clear: both;
+  	    padding-top: 100px;
   	    bottom: 25px;
         color: #F26722;
         font-family: times, Times New Roman, times-roman, georgia, serif;
@@ -184,7 +185,7 @@
         <% if @documents.empty? %>
         You don't have any documents yet. <a href="/document/create">Should we get you started?</a>
         <% else %>
-        Listing <%= @documents.length %> document<%= @documents.length == 1 ? '': 's' %>. <a href="/document/create">Start a new one?</a>
+        Listing <%= @documents.length %> document<%= @documents.length == 1 ? '': 's' %>. <a href="/editor">Start a new one?</a>
         <% end %>
       </span>
       <% end %>
@@ -194,7 +195,7 @@
         <% for document in @documents %>
         <li>
           <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
-          <span id="document-title" class="inline-box"><%= document.title %></span>
+          <span id="document-title" class="inline-box"><%= document.title.empty? ? "&nbsp;" : document.title %></span>
           <a id="document-edit-button" href="/documents/<%= document.document_id %>" class="inline-box">edit</a>
           <a id="document-delete-button" href="/documents/<%= document.document_id %>/delete" class="inline-box ui-corner-right">delete</a>
         </li>
