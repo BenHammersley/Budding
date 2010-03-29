@@ -105,6 +105,8 @@ module Budding
     post '/signup' do
       unless User.find(:email => params[:signup_email]).nil?
         flash.info = "It looks like your e-mail is already registered. Try logging in instead." 
+        flash.form = 'login'
+        redirect '/'
       else
         @user = User.new({:email => params[:signup_email], :password => params[:signup_password]}).save
         session[:user] = {:email => params[:signup_email]}
