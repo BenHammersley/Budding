@@ -13,7 +13,7 @@
       this.each(function() {
         ids.push(jQuery(this).attr('id'));
       });
-      if(ids.length) return ids;
+      if(ids.length > 1) return ids;
       else return ids[0];
     };
     

@@ -39,6 +39,7 @@ module Budding
     use Rack::Flash, :accessorize => [:info, :form]
 
     get '/' do
+      @title = "Budding"
       flash.form = 'signup' if flash.form.nil?
       erb :index
     end
@@ -80,12 +81,15 @@ module Budding
     end
     
     get '/dashboard' do
-      @documents = current_user.documents
+      @title = "Budding: Dashboard"
+      @documents = current_user.documents_dataset.order(:created_on.desc).all
       erb :dashboard
     end
+    
     get '/document/create' do
+      @title = "Budding: Untitled document"
       @languages = Language.all
-      erb :"document/create"
+      erb :"experimental/create"
     end
     post '/document/create' do
       document_data = {
@@ -164,10 +168,6 @@ module Budding
       else
         'Error'
       end
-    end
-    # experimental -- jonas, march 23, 2010
-    get '/experimental/create' do
-      erb :"experimental/create"
     end
   end
 end

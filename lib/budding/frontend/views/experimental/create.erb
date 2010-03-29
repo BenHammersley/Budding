@@ -2,17 +2,46 @@
 <html>
   <head>
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
-  	<title>Budding: Create Document</title>
-    <link type="text/css" href="/css/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
-    <script type="text/javascript" src="/js/jquery-1.3.2.js"></script>
-    <script type="text/javascript" src="/js/jquery-ui-1.8rc3.custom.min.js"></script>
+  	<title><%= @title %></title>
+    <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
     <script type="text/javascript">
+    
+    jQuery.fn.id = function() {  
+      var ids = [];
+      this.each(function() {
+        ids.push(jQuery(this).attr('id'));
+      });
+      if(ids.length > 1) return ids;
+      else return ids[0];
+    };
+    
     budding = {
       ui: {
+        '#document-title-text': {val: "Click to add title"},
         currentFragments: {text: [], elements: []}
+      },
+      document: {
+        title: null,
+        body: [],
+        next_text_block_id: 0
       }
     };
-    make_fragments_clickable = function() {
+    
+    budding.remove_text_block = function(id) {
+      var to_be_removed = this.document.body[id];
+      delete this.document.body[id];
+      return to_be_removed; // whole object
+    };
+    budding.add_text_block = function(text) {
+      this.document.body[this.document.next_text_block_id] = {
+        id: this.document.next_text_block_id, text: text
+      };
+      return this.document.next_text_block_id++; // only id
+    };
+    
+    budding.make_fragments_clickable = function() {
       var blocks = $('#text-block p');
       for(var i = 0, len = blocks.length; i < len; i++) {
         var block = $(blocks[i]);
@@ -57,8 +86,9 @@
           ui.draggable.remove();
         }
       });
-    };
-    init_ui = function() {
+    }
+    
+    budding.init = function() {
       $('.top-button').button();
       $('#text-block-more').button();
       $('.top-button').click(function(elem) {
@@ -68,16 +98,27 @@
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
           if(!ta_val.match(/^\s*$/)) {
-            $('#text-block-more').click();
+            $('#text-block-more').trigger('click');
           }
         }
       }); 
       $('#text-block-more').click(function() {
         var text = $('#text-block-ta').val();
-        var p = $('<p></p>').text(text);
-        $('#text-block-ta').before(p);
-        $('#text-block-ta').text("");
-        make_fragments_clickable();
+        var text_block_id = budding.add_text_block(text);
+        var p = $('<p id="text-block-' + text_block_id + '" class="text-block"></p>').text(text);
+        if(budding.document.body.length > 1) {
+          $('.text-block:last').after(p);
+        } else {
+          $('#text-block-ta').before(p);
+        }
+        $('#text-block-ta').val("");
+        budding.make_fragments_clickable();
+        $('#text-block-' + text_block_id).click(function() {
+          var text_block_ta = $('#text-block-ta').detach();
+          $(this).after(text_block_ta);
+          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+          text_block_ta.val(budding.document.body[text_block_id].text);
+        });
       });
       $('body').keydown(function(e) { 
         budding.ui.shiftKey = e.shiftKey;
@@ -97,11 +138,45 @@
           budding.ui.shiftKey = false;
         }
       });
+      $('#document-title').click(function() {
+        if(!$("#document-title-input").is(":visible")) {
+          $("#document-title-input").show();
+          $("#document-title-input").val(budding.document.title);
+          $("#document-title-text").hide();
+        }
+      });
+      $('#document-title-input').blur(function(e) {
+        var title = $("#document-title-input").val();
+        $("#document-title-input").hide();
+        if(!title.match(/^\s*$/)) {
+          budding.document.title = $("#document-title-input").val();
+          $("#document-title-text").text(budding.document.title);
+        } else {
+          $("#document-title-text").text(budding.ui["#document-title-text"].val);
+        }        
+        $("#document-title-text").show();
+      });
+      $().keydown(function(e) {
+        if(e.which == 13) {
+          var title = $("#document-title-input").val();
+          $("#document-title-input").hide();
+          if(!title.match(/^\s*$/)) {
+            budding.document.title = $("#document-title-input").val();
+            $("#document-title-text").text(budding.document.title);
+          } else {
+            $("#document-title-text").text(budding.ui["#document-title-text"].val);
+          }
+          
+          $("#document-title-text").show();
+        }
+      });
     }
+    
     $(document).ready(function(){
-      init_ui();
-      //make_link_fragments_clickable();
+      budding.init();
+      budding.make_fragments_clickable();
     });
+    
     </script>
   	<style type="text/css" media="screen">
   	  * {
@@ -171,8 +246,14 @@
 		    list-style-type: square;
 		  }
 		  #editor {
-		    width: 500px;
+		    width: 595px;
 		    float: left;
+	    }
+	    .text-block {
+	      margin: 0px 0px 10px 0px;
+	    }
+	    .text-block:hover { 
+	      background: #F0E68C;
 	    }
 	    #fragments-container {
 	      float: left;
@@ -185,15 +266,11 @@
         line-height: 1.2em;
 	      width: 240px;
   		  background-color: #BDBDBD;
-  		  -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
 	    }
 	    #wikipedia-dropbox {
 	      margin-top: 10px;
 	      padding: 5px;
   		  background-color: #ADD8E6;
-  		  -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
 	    }
 	    #fragments p {
 	      margin-bottom: 5px;
@@ -229,6 +306,37 @@
       #text-block p {
         margin-bottom: 10px;
       }
+      #document-title {
+      	background: #eee;
+	      border: 1px solid #bbb;
+	      padding: 5px;
+	      margin-bottom: 10px;
+	    }
+	    #document-title-input {
+	      font-size: 14px;
+	      width: 100%;
+	      padding: 2px 0px 2px 0px;
+	    }
+		  .server_error:before {
+		    content: "[!] ";
+		    font-weight: bold;
+		    color: #A52A2A;
+		    letter-spacing: 3px;
+		  }
+  	  #blurb {
+  	    position: fixed;
+  	    bottom: 25px;
+        color: #F26722;
+        font-family: times, Times New Roman, times-roman, georgia, serif;
+        font-size: 18px;
+	    }
+	    #blurb span.blurb {
+        padding: 10px;
+	      background: #ececec;
+	    }
+	    #blurb a:visited { 
+        color: #F26722;
+      }
   	</style>
   </head>
   <body>
@@ -244,7 +352,7 @@
         <li>Click on words to add them to the sidebar for later annotation.</li>
         <li>Press and hold <b>shift</b> to select multiple words (compose phrases).</li>
         <li>After selecting words and phrases, use the side-bar to assign links and save.</li>
-      <ul>
+      </ul>
     </div>
     <div id="content">
       <div id="editor">
@@ -254,15 +362,32 @@
         </div>
       </div>
       <div id="fragments-container">
-        <div id="selected-fragments">
+        <div id="document-title" class="ui-corner-all">
+          <span id="document-title-text">Click to add title</span>
+          <input id="document-title-input" style="display: none;" class="ui-widget" type="text">
+        </div>
+        <div id="selected-fragments" class="ui-corner-all">
           <p align="center">Selected fragments<br>will appear here.</p>
           <span id="fragments-end"></span>
         </div>
-        <div id="wikipedia-dropbox">
+        <div id="wikipedia-dropbox" class="ui-corner-all">
           <p align="center">Drag fragments here<br>to turn them into<br>Wikipedia queries.</p>
           <span id="wikipedia-fragments-end"></span>
         </div>
       </div>
+      <!--
+        Title
+        Short summary
+        Teaser
+        Complete copy
+        Metadata
+        Locations
+        People
+        Companies
+        Keywords
+        Language
+      -->
+      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>
 </html>

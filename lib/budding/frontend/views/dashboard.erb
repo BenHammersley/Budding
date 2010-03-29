@@ -13,7 +13,7 @@
       this.each(function() {
         ids.push(jQuery(this).attr('id'));
       });
-      if(ids.length) return ids;
+      if(ids.length > 1) return ids;
       else return ids[0];
     };
     
@@ -102,6 +102,17 @@
       #content label {
   		  font-size: 12px;
 		  }
+      #content li {
+        margin-bottom: 3px;
+      }
+	    #content li:after {
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+	    }  
 	    .inline-box {
 	      display: inline;
 	      background: #eee;
@@ -138,14 +149,6 @@
 	      padding: 5px 10px 5px 10px;
 	      width: 635px;
 	    }
-	    #content li:after {
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-	    }  
 		  .server_error:before {
 		    content: "[!] ";
 		    font-weight: bold;
@@ -192,7 +195,7 @@
         <li>
           <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
           <a id="document-title" class="inline-box" title="Document title" href="/document/open/<%= document.document_id %>"><%= document.title %></a>
-          <a id="document-edit-button" href="/document/edit/<%= document.document_id %>" class="inline-box ui-corner-left">edit</a>
+          <a id="document-edit-button" href="/document/edit/<%= document.document_id %>" class="inline-box">edit</a>
           <a id="document-delete-button" href="/document/delete/<%= document.document_id %>" class="inline-box ui-corner-right">delete</a>
         </li>
         <% end %>
