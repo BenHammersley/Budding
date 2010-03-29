@@ -27,6 +27,13 @@ module Budding
       def current_user
         @user ||= User.find(:email => session[:user][:email])
       end
+      def logged?
+        if session[:user] and session[:user][:email]
+          !current_user.nil?
+        else
+          false
+        end
+      end
       def ui_code_dump(thing)
         %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}</pre>}
       end
@@ -39,6 +46,7 @@ module Budding
     use Rack::Flash, :accessorize => [:info, :form]
 
     get '/' do
+      redirect '/dashboard' if logged?
       flash.form = 'signup' if flash.form.nil?
       erb :index
     end
