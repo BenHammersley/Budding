@@ -80,9 +80,10 @@
     
     budding.init = function() {
 
-      $("#auth").buttonset();
-      $('#signup-button').click(budding.ui.listeners['#signup-button']);
-      $('#login-button').click(budding.ui.listeners['#login-button']);
+      $('.top-button').button();
+      $("#tagger").buttonset();
+      // $('#signup-button').click(budding.ui.listeners['#signup-button']);
+      // $('#login-button').click(budding.ui.listeners['#login-button']);
 
       $('#input-email, #input-password-signup, #input-password-login').focus(function(e) {
         $(this).css({color: "#000"});
@@ -107,7 +108,7 @@
       }
       
       $('#auth').buttonset('refresh');
-      $('#authform').show();
+      $('#tagger').show();
 
     }
     
@@ -183,10 +184,64 @@
       #content label {
   		  font-size: 12px;
 		  }
-		  
-		  #authform {
+		  #input-url {
+		    padding: 0px 3px 0px 5px;
+		    font-size: 16px !important;
+		    height: 27px !important;
+		    width: 760px;
+		  }
+		  #tagger {
 		    display: none;
 		  }
+	    .tagbox {
+        margin: 10px 8px 0px 0px;
+	      padding-top: 23px;
+	      background-color: #eee;
+	      border: 1px solid #bbb;
+  		  height: 50px;
+  		  width: 203px;
+  		  float: left;
+        
+	    }
+	    .tag {
+	      margin-top: 10px;
+	      background-color: #ADD8E6;
+	    }
+	    #dropboxes {
+	      padding: 0px;
+	      margin: 0px;
+	    }
+	    #dropboxes:after {
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+	    }
+	    .dropbox {
+        background-color: #ADD8E6;
+        float: left;
+        width: 62px;
+        padding: 10px;
+        margin: 10px 5px 10px 0px;
+        font-size: 12px;
+        font-family: georgia;
+        font-weight: bold;
+	    }
+	    .dropbox-last {
+	      margin-right: 0px;
+	    }
+      div.box-label {
+        float: right;
+        font-size: 12px;
+        font-family: georgia;
+        font-weight: bold;
+        margin-top: -24px;
+        padding: 3px 5px 0px 5px;
+        background: #BDBDBD;
+        border: 1px solid #bbb;
+      }
 		  #input-email, #input-password-login, #input-password-signup {
 		    margin-left: 10px; 
         height: 27px;
@@ -223,25 +278,40 @@
   <body>
     <div id="top">
       <h1>Budding</h1>
-      <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
+      <input type="button" id="button-dashboard" class="top-button" value="Dashboard">
+      <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
     <div id="controls">
       <% if flash.info %>
       <span id="info" class="server_error"><%= flash.info %></span>
       <% else %>
-      <span id="info">Signing up is as easy as logging in: we'll send you an e-mail with your password, but no activation is needed.</span>
+      <span id="info">Budding will scan text from a URL and identify potential keywords for tagging.</span>
       <% end %>
 		</div>
     <div id="content">
-		  <div id="auth">
-		    <form id="authform" action="/login" method="post" >
-          <input type="radio" id="login-button" name="auth"><label for="login-button">Login</label>
-          <input type="radio" id="signup-button" name="auth"><label for="signup-button">Sign up</label>
-          <input type="text" name="signup_email" id="input-email" class="ui-widget" placeholder="Your email">
-          <input name="signup_password" id="input-password-signup" class="ui-widget" placeholder="Your password">
-          <input name="password" type="password" id="input-password-login" class="ui-widget" placeholder="Your password">
-          <input type="submit" style="margin-left: 10px;" value="Go.">
+		  <div id="tagger">
+		    <form id="taggerform" action="/tagger" method="post" >
+          <input type="text" name="url" id="input-url" class="ui-widget" placeholder="URL to scrape">
+          <input type="submit" style="margin-left: 10px;" value="Import">
 		    </form>
+        <div id="dropboxes">
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
+            <span id="wikipedia-fragments-end"></span>
+          </div>
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;google&gt;</div> 
+            <span id="wikipedia-fragments-end"> </span>
+          </div>
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
+            <span id="wikipedia-fragments-end"> </span>
+          </div>
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
+            <span id="wikipedia-fragments-end"> </span>
+          </div>
+        </div>
 		  </div>
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>

@@ -41,7 +41,9 @@ module Budding
       end
       
       def ui_code_dump(thing)
-        %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}</pre>}
+        %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">}
+          %Q{#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}}
+        %Q{</pre>}
       end
 
       def ui_editor()
@@ -122,6 +124,19 @@ module Budding
       erb :dashboard
     end
     
+    get '/tagger' do
+      erb :tagger
+    end
+    
+    get '/tags' do
+      # @all_tags = database[:tags].all
+      erb :tags
+    end
+    
+    post '/tags' do
+      erb :tags
+    end
+    
     get '/editor' do
       @document = Document.new
       ui_editor()
@@ -158,6 +173,14 @@ module Budding
       else
         # erb :"document/not_found"
         raise ::Sinatra::NotFound
+      end
+    end
+    
+    get '/documents/:id/delete' do
+      @document = Document.find(:document_id => params[:id])
+      unless @document.user != current_user or @document.nil?
+        @document.delete()
+        redirect '/dashboard'
       end
     end
     
