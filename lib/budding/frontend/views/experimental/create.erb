@@ -302,6 +302,7 @@
 	      float: left;
 	      position: relative;
 	      margin-left: 15px;
+	      width: 240px;	      
 	    }
 	    #fragments-container:after {  
         content: ".";  
@@ -312,16 +313,44 @@
         font-size: 0;
 	    }
       #selected-fragments {
-        padding: 5px;
-        width: 220px;
-        line-height: 1.2em;
-	      width: 240px;
-  		  background-color: #BDBDBD;
+
 	    }
-	    #wikipedia-dropbox {
-	      margin-top: 10px;
+	    .tagbox {
+        margin-top: 5px;
 	      padding: 5px;
-  		  background-color: #ADD8E6;
+	      padding-top: 23px;
+	      background-color: #eee;
+	      border: 1px solid #bbb;
+  		  height: 50px;
+	    }
+	    .tag {
+	      margin-top: 10px;
+	      background-color: #ADD8E6;
+	    }
+	    #dropboxes {
+	      padding: 0px;
+	      margin: 0px;
+	    }
+	    #dropboxes:after {
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+	    }
+	    .dropbox {
+        background-color: #ADD8E6;
+        float: left;
+        width: 62px;
+        padding: 10px;
+        margin: 10px 5px 10px 0px;
+        font-size: 12px;
+        font-family: georgia;
+        font-weight: bold;
+	    }
+	    .dropbox-last {
+	      margin-right: 0px;
 	    }
 	    #fragments p {
 	      margin-bottom: 5px;
@@ -364,7 +393,7 @@
       #document-title {
       	background: #eee;
 	      border: 1px solid #bbb;
-	      padding: 5px;
+	      padding: 23px 5px 5px 5px;
 	      margin-bottom: 10px;
 	    }
 	    #document-title-input {
@@ -391,6 +420,17 @@
 	    }
 	    #blurb a:visited { 
         color: #F26722;
+      }
+      div.box-label {
+        position: absolute;
+        right: 0;
+        font-size: 12px;
+        font-family: georgia;
+        font-weight: bold;
+        margin-top: -24px;
+        padding: 3px 5px 0px 5px;
+        background: #BDBDBD;
+        border: 1px solid #bbb;
       }
   	</style>
   </head>
@@ -426,17 +466,33 @@
         </div>
       </div>
       <div id="fragments-container">
-        <div id="document-title" class="ui-corner-all">
+        <div id="document-title" class="ui-corner-left ui-corner-br">
+          <div class="box-label ui-corner-bl">title</div> 
           <span id="document-title-text">Click to add title</span>
           <input id="document-title-input" style="display: none;" class="ui-widget" type="text">
         </div>
-        <div id="selected-fragments" class="ui-corner-all">
-          <p align="center">Selected fragments<br>will appear here.</p>
+        <div id="selected-fragments" class="tagbox ui-corner-all">
+          <div class="box-label ui-corner-bl">&lt;selected&gt;</div> 
+          <span class="tag">Steve Jobs</span> 
+          <span class="tag">Steve Jobs</span>
+          <span class="tag">Steve Jobs</span>
           <span id="fragments-end"></span>
         </div>
-        <div id="wikipedia-dropbox" class="ui-corner-all">
-          <p align="center">Drag fragments here<br>to turn them into<br>Wikipedia queries.</p>
+        <div class="tagbox ui-corner-all">
+          <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
           <span id="wikipedia-fragments-end"></span>
+        </div>
+        <div class="tagbox ui-corner-all">
+          <div class="box-label ui-corner-bl">&lt;google&gt;</div> 
+          <span id="wikipedia-fragments-end"> </span>
+        </div>
+        <div class="tagbox ui-corner-all">
+          <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
+          <span id="wikipedia-fragments-end"> </span>
+        </div>
+        <div class="tagbox ui-corner-all">
+          <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
+          <span id="wikipedia-fragments-end"> </span>
         </div>
       </div>
       <!--

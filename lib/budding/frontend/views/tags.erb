@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
+  	<title><%= @title %></title>
+    <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript">
+        
+    jQuery.fn.id = function() {  
+      var ids = [];
+      this.each(function() {
+        ids.push(jQuery(this).attr('id'));
+      });
+      if(ids.length > 1) return ids;
+      else return ids[0];
+    };
+    
+    budding = {
+      ui: {
+        form: '<%= flash.form %>',
+        forms: {
+          login: {
+            '#input-email': {color: '#bbb', name: 'email', placeholder: "Your e-mail", class: 'ui-widget'},
+            '#input-password': {color: '#bbb', name: 'password', placeholder: "Your password", class: 'ui-widget', type: 'password'},
+            '#info': {
+                html: "Welcome back. If you want, we can keep you signed in for a while. " +
+                      "<input id=keep_signed_in type=checkbox class=ui-widget style=\"margin-left: 5px;\" name=keep_signed_in>" +
+                      "<label for=keep_signed_in style=\"margin-left: 5px;\">Sounds good.</label>"
+            }
+          },
+          signup: {
+            '#input-email': {color: '#bbb', name: 'signup_email', placeholder: "Your e-mail", class: 'ui-widget'},
+            '#input-password': {color: '#bbb', name: 'signup_password', placeholder: "Your password", class: 'ui-widget'},
+            '#info': {html: "Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed."}
+          }
+        },
+        listeners: {
+          '#signup-button': function() {
+            $('#signup-button').attr('checked', true);
+            $('#auth').buttonset('refresh');
+            $('#authform').attr('action', '/signup');
+            $('#input-email').attr('name', budding.ui.forms.signup['#input-email'].name);
+            $('#input-password-login').hide();
+            $('#input-password-signup').show();
+            $('#info').removeClass('server_error');
+            $('#info').html(budding.ui.forms.signup['#info'].html);
+            budding.ui.form = 'signup';
+          },
+          '#login-button': function() {
+            $('#login-button').attr('checked', true);
+            $('#auth').buttonset('refresh');
+            $('#authform').attr('action', '/login');
+            $('#input-email').attr('name', budding.ui.forms.login['#input-email'].name);
+            $('#input-password-login').attr('name', budding.ui.forms.login['#input-password'].name);
+            $('#input-password-signup').hide();
+            $('#input-password-login').show();
+            $('#info').removeClass('server_error');
+            $('#info').html(budding.ui.forms.login['#info'].html);
+            $('#keep_signed_in').click(function() {
+              if($(this).is(":checked")) {
+                $('label[for=keep_signed_in]').css('font-weight', 'bold');
+                $('#authform').append('<input type=hidden name=keep_signed_in value=1>');
+              } else {
+                $('label[for=keep_signed_in]').css('font-weight', 'normal');
+                $('#authform input[name=keep_signed_in]').remove();
+              }
+            });
+            budding.ui.form = 'login';
+          },
+          
+        }
+      }
+    }
+    
+    <% unless flash.info.nil? %>
+    budding.ui.forms['<%= flash.form %>']['#info'].html = '<%= flash.info.gsub("'", "\\\\'") %>';
+    <% end %>
+    
+    budding.init = function() {
+
+      $("#auth").buttonset();
+      $('#signup-button').click(budding.ui.listeners['#signup-button']);
+      $('#login-button').click(budding.ui.listeners['#login-button']);
+
+      $('#input-email, #input-password-signup, #input-password-login').focus(function(e) {
+        $(this).css({color: "#000"});
+      });
+
+      $('#input-email, #input-password-signup, #input-password-login').blur(function(e) {
+        var input = "#" + $(this).id();
+        if(input.match(/^#input-password/)) {
+          input = '#input-password';
+        }
+        if($(this).val() == $(this).attr('placeholder')) {
+          console.log("budding.ui.form: " + budding.ui.form);
+          console.log("input: " + input);
+          $(this).css({color: budding.ui.forms[budding.ui.form][input].color});
+        }
+      });
+
+      if(budding.ui.form == 'login') {
+        budding.ui.listeners['#login-button'].call($('#login-button'));
+      } else if(budding.ui.form == 'signup') {
+        budding.ui.listeners['#signup-button'].call($('#signup-button'))
+      }
+      
+      $('#auth').buttonset('refresh');
+      $('#authform').show();
+
+    }
+    
+    $(document).ready(function(){
+      budding.init();
+    });
+    
+    </script>
+  	<style type="text/css" media="screen">
+  	
+  	  * {
+    		margin: 0;
+    		padding: 0;
+	    }
+  		body {
+  		  width: 100%;
+  			font: normal 95% helvetica, sans-serif;
+  			color: #000;
+  			background-color: #fff;
+  		}
+  		
+  		#top {
+  		  padding: 0px;
+  		  padding-left: 20px;
+  		  padding-top: 10px;
+  		  padding-bottom: 5px;
+  		  margin: 0px;
+  		  background: #ccc;
+  		}
+  		#top h1 {
+        display: inline;
+        margin-right: 5px;
+  		}
+  		#top input.top-button {
+  		  font-size:12px;
+		  }
+		  
+  		#content {
+  		  padding: 0;
+  			margin: 20px;
+        width: 860px;
+  			margin-bottom: 10px;
+  		}
+  		#content:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }
+      
+  		#controls {
+  		  font-size: 14px;
+  		  padding: 0px;
+  		  padding-top: 10px;
+  		  padding-bottom: 10px;
+  		  padding-left: 20px;
+  		  margin: 0px;
+  		  background: #ececec;
+  		}
+  		#controls:after {  
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+      }  
+      #content input {
+  		  font-size: 12px;
+		  }
+      #content label {
+  		  font-size: 12px;
+		  }
+		  
+		  #authform {
+		    display: none;
+		  }
+		  #input-email, #input-password-login, #input-password-signup {
+		    margin-left: 10px; 
+        height: 27px;
+        padding: 0px 5px 0px 5px;
+		    color: #bbb;
+		  	width: 170px; 
+		  }
+		  #input-password-login, #input-password-signup {
+		    display: none;
+		  }
+		  .server_error:before {
+		    content: "[!] ";
+		    font-weight: bold;
+		    color: #A52A2A;
+		    letter-spacing: 3px;
+		  }
+		  
+  	  #blurb {
+  	    position: fixed;
+  	    bottom: 25px;
+        color: #F26722;
+        font-family: times, Times New Roman, times-roman, georgia, serif;
+        font-size: 18px;
+	    }
+	    #blurb span.blurb {
+        padding: 10px;
+	      background: #ececec;
+	    }
+	    #blurb a:visited { 
+        color: #F26722;
+      }
+  	</style>
+  </head>
+  <body>
+    <div id="top">
+      <h1>Budding</h1>
+      <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
+    </div>
+    <div id="controls">
+      <% if flash.info %>
+      <span id="info" class="server_error"><%= flash.info %></span>
+      <% else %>
+      <span id="info">Signing up is as easy as logging in: we'll send you an e-mail with your password, but no activation is needed.</span>
+      <% end %>
+		</div>
+    <div id="content">
+		  <div id="auth">
+		    <form id="authform" action="/login" method="post" >
+          <input type="radio" id="login-button" name="auth"><label for="login-button">Login</label>
+          <input type="radio" id="signup-button" name="auth"><label for="signup-button">Sign up</label>
+          <input type="text" name="signup_email" id="input-email" class="ui-widget" placeholder="Your email">
+          <input name="signup_password" id="input-password-signup" class="ui-widget" placeholder="Your password">
+          <input name="password" type="password" id="input-password-login" class="ui-widget" placeholder="Your password">
+          <input type="submit" style="margin-left: 10px;" value="Go.">
+		    </form>
+		  </div>
+      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
+    </div>
+  </body>
+</html>
