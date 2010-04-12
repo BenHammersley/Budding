@@ -23,7 +23,6 @@ module Sinatra
       end
       database
     end
-
     def database
       @database ||= Sequel.connect(conn_params || database_url)
     end
@@ -81,6 +80,16 @@ module Budding
           "Javanese", "Serbian", "Kannada"].each do |lang|
             database[:languages].insert(:name => lang)
           end
+      end
+      migration "add tags table" do
+        database.create_table :tags do
+          # id, name, canonical_resource, suggested_resources
+            primary_key :tag_id, :type => Bignum
+            String :name
+            String :canonical_resource
+            String :suggested_resources
+            DateTime :created_at
+        end
       end
     end
     class User < Sequel::Model
