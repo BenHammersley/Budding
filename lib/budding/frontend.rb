@@ -48,12 +48,12 @@ module Budding
 
       def ui_editor()
         @text_blocks = [] 
-        if @document
-          @title = "Budding: #{@document.title}" if @document.title
+        if @document_id
+          @document_title = @document.title || "Untitled document"
           @text_blocks = @document.story.split(/(?:\r\n)+/) if @document.story
-          puts @document.story.inspect
+          @has_title = true if @document_title
         else
-          @title = "Budding: Untitled document"
+          @document_title = "Untitled document"
         end
         @languages = Language.all
         erb :"experimental/create"
@@ -119,6 +119,7 @@ module Budding
     end
     
     get '/dashboard' do
+      redirect '/' unless logged?
       @title = "Budding: Dashboard"
       @documents = current_user.documents_dataset.order(:created_on.desc).all
       erb :dashboard
@@ -138,16 +139,22 @@ module Budding
     end
     
     get '/editor' do
+      redirect '/' unless logged?
       @document = Document.new
       ui_editor()
     end
     
-    post '/documents' do
+    post '/documents*' do
+      redirect '/' unless logged?
       document_data = {
-        :user_id => current_user.user_id,
         :title => params[:title],
         :story => params[:story]
-      }
+      }      
+      if params[:id]
+        @document_id = params[:id]
+      else
+        document_data[:user_id] = current_user.user_id
+      end
       # document_data.merge!({
       #   :short_summary => params[:summary],
       #   :teaser => params[:teaser],
@@ -157,16 +164,24 @@ module Budding
       #   :keywords => params[:keywords],
       #   :language_id => params[:language]
       # })
-      doc = Document.new(document_data)
-      if doc.save
-        redirect "/documents/#{doc.document_id}"
+      if params[:id]
+        doc = Document.find(:document_id => params[:id])
+        doc.update(document_data)
       else
-        'Error'
+        doc = Document.new(document_data)
       end
+      doc.save
+      redirect "/documents/#{doc.document_id}"
+    end
+    
+    get '/documents' do
+      redirect '/dashboard'
     end
     
     get '/documents/:id' do
+      redirect '/' unless logged?
       @document = Document.find(:document_id => params[:id])
+      @document_id = @document.document_id
       unless @document.user != current_user or @document.nil?
         @lang = @document.language.name unless @document.language.nil?
         ui_editor()
@@ -177,6 +192,7 @@ module Budding
     end
     
     get '/documents/:id/delete' do
+      redirect '/' unless logged?
       @document = Document.find(:document_id => params[:id])
       unless @document.user != current_user or @document.nil?
         @document.delete()
@@ -185,6 +201,7 @@ module Budding
     end
     
     get '/documents/:id/as/:filetype' do
+      redirect '/' unless logged?
       mime_type = {
         "pdf" => "application/pdf",
         "rtf" => "application/rtf",
@@ -202,6 +219,10 @@ module Budding
         raise ::Sinatra::NotFound
       end
     end
-        
+    
+    get '/test_url/(' do
+      params[:id]
+    end
+            
   end
 end

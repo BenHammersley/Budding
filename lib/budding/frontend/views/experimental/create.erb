@@ -2,7 +2,7 @@
 <html>
   <head>
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
-  	<title><%= @title %></title>
+  	<title>Budding: <%= @document_title %></title>
     <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
@@ -23,7 +23,8 @@
         currentFragments: {text: [], elements: []}
       },
       document: {
-        title: null,
+        id: <%= @document_id || "null" %>,
+        title: <%= @has_title ? %Q{"#{@document_title.gsub('"', '\\"').strip}"} : "null" %>,
         body: [],
         next_text_block_id: 0,
       }
@@ -48,6 +49,8 @@
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
           text_block_ta.val(budding.document.body[text_block_id].text);
           $(this).addClass('text-block-selected');
+          budding.ui.text_block_selected = true;
+          budding.ui.current_text_block = text_block_id;
         });
       }
     }
@@ -84,7 +87,17 @@
       });
     };
     
+    budding.update_text_block = function(text_block_id, text_block_value) {
+      budding.document.body[text_block_id].text = text_block_value;
+    };
+    
     budding.save_story = function() {
+      if(this.document.id != null)
+        $('#editor-form').attr('action', '/documents?id=' + this.document.id);
+      if(!budding.ui.text_block_selected && !$('#text-block-ta').val().match(/^\s*$/))
+        budding.add_text_block($('#text-block-ta').val());
+      else
+        budding.update_text_block(budding.ui.current_text_block, $('#text-block-ta').val());
       $('#editor-form input[name=title]').val(this.document.title);
       $('#editor-form input[name=story]').val(this.document.body.single_string());
       $('#editor-form').submit();
@@ -140,16 +153,22 @@
     budding.init = function() {
       $('.top-button').button();
       $('#editor-save').button();
+      $('#text-block-type-buttonset').buttonset();
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
-      $('#text-block-ta').keydown(function(e) {
+      $('#document-title-text').keypress(function(e) {
+        return e.keyCode == 13;
+      });
+      $('#text-block-ta').keypress(function(e) {
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
           if(!ta_val.match(/^\s*$/)) {
             budding.add_text_block(ta_val);
           }
+          return false;
         }
+        return true;
       });
       $('#text-block-ta').keyup(function() {
         if($('#text-block-ta').val().match(/^\s*$/)) {
@@ -183,17 +202,18 @@
         }
       });
       $('#document-title-input').blur(function(e) {
-        var title = $("#document-title-input").val();
+        var title = $.trim($("#document-title-input").val());
         $("#document-title-input").hide();
         if(!title.match(/^\s*$/)) {
-          budding.document.title = $("#document-title-input").val();
-          $("#document-title-text").text(budding.document.title);
+          console.log(title);
+          budding.document.title = title;
+          $("#document-title-text").text(title);
         } else {
           $("#document-title-text").text(budding.ui["#document-title-text"].val);
         }        
         $("#document-title-text").show();
       });
-      $(document).keydown(function(e) {
+      $(document).keypress(function(e) {
         if(e.which == 13) {
           var title = $("#document-title-input").val();
           $("#document-title-input").hide();
@@ -313,8 +333,30 @@
         font-size: 0;
 	    }
       #selected-fragments {
-
+        line-height: 2em;
+        padding-bottom: 14px;
+        text-align: center;
 	    }
+	    #editor-controls {
+        padding: 0px;
+      }
+	    #text-block-type-buttonset  {
+	      float: left;
+  		  font-size: 12px;
+        width: 500px;
+      }
+      #text-block-type-buttonset div {
+  		  height: 15px;
+      }
+      #editor-save-box {
+        position: relative;
+        margin-right: 1px;
+      }
+      #editor-save {
+        position: absolute;
+        right: 0px;
+  		  font-size: 12px;
+      }
 	    .tagbox {
         margin-top: 5px;
 	      padding: 5px;
@@ -324,8 +366,11 @@
   		  height: 50px;
 	    }
 	    .tag {
-	      margin-top: 10px;
 	      background-color: #ADD8E6;
+	      padding: 5px;
+	      cursor: pointer;
+	      font-size: 11px;
+	      border: 1px solid #bbb;
 	    }
 	    #dropboxes {
 	      padding: 0px;
@@ -383,10 +428,6 @@
         margin-bottom: 5px;
         padding: 5px;
       }
-      #editor-save {
-  		  font-size: 12px;
-  		  float: right;
-      }
       #text-blocks p {
         margin-bottom: 10px;
       }
@@ -422,6 +463,7 @@
         color: #F26722;
       }
       div.box-label {
+        line-height: 1em;
         position: absolute;
         right: 0;
         font-size: 12px;
@@ -458,7 +500,15 @@
           </p>
           <% end %>
           <textarea id="text-block-ta"></textarea>
-          <input type="button" id="editor-save" value="Save">
+          <div id="editorcontrols">
+            <div id="text-block-type-buttonset">
+              <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p"><label for="text-block-type-p">&lt;p&gt;</label>
+              <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
+            </div>
+            <div id="editor-save-box">
+              <input type="button" id="editor-save" value="Save">
+            </div>
+          </div>
           <form id="editor-form" style="display: none;" method=post action=/documents>
             <input type="hidden" name="title" value="">
             <input type="hidden" name="story" value="">
@@ -468,14 +518,14 @@
       <div id="fragments-container">
         <div id="document-title" class="ui-corner-left ui-corner-br">
           <div class="box-label ui-corner-bl">title</div> 
-          <span id="document-title-text">Click to add title</span>
-          <input id="document-title-input" style="display: none;" class="ui-widget" type="text">
+          <span id="document-title-text"><%= @has_title ? @document_title : "Click to add title" %></span>
+          <textarea id="document-title-input" style="display: none;" class="ui-widget"><%= @has_title ? @document_title : "Click to add title" %></textarea>
         </div>
         <div id="selected-fragments" class="tagbox ui-corner-all">
           <div class="box-label ui-corner-bl">&lt;selected&gt;</div> 
-          <span class="tag">Steve Jobs</span> 
-          <span class="tag">Steve Jobs</span>
-          <span class="tag">Steve Jobs</span>
+          <span class="tag ui-corner-all">Steve Jobs</span> 
+          <span class="tag ui-corner-all">Steve Jobs&nbsp;</span>
+          <span class="tag ui-corner-all">Steve&nbsp;Jobs</span>
           <span id="fragments-end"></span>
         </div>
         <div id="dropboxes">
