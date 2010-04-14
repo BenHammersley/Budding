@@ -1,6 +1,8 @@
 $:.push(File.expand_path(File.join(File.dirname(__FILE__), 'lib')))
 
 require 'rubygems'
+require 'nokogiri'
+require 'set'
 require 'rake/clean'
 require 'fileutils'
 
@@ -54,4 +56,22 @@ task :stop_openoffice do
   oo_pid_file = File.join(BUDDING_ROOT, "conf", "oo_pid")
   oo_pid = File.read(oo_pid)
   `kill -s 9 #{oo_pid}`
+end
+
+task :read_wikipedia_xml do
+  wxml = Nokogiri::XML(open('test/wikipedia/apple_inc.xml'))
+  # Nokogiri's XPATH implementation doesn't seem to parse 
+  # Wikipedia's XML format very well, which forces us to...
+  root = wxml.child
+  i = 0
+  i += 1 while root.children[i].name != "page"
+  page = root.children[i]
+  i = 0
+  i += 1 while page.children[i].name != "revision"
+  revision = page.children[i]
+  i = 0
+  i += 1 while (revision.children[i].text.length < 100)
+  text = revision.children[i].text
+  potential_keywords = text.scan(/[A-Z]\w+(?:(?: )[A-Z]\w+)/)
+  puts set(potential_keywords).to_a
 end

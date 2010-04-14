@@ -3,6 +3,10 @@ require 'rack'
 require 'sinatra'
 require 'prawn'
 require 'rtf'
+require 'open-uri'
+require 'nokogiri'
+require 'set'
+require 'json'
 
 unless Object.const_defined?(:BUDDING_ROOT)
   BUDDING_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
@@ -127,6 +131,35 @@ module Budding
     
     get '/tagger' do
       erb :tagger
+    end
+    
+    post '/tagger' do
+      url = params[:url] # testing with http://en.wikipedia.org/wiki/Special:Export/Apple_Inc.
+      firefox_user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6 (.NET CLR 3.5.30729)'
+      wxml = Nokogiri::XML(open(url, 'User-Agent' => firefox_user_agent))
+      # Nokogiri's XPATH implementation doesn't seem to parse 
+      # Wikipedia's XML format very well, which forces us to...
+      root = wxml.child
+      i = 0
+      i += 1 while root.children[i].name != "page"
+      page = root.children[i]
+      i = 0
+      i += 1 while page.children[i].name != "revision"
+      revision = page.children[i]
+      i = 0
+      i += 1 while (revision.children[i].text.length < 100)
+      text = revision.children[i].text
+      # puts text
+      potential_keywords = text.scan(/[A-Z]\w+(?:(?: )[A-Z]\w+)/m)
+      potential_keywords_freq = {}
+      for pk in potential_keywords
+        potential_keywords_freq[pk] ||= 1
+        potential_keywords_freq[pk] += 1
+      end
+      avg =  potential_keywords_freq.values.sum/potential_keywords_freq.values.length
+      @tags = Set.new(potential_keywords_freq.collect { |k, v| k if v > avg }.compact).to_a
+      content_type :json, :charset => 'utf-8'
+      @tags.to_json
     end
     
     get '/tags' do

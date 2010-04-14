@@ -78,6 +78,16 @@
     budding.ui.forms['<%= flash.form %>']['#info'].html = '<%= flash.info.gsub("'", "\\\\'") %>';
     <% end %>
     
+    budding.display_potential_keywords = function(tags) {
+      var span, root = $('#potential-keywords');
+      for(var i = 0, len = tags.length; i < len; i++) {
+        span = $('<span class="tag ui-corner-all">' + tags[i].replace(" ", "&nbsp;") + '</span>');
+        root.append(span);
+        root.append(" ");
+      }
+      root.show();
+    }
+    
     budding.init = function() {
 
       $('.top-button').button();
@@ -109,6 +119,11 @@
       
       $('#auth').buttonset('refresh');
       $('#tagger').show();
+      
+      $('#tagger-submit').click(function() {
+        var url = $('#input-url').val();
+        $.post('/tagger', {url: url}, budding.display_potential_keywords, 'json');
+      });
 
     }
     
@@ -200,12 +215,22 @@
 	      border: 1px solid #bbb;
   		  height: 50px;
   		  width: 203px;
-  		  float: left;
-        
+  		  float: left; 
+	    }
+	    #potential-keywords {
+	      display: none;
+        margin: 10px 12px 0px 0px;
+	      padding: 10px;
+	      background-color: #eee;
+	      border: 1px solid #bbb;
+	      line-height: 2em;
 	    }
 	    .tag {
-	      margin-top: 10px;
 	      background-color: #ADD8E6;
+	      padding: 5px;
+	      cursor: pointer;
+	      font-size: 11px;
+	      border: 1px solid #bbb;
 	    }
 	    #dropboxes {
 	      padding: 0px;
@@ -292,8 +317,10 @@
 		  <div id="tagger">
 		    <form id="taggerform" action="/tagger" method="post" >
           <input type="text" name="url" id="input-url" class="ui-widget" placeholder="URL to scrape">
-          <input type="submit" style="margin-left: 10px;" value="Import">
+          <input id="tagger-submit" type="button" style="margin-left: 10px;" value="Import">
 		    </form>
+		    <div id="potential-keywords" class="ui-corner-all">
+		    </div>
         <div id="dropboxes">
           <div class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
