@@ -74,7 +74,7 @@ module Budding
     get '/' do
       redirect '/dashboard' if logged?
       @title = "Budding"
-      flash.form = 'signup' if flash.form.nil?
+      flash.form = 'login' if flash.form.nil?
       erb :index
     end
 
@@ -156,7 +156,7 @@ module Budding
         potential_keywords_freq[pk] ||= 1
         potential_keywords_freq[pk] += 1
       end
-      avg =  potential_keywords_freq.values.sum/potential_keywords_freq.values.length
+      avg = potential_keywords_freq.values.sum/potential_keywords_freq.values.length
       @tags = Set.new(potential_keywords_freq.collect { |k, v| k if v > avg }.compact).to_a
       content_type :json, :charset => 'utf-8'
       @tags.to_json
