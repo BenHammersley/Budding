@@ -44,6 +44,10 @@ module Budding
         end
       end
       
+      def document_owner?
+        @document.user_id == session.fetch(:user, {}).fetch(:user_id, nil)
+      end
+      
       def ui_code_dump(thing)
         %Q{<pre style="margin: 15px 0px 15px 0px; font-family: monofur;">}
           %Q{#{thing.gsub('<', '&lt;').gsub('>', '&gt;')}}
@@ -82,7 +86,7 @@ module Budding
       @user = User.find(:email => params[:email])
       unless @user.nil?
         if @user.login(params[:email], params[:password])
-          session[:user] = {:email => params[:email]}
+          session[:user] = {:email => params[:email], :user_id => @user.user_id}
           redirect '/dashboard'
         else
           # Pony::mail(
@@ -177,17 +181,13 @@ module Budding
       ui_editor()
     end
     
-    post '/documents*' do
+    post '/documents' do
       redirect '/' unless logged?
       document_data = {
         :title => params[:title],
         :story => params[:story]
       }      
-      if params[:id]
-        @document_id = params[:id]
-      else
-        document_data[:user_id] = current_user.user_id
-      end
+      document_data[:user_id] = current_user.user_id
       # document_data.merge!({
       #   :short_summary => params[:summary],
       #   :teaser => params[:teaser],
@@ -197,14 +197,21 @@ module Budding
       #   :keywords => params[:keywords],
       #   :language_id => params[:language]
       # })
-      if params[:id]
-        doc = Document.find(:document_id => params[:id])
-        doc.update(document_data)
-      else
-        doc = Document.new(document_data)
-      end
+      doc = Document.new(document_data)
       doc.save
       redirect "/documents/#{doc.document_id}"
+    end
+    
+    post '/documents/:id' do
+      redirect '/' unless logged?
+      document_data = {
+        :title => params[:title],
+        :story => params[:story]
+      }
+      @document = Document.find(:document_id => params[:id])
+      redirect '/' unless document_owner?
+      @document.update(document_data)
+      redirect "/documents/#{params[:id]}"
     end
     
     get '/documents' do
@@ -214,6 +221,7 @@ module Budding
     get '/documents/:id' do
       redirect '/' unless logged?
       @document = Document.find(:document_id => params[:id])
+      redirect '/' unless document_owner?
       @document_id = @document.document_id
       unless @document.user != current_user or @document.nil?
         @lang = @document.language.name unless @document.language.nil?
@@ -227,6 +235,7 @@ module Budding
     get '/documents/:id/delete' do
       redirect '/' unless logged?
       @document = Document.find(:document_id => params[:id])
+      redirect '/' unless document_owner?
       unless @document.user != current_user or @document.nil?
         @document.delete()
         redirect '/dashboard'

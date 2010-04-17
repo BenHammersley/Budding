@@ -27,8 +27,22 @@
         title: <%= @has_title ? %Q{"#{@document_title.gsub('"', '\\"').strip}"} : "null" %>,
         body: [],
         next_text_block_id: 0,
-      }
+      },
+      utils: {}
     };
+    
+    budding.utils.have_unclosed_tags = function(text) {
+      // <a></a><b></b> = false
+      // <a><b></b></a> = true
+      // <a><b></b> = true
+      var tags = text.match(/<([^/>]+)>/g);
+      for(var tag in tags) {
+        if(!text.match(new RegExp(tags[tag] + '[^>]*</' + tags[tag].substr(1)))) {
+          return true;
+        }
+      }
+      return false;
+    }
     
     budding.document.body.single_string = function() {
       return $.map(this, function(tb) { return tb.text; }).join("\n");
@@ -44,10 +58,10 @@
         this.document.next_text_block_id++;
         $(blocks[i]).click(function() {
           $('.text-block').removeClass('text-block-selected');
-          var text_block_ta = $('#text-block-ta').detach();
-          $(this).after(text_block_ta);
+          var editor_controls = $('#editor-controls').detach();
+          $(this).after(editor_controls);
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-          text_block_ta.val(budding.document.body[text_block_id].text);
+          $('#text-block-ta').val(budding.document.body[text_block_id].text);
           $(this).addClass('text-block-selected');
           budding.ui.text_block_selected = true;
           budding.ui.current_text_block = text_block_id;
@@ -71,7 +85,7 @@
       if(budding.document.body.length > 1) {
         $('.text-block:last').after(p);
       } else {
-        $('#text-block-ta').before(p);
+        $('#editor-controls').before(p);
       }
       $('#text-block-ta').val("");
       budding.make_fragments_clickable();
@@ -93,7 +107,7 @@
     
     budding.save_story = function() {
       if(this.document.id != null)
-        $('#editor-form').attr('action', '/documents?id=' + this.document.id);
+        $('#editor-form').attr('action', '/documents/' + this.document.id);
       if(budding.ui.text_block_selected) {
         budding.update_text_block(budding.ui.current_text_block, $('#text-block-ta').val());
       } else if(!$('#text-block-ta').val().match(/^\s*$/)) {
@@ -231,6 +245,9 @@
       $('#editor-save').click(function() {
         budding.save_story();
       });
+      $('.inbetween-handle').click(function() {
+        
+      });
     }
     
     $(document).ready(function(){
@@ -315,10 +332,25 @@
 	      font-family: Georgia, times;
 	      margin: -5px 0px 0px -5px;
 	      padding: 5px 5px 5px 5px;
-	    }
+/*        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+*/	    }
 	    .text-block:hover { 
 	      background: #F0E68C;
 	    }
+	    .text-block-selected {
+	      background: #BDB76B;
+	    }
+	    
+	    .inbetween-handle {
+	      height: 10px;
+	      margin: -10px 0px 5px -5px;
+	    }
+	    .inbetween-handle:hover {
+	      background: #BDB76B;
+	    }
+
+	    
 	    #fragments-container {
 	      float: left;
 	      position: relative;
@@ -340,9 +372,11 @@
 	    }
 	    #editor-controls {
         padding: 0px;
+        margin-bottom: 10px;
       }
 	    #text-block-type-buttonset  {
 	      float: left;
+	      margin-left: -5px;
   		  font-size: 12px;
         width: 500px;
       }
@@ -355,7 +389,7 @@
       }
       #editor-save {
         position: absolute;
-        right: 0px;
+        right: -3px;
   		  font-size: 12px;
       }
 	    .tagbox {
@@ -416,19 +450,38 @@
   		  -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
 	    }
-	    .text-block-selected {
-	      background: #BDB76B;
-	    }
 	    .selectable:hover {
 	      background: #BDB76B;
 	    }
+	    
+	    
+	    #editor-controls:after {
+        content: ".";  
+        visibility: hidden;  
+        display: block;  
+        clear: both;  
+        height: 0;  
+        font-size: 0;
+	    }
+	    
       #text-block-ta {
+	      background: #FFFFE0; 
   		  font-size: 14px;
-        width: 580px;
+  		  outline: 0;
+        width: 587px;
         height: 70px;
         margin-bottom: 5px;
+	      margin: -5px 0px 0px -5px;
         padding: 5px;
+      } 
+      
+      #text-block-ta:focus {
+        box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
+        -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
+        -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
       }
+      
+      
       #text-blocks p {
         margin-bottom: 10px;
       }
@@ -499,9 +552,10 @@
           <p id="text-block-<%= index %>" class="text-block">
           <%= escape_html(value) %>
           </p>
+          <div class="inbetween-handle"></div>
           <% end %>
-          <textarea id="text-block-ta"></textarea>
-          <div id="editorcontrols">
+          <div id="editor-controls">
+            <textarea id="text-block-ta"></textarea>
             <div id="text-block-type-buttonset">
               <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p"><label for="text-block-type-p">&lt;p&gt;</label>
               <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
