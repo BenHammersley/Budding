@@ -94,10 +94,11 @@
     budding.save_story = function() {
       if(this.document.id != null)
         $('#editor-form').attr('action', '/documents?id=' + this.document.id);
-      if(!budding.ui.text_block_selected && !$('#text-block-ta').val().match(/^\s*$/))
-        budding.add_text_block($('#text-block-ta').val());
-      else
+      if(budding.ui.text_block_selected) {
         budding.update_text_block(budding.ui.current_text_block, $('#text-block-ta').val());
+      } else if(!$('#text-block-ta').val().match(/^\s*$/)) {
+        budding.add_text_block($('#text-block-ta').val());
+      }
       $('#editor-form input[name=title]').val(this.document.title);
       $('#editor-form input[name=story]').val(this.document.body.single_string());
       $('#editor-form').submit();
