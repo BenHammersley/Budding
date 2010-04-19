@@ -20,13 +20,14 @@
     budding = {
       ui: {
         '#document-title-text': {val: "Click to add title"},
-        currentFragments: {text: [], elements: []}
+        currentFragments: {text: [], elements: []},
+        text_block_selected: false,
+        current_text_block: null
       },
       document: {
         id: <%= @document_id || "null" %>,
         title: <%= @has_title ? %Q{"#{@document_title.gsub('"', '\\"').strip}"} : "null" %>,
-        body: [],
-        next_text_block_id: 0,
+        body: []
       },
       utils: {}
     };
@@ -49,16 +50,18 @@
     }
     
     budding.parse_text_blocks = function() {
-      var text, blocks = $('#text-blocks p');
-      for(var i = 0, len = blocks.length; i < len; i++) {
-        text = $.trim($(blocks[i]).text());
-        this.document.body[this.document.next_text_block_id] = {
-          id: this.document.next_text_block_id, text: text
-        };
-        this.document.next_text_block_id++;
-        $(blocks[i]).click(function() {
+      var text_blocks = $('.text-block');
+      for(var text_block_hash, i = 0, len = text_blocks.length; i < len; i++) {
+        text_block_hash = {text: $.trim($(text_blocks[i]).text())};
+        this.document.body.push(text_block_hash);
+        text_block_hash.id = this.document.body.length-1;
+        $(text_blocks[i]).click(function() {
           $('.text-block').removeClass('text-block-selected');
           var editor_controls = $('#editor-controls').detach();
+          if(budding.ui.text_block_selected) {
+            $('#text-block-' + budding.ui.current_text_block).show();
+          }
+          $(this).hide();
           $(this).after(editor_controls);
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
           $('#text-block-ta').val(budding.document.body[text_block_id].text);
@@ -75,29 +78,50 @@
       return to_be_removed; // whole object
     };
     
-    budding.add_text_block = function(text) {
+    budding.add_text_block = function(text, insertion_index) {
+      
       text = $.trim(text);
-      this.document.body[this.document.next_text_block_id] = {
-        id: this.document.next_text_block_id, text: text
-      };
-      var text_block_id = this.document.next_text_block_id++;
-      var p = $('<p id="text-block-' + text_block_id + '" class="text-block"></p>').text(text);
-      if(budding.document.body.length > 1) {
-        $('.text-block:last').after(p);
+      var text_block_hash = {'text': text};
+      var p = $('<p class="text-block"></p>').text(text);
+      
+      if(insertion_index != null) {
+        text_block_hash.id = insertion_index;
+        var old_length = budding.document.body.length;
+        this.document.body.splice(insertion_index, 0, text_block_hash);
+        var new_insertion_point = $('<div class="insertion-point"></div>');
+        $('#insertion-point-' + insertion_index).before(new_insertion_point);
+        for(var i = insertion_point; i < old_length; i++) {
+          $('#text-block-' + i).attr('id', 'text-block-' + (i+1));
+          $('#insertion-point-' + i).attr('id', 'insertion-point-' + (i+1));
+        }
+        new_insertion_point.attr('id', 'insertion-point-' + insertion_index);
+        p.attr('id', 'text-block-' + text_block_hash.id);
+        new_insertion_point.before(p);
       } else {
-        $('#editor-controls').before(p);
+        text_block_hash.id = this.document.body.length;
+        this.document.body.push(text_block_hash);
+        p.attr('id', 'text-block-' + text_block_hash.id);
+        if(budding.document.body.length > 1) {
+          $('.text-block:last').after(p);
+        } else {
+          $('#editor-controls').before(p);
+        }
       }
       $('#text-block-ta').val("");
       budding.make_fragments_clickable();
       $('#text-block-' + text_block_id).click(function() {
         $('.text-block').removeClass('text-block-selected');
-        $('.text-block').addClass('selectable');
-        var text_block_ta = $('#text-block-ta').detach();
-        $(this).after(text_block_ta);
+        var editor_controls = $('#editor-controls').detach();
+        if(budding.ui.text_block_selected) {
+          $('#text-block-' + budding.ui.current_text_block).show();
+        }
+        $(this).hide();
+        $(this).after(editor_controls);
         var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-        text_block_ta.val(budding.document.body[text_block_id].text);
-        $(this).removeClass('selectable');
+        $('#text-block-ta').val(budding.document.body[text_block_id].text);
         $(this).addClass('text-block-selected');
+        budding.ui.text_block_selected = true;
+        budding.ui.current_text_block = text_block_id;
       });
     };
     
@@ -166,15 +190,24 @@
     }
     
     budding.init = function() {
+      
+      this.parse_text_blocks();      
+      
       $('.top-button').button();
       $('#editor-save').button();
       $('#text-block-type-buttonset').buttonset();
+      
+      
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
+      
+      
       $('#document-title-text').keypress(function(e) {
         return e.keyCode == 13;
       });
+      
+      
       $('#text-block-ta').keypress(function(e) {
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
@@ -185,15 +218,23 @@
         }
         return true;
       });
+      
+      
       $('#text-block-ta').keyup(function() {
         if($('#text-block-ta').val().match(/^\s*$/)) {
           $('#text-block-ta').val("");
         }
       });
+      
+      
       $('#text-block-ta').val("");
+      
+      
       $('body').keydown(function(e) { 
         budding.ui.shiftKey = e.shiftKey;
       });
+      
+      
       $('body').keyup(function() { 
         if(budding.ui.shiftKey) {
           if(budding.ui.currentFragments.elements.length) {
@@ -209,6 +250,8 @@
           budding.ui.shiftKey = false;
         }
       });
+      
+      
       $('#document-title').click(function() {
         if(!$("#document-title-input").is(":visible")) {
           $("#document-title-input").show();
@@ -216,6 +259,8 @@
           $("#document-title-text").hide();
         }
       });
+      
+      
       $('#document-title-input').blur(function(e) {
         var title = $.trim($("#document-title-input").val());
         $("#document-title-input").hide();
@@ -228,6 +273,8 @@
         }        
         $("#document-title-text").show();
       });
+      
+      
       $(document).keypress(function(e) {
         if(e.which == 13) {
           var title = $("#document-title-input").val();
@@ -242,16 +289,31 @@
           $("#document-title-text").show();
         }
       });
+      
+      
       $('#editor-save').click(function() {
         budding.save_story();
       });
-      $('.inbetween-handle').click(function() {
-        
+      
+      
+      $('.insertion-point').click(function() {
+        if(budding.ui.text_block_selected) {
+          var last_selected_text_block = $('#text-block-' + budding.ui.current_text_block);
+          last_selected_text_block.removeClass('text-block-selected');
+          last_selected_text_block.show();
+        }
+        var editor_controls = $('#editor-controls').detach();
+        $(this).hide();
+        $(this).after(editor_controls);
+        var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+        $('#text-block-ta').val(budding.document.body[text_block_id].text);
+        $(this).addClass('text-block-selected');
+        budding.ui.text_block_selected = true;
+        budding.ui.current_text_block = text_block_id;
       });
     }
     
     $(document).ready(function(){
-      budding.parse_text_blocks();
       budding.init();
     });
     
@@ -342,11 +404,11 @@
 	      background: #BDB76B;
 	    }
 	    
-	    .inbetween-handle {
+	    .insertion-point {
 	      height: 10px;
 	      margin: -10px 0px 5px -5px;
 	    }
-	    .inbetween-handle:hover {
+	    .insertion-point:hover {
 	      background: #BDB76B;
 	    }
 
@@ -552,7 +614,7 @@
           <p id="text-block-<%= index %>" class="text-block">
           <%= escape_html(value) %>
           </p>
-          <div class="inbetween-handle"></div>
+          <div id="insertion-point-<%= index %>" class="insertion-point"></div>
           <% end %>
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
