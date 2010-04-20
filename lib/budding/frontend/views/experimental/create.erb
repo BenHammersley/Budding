@@ -71,7 +71,7 @@
           budding.ui.current_text_block = text_block_id;
         });
       }
-      this.ui.current_insertion_point = this.document.body.length;
+      this.ui.insertion_point_index = this.document.body.length;
     }
     
     budding.remove_text_block = function(id) {
@@ -95,18 +95,21 @@
             
       var text_block = $('#text-block-' + text_block_hash.id);
       if(!text_block.length) {
+        console.log('a');
         p.attr('id', 'text-block-' + text_block_hash.id);
         $('#insertion-point-' + text_block_hash.id).before(p);
       } else {
-        text_block_hash.id += 1;
-        for(var i = budding.ui.insertion_point_index; i < old_length; i++) {
-          $('#text-block-' + i).attr('id', 'text-block-' + (i+1));
-          $('#insertion-point-' + i).attr('id', 'insertion-point-' + (i+1));
-        }
+        console.log('b');
         $('#insertion-point-' + text_block_hash.id).after(new_insertion_point);
+        $('#insertion-point-' + text_block_hash.id).show();
+        text_block_hash.id += 1;
         p.attr('id', 'text-block-' + text_block_hash.id);
         new_insertion_point.before(p);
         new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
+        for(var i = budding.ui.insertion_point_index+1; i < old_length; i++) {
+          $('#text-block-' + i).attr('id', 'text-block-' + (i+1));
+          $('#insertion-point-' + i).attr('id', 'insertion-point-' + (i+1));
+        }
       }
 
       budding.place_editor_controls_at_insertion_point(text_block_hash.id);
@@ -207,7 +210,8 @@
         last_selected_text_block.show();
         budding.ui.text_block_selected = false;
       }
-      budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1])+1;
+      
+      budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1]);
       $('#text-block-ta').val("");
       var editor_controls = $('#editor-controls').detach();
       context.hide();
@@ -220,6 +224,7 @@
       this.parse_text_blocks();
       
       budding.place_editor_controls_at_insertion_point(this.ui.insertion_point_index);
+      console.log('this.ui.insertion_point_index: ' + this.ui.insertion_point_index);
       
       $('.top-button').button();
       $('#editor-save').button();
