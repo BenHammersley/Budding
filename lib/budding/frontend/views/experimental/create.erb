@@ -100,16 +100,16 @@
         $('#insertion-point-' + text_block_hash.id).before(p);
       } else {
         console.log('b');
-        $('#insertion-point-' + text_block_hash.id).after(new_insertion_point);
         $('#insertion-point-' + text_block_hash.id).show();
         text_block_hash.id += 1;
-        p.attr('id', 'text-block-' + text_block_hash.id);
-        new_insertion_point.before(p);
-        new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
-        for(var i = budding.ui.insertion_point_index+1; i < old_length; i++) {
+        for(var i = text_block_hash.id; i < old_length; i++) {
           $('#text-block-' + i).attr('id', 'text-block-' + (i+1));
           $('#insertion-point-' + i).attr('id', 'insertion-point-' + (i+1));
         }
+        $('#editor-controls').after(new_insertion_point);
+        p.attr('id', 'text-block-' + text_block_hash.id);
+        new_insertion_point.before(p);
+        new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
       }
 
       budding.place_editor_controls_at_insertion_point(text_block_hash.id);
