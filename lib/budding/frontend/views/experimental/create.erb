@@ -87,32 +87,32 @@
       var p = $('<p class="text-block"></p>').text(text);
       var new_insertion_point = $('<div class="insertion-point"></div>');
       
-      if(budding.ui.insertion_point_active) {
-        text_block_hash.id = budding.ui.insertion_point_index;
-        var old_length = budding.document.body.length;
-        this.document.body.splice(budding.ui.insertion_point_index, 0, text_block_hash);
-        $('#insertion-point-' + budding.ui.insertion_point_index).before(new_insertion_point);
+      text_block_hash.id = budding.ui.insertion_point_index;
+      var old_length = budding.document.body.length;
+      
+      this.document.body.splice(budding.ui.insertion_point_index, 0, text_block_hash);
+      p.attr('id', 'text-block-' + text_block_hash.id);
+            
+      var text_block = $('#text-block-' + text_block_hash.id);
+      if(!text_block.length) {
+        p.attr('id', 'text-block-' + text_block_hash.id);
+        $('#insertion-point-' + text_block_hash.id).before(p);
+      } else {
+        text_block_hash.id += 1;
         for(var i = budding.ui.insertion_point_index; i < old_length; i++) {
           $('#text-block-' + i).attr('id', 'text-block-' + (i+1));
           $('#insertion-point-' + i).attr('id', 'insertion-point-' + (i+1));
         }
-        new_insertion_point.attr('id', 'insertion-point-' + budding.ui.insertion_point_index);
+        $('#insertion-point-' + text_block_hash.id).after(new_insertion_point);
         p.attr('id', 'text-block-' + text_block_hash.id);
         new_insertion_point.before(p);
-      } else {
-        text_block_hash.id = this.document.body.length;
-        this.document.body.push(text_block_hash);
-        p.attr('id', 'text-block-' + text_block_hash.id);
-        if(budding.document.body.length > 1) {
-          $('.insertion-point:last').after(p);
-        } else {
-          $('#editor-controls').before(p);
-        }
         new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
-        p.after(new_insertion_point);
       }
+
       budding.place_editor_controls_at_insertion_point(text_block_hash.id);
+
       budding.make_fragments_clickable();
+      
       $('#text-block-' + text_block_hash.id).click(function() {
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
@@ -194,30 +194,26 @@
     }
 
     budding.place_editor_controls_at_insertion_point = function(index) {
-      console.log('budding.place_editor_controls_at_insertion_point(' + index + ');')
-      $('#text-block-ta').val("");
-      if(this.document.body.length == 0) {
-        $('#editor-controls').show();
-      } else {
-        budding.place_editor_controls_at_insertion_point.click_handler($('#insertion-point-' + index));
-        $('#editor-controls').show();
-      }
+      var insertion_point = $('#insertion-point-' + index);
+      budding.place_editor_controls_at_insertion_point.click_handler(insertion_point);
     }
+    
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
       console.log(context);
+
       if(budding.ui.text_block_selected) {
         var last_selected_text_block = $('#text-block-' + budding.ui.current_text_block);
         last_selected_text_block.removeClass('text-block-selected');
         last_selected_text_block.show();
         budding.ui.text_block_selected = false;
       }
-      budding.ui.insertion_point_active = true;
       budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1])+1;
+      $('#text-block-ta').val("");
       var editor_controls = $('#editor-controls').detach();
       context.hide();
       context.after(editor_controls);
+      $('#editor-controls').show();
     }
-
 
     budding.init = function() {
       
@@ -628,11 +624,15 @@
     <div id="content">
       <div id="editor">
         <div id="text-blocks">
-          <% @text_blocks.each_with_index do |value, index| %>
-          <p id="text-block-<%= index %>" class="text-block">
-          <%= escape_html(value) %>
-          </p>
-          <div id="insertion-point-<%= index %>" class="insertion-point"></div>
+          <% if @text_blocks.length == 0 %>
+            <div id="insertion-point-0" class="insertion-point"></div>
+          <% else %>
+            <% @text_blocks.each_with_index do |value, index| %>
+            <p id="text-block-<%= index %>" class="text-block">
+            <%= escape_html(value) %>
+            </p>
+            <div id="insertion-point-<%= index %>" class="insertion-point"></div>
+            <% end %>
           <% end %>
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
