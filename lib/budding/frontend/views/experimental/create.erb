@@ -89,24 +89,25 @@
       
       text_block_hash.id = budding.ui.insertion_point_index;
       var old_length = budding.document.body.length;
-      
-      this.document.body.splice(budding.ui.insertion_point_index, 0, text_block_hash);
       p.attr('id', 'text-block-' + text_block_hash.id);
             
       var text_block = $('#text-block-' + text_block_hash.id);
       if(!text_block.length) {
         console.log('a');
+        this.document.body.splice(text_block_hash.id, 0, text_block_hash);
         p.attr('id', 'text-block-' + text_block_hash.id);
         $('#insertion-point-' + text_block_hash.id).before(p);
       } else {
         console.log('b');
         $('#insertion-point-' + text_block_hash.id).show();
         text_block_hash.id += 1;
+        this.document.body.splice(text_block_hash.id, 0, text_block_hash);
         var text_blocks = $('.text-block');
         var insertion_points = $('.insertion-point');
         for(var i = text_block_hash.id, len = text_blocks.length; i < len; i++) {
           $(text_blocks[i]).attr('id', 'text-block-' + (i+1));
           $(insertion_points[i]).attr('id', 'insertion-point-' + (i+1));
+          this.document.body[i].id = i+1;
         }
         $('#editor-controls').after(new_insertion_point);
         p.attr('id', 'text-block-' + text_block_hash.id);
