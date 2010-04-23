@@ -96,18 +96,15 @@
       p.attr('id', 'text-block-' + text_block_hash.id);
             
       var text_block = $('#text-block-' + text_block_hash.id);
-      if(!text_block.length) {
-        console.log('a');
+      if(!text_block.length) { /* refactorable: if(document.is_empty()) */
+        console.log('document.is_emtpy(): true');
         this.document.body.splice(text_block_hash.id, 0, text_block_hash);
         p.attr('id', 'text-block-' + text_block_hash.id);
         $('#insertion-point-' + text_block_hash.id).before(p);
       } else {
-        console.log('b');
+        console.log('document.is_emtpy(): false');
         $('#insertion-point-' + text_block_hash.id).show();
-        console.log('text_block_hash.id: ' + text_block_hash.id);
-        console.log(this.document.body.toString());
         text_block_hash.id += 1;
-        console.log(this.document.body.toString());
         var text_blocks = $('.text-block');
         var insertion_points = $('.insertion-point');
         for(var i = text_block_hash.id, len = text_blocks.length; i < len; i++) {
@@ -121,6 +118,9 @@
         new_insertion_point.before(p);
         new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
       }
+      
+      console.log('budding.add_text_block(), text_block_hash.id: ' + text_block_hash.id);
+      console.log('budding.add_text_block(), this.document.body: ' + this.document.body.toString());
 
       budding.place_editor_controls_at_insertion_point(text_block_hash.id);
 
@@ -128,7 +128,11 @@
       
       /* refactorable: automatically reassign event handlers for a given widget class */
       
-      $('#text-block-' + text_block_hash.id).click(function() {
+      new_insertion_point.click(function() {
+        budding.place_editor_controls_at_insertion_point.click_handler($(this));
+      });
+      
+      p.click(function() {
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
         if(budding.ui.text_block_selected) {
@@ -142,6 +146,7 @@
         budding.ui.text_block_selected = true;
         budding.ui.current_text_block = text_block_id;
       });
+      
     };
     
     budding.update_text_block = function(text_block_id, text_block_value) {
