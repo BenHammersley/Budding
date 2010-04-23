@@ -72,6 +72,7 @@
         this.document.body.push(text_block_hash);
         text_block_hash.id = this.document.body.length-1;
         $(text_blocks[i]).click(function() {
+          $('.insertion-point').show();
           $('.text-block').removeClass('text-block-selected');
           var editor_controls = $('#editor-controls').detach();
           if(budding.ui.text_block_selected) {
@@ -79,15 +80,18 @@
           }
           $(this).after(editor_controls);
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-          $('#text-block-ta').addClass('ta-text-block-selected');
+          $('#text-block-ta').css('margin-top', '-10px');
+          console.log("$('#text-block-ta').addClass('ta-text-block-selected');");
           $('#text-block-ta').val(budding.document.body[text_block_id].text);
-          $(this).addClass('text-block-selected');
           budding.ui.text_block_selected = true;
           budding.ui.current_text_block = text_block_id;
+          $(this).addClass('text-block-selected');
           $('#text-block-ta').focus();
+          var content_length = budding.document.body[text_block_id].text;
+          $('#text-block-ta')[0].setSelectionRange(content_length, content_length);
         });
       }
-      this.ui.insertion_point_index = this.document.body.length;
+      this.ui.insertion_point_index = this.document.body.length-1;
     }
     
     budding.remove_text_block = function(id) {
@@ -262,6 +266,8 @@
     
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
 
+      context = $(context);
+      console.log(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1]);
 
       if(budding.ui.text_block_selected) {
