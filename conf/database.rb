@@ -83,13 +83,16 @@ module Budding
       end
       migration "add tags table" do
         database.create_table :tags do
-          # id, name, canonical_resource, suggested_resources
+          # id, name, category, canonical_resource, suggested_resources
             primary_key :tag_id, :type => Bignum
             String :name
             String :canonical_resource
             String :suggested_resources
             DateTime :created_at
         end
+      end
+      migration "add category to tags" do
+        database.add_column(:tags, :category, String, :size => 60)
       end
     end
     class User < Sequel::Model

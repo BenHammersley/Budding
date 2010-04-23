@@ -34,7 +34,8 @@
           }).join(',');
         }})
       },
-      utils: {}
+      utils: {},
+      identified_tags: {}
     };
     
     budding.utils.have_unclosed_tags = function(text) {
@@ -48,6 +49,16 @@
         }
       }
       return false;
+    }
+    
+    budding.load_known_tags = function() {
+      $.get('/tags', function(data) {
+        console.log(data);
+        budding.known_tags = {};
+        for(var i = 0, len = data.length; i < len; i++) {
+          budding.known_tags[data[i].name] = data[i].category;
+        }
+      }, 'json');
     }
     
     budding.document.body.single_string = function() {
@@ -66,13 +77,14 @@
           if(budding.ui.text_block_selected) {
             $('#text-block-' + budding.ui.current_text_block).show();
           }
-          $(this).hide();
           $(this).after(editor_controls);
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+          $('#text-block-ta').addClass('ta-text-block-selected');
           $('#text-block-ta').val(budding.document.body[text_block_id].text);
           $(this).addClass('text-block-selected');
           budding.ui.text_block_selected = true;
           budding.ui.current_text_block = text_block_id;
+          $('#text-block-ta').focus();
         });
       }
       this.ui.insertion_point_index = this.document.body.length;
@@ -96,56 +108,70 @@
       p.attr('id', 'text-block-' + text_block_hash.id);
             
       var text_block = $('#text-block-' + text_block_hash.id);
-      if(!text_block.length) { /* refactorable: if(document.is_empty()) */
-        console.log('document.is_emtpy(): true');
-        this.document.body.splice(text_block_hash.id, 0, text_block_hash);
-        p.attr('id', 'text-block-' + text_block_hash.id);
-        $('#insertion-point-' + text_block_hash.id).before(p);
+      if(budding.ui.text_block_selected) {
+        budding.update_text_block(budding.ui.current_text_block, text);
+        $('#text-block-' + budding.ui.current_text_block).text(text);
+        budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
+        // budding.make_fragments_clickable();
       } else {
-        console.log('document.is_emtpy(): false');
-        $('#insertion-point-' + text_block_hash.id).show();
-        text_block_hash.id += 1;
-        var text_blocks = $('.text-block');
-        var insertion_points = $('.insertion-point');
-        for(var i = text_block_hash.id, len = text_blocks.length; i < len; i++) {
-          $(text_blocks[i]).attr('id', 'text-block-' + (i+1));
-          $(insertion_points[i]).attr('id', 'insertion-point-' + (i+1));
-          this.document.body[i].id = i+1;
+        if(!text_block.length) { /* refactorable: if(document.is_empty()) */
+          console.log('document.is_emtpy(): true');
+          this.document.body.splice(text_block_hash.id, 0, text_block_hash);
+          p.attr('id', 'text-block-' + text_block_hash.id);
+          $('#insertion-point-' + text_block_hash.id).before(p);
+        } else {
+          console.log('document.is_emtpy(): false');
+          $('#insertion-point-' + text_block_hash.id).show();
+          text_block_hash.id += 1;
+          var text_blocks = $('.text-block');
+          var insertion_points = $('.insertion-point');
+          for(var i = text_block_hash.id, len = text_blocks.length; i < len; i++) {
+            $(text_blocks[i]).attr('id', 'text-block-' + (i+1));
+            $(insertion_points[i]).attr('id', 'insertion-point-' + (i+1));
+            this.document.body[i].id = i+1;
+          }
+          $('#editor-controls').after(new_insertion_point);
+          this.document.body.splice(text_block_hash.id, 0, text_block_hash);
+          p.attr('id', 'text-block-' + text_block_hash.id);
+          new_insertion_point.before(p);
+          new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
         }
-        $('#editor-controls').after(new_insertion_point);
-        this.document.body.splice(text_block_hash.id, 0, text_block_hash);
-        p.attr('id', 'text-block-' + text_block_hash.id);
-        new_insertion_point.before(p);
-        new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
-      }
       
-      console.log('budding.add_text_block(), text_block_hash.id: ' + text_block_hash.id);
-      console.log('budding.add_text_block(), this.document.body: ' + this.document.body.toString());
+        console.log('budding.add_text_block(), text_block_hash.id: ' + text_block_hash.id);
+        console.log('budding.add_text_block(), this.document.body: ' + this.document.body.toString());
+        
+        budding.identify_tags(text);
 
-      budding.place_editor_controls_at_insertion_point(text_block_hash.id);
+        budding.place_editor_controls_at_insertion_point(text_block_hash.id);
 
-      budding.make_fragments_clickable();
+        // budding.make_fragments_clickable();
       
-      /* refactorable: automatically reassign event handlers for a given widget class */
+        /* refactorable: automatically reassign event handlers for a given widget class */
       
-      new_insertion_point.click(function() {
-        budding.place_editor_controls_at_insertion_point.click_handler($(this));
-      });
+        new_insertion_point.click(function() {
+          budding.place_editor_controls_at_insertion_point.click_handler($(this));
+        });
       
-      p.click(function() {
-        $('.text-block').removeClass('text-block-selected');
-        var editor_controls = $('#editor-controls').detach();
-        if(budding.ui.text_block_selected) {
-          $('#text-block-' + budding.ui.current_text_block).show();
-        }
-        $(this).hide();
-        $(this).after(editor_controls);
-        var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-        $('#text-block-ta').val(budding.document.body[text_block_id].text);
-        $(this).addClass('text-block-selected');
-        budding.ui.text_block_selected = true;
-        budding.ui.current_text_block = text_block_id;
-      });
+        p.click(function() {
+          $('.insertion-point').show();
+          $('.text-block').removeClass('text-block-selected');
+          var editor_controls = $('#editor-controls').detach();
+          if(budding.ui.text_block_selected) {
+            $('#text-block-' + budding.ui.current_text_block).show();
+          }
+          $(this).after(editor_controls);
+          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+          $('#text-block-ta').css('margin-top', '-10px');
+          console.log("$('#text-block-ta').addClass('ta-text-block-selected');");
+          $('#text-block-ta').val(budding.document.body[text_block_id].text);
+          budding.ui.text_block_selected = true;
+          budding.ui.current_text_block = text_block_id;
+          $(this).addClass('text-block-selected');
+          $('#text-block-ta').focus();
+          var content_length = budding.document.body[text_block_id].text;
+          $('#text-block-ta')[0].setSelectionRange(content_length, content_length);
+        });
+     }
       
     };
     
@@ -164,6 +190,22 @@
       $('#editor-form input[name=title]').val(this.document.title);
       $('#editor-form input[name=story]').val(this.document.body.single_string());
       $('#editor-form').submit();
+    };
+    
+    
+    budding.identify_tags = function(text) {
+      var tag, category, box;
+      for(tag in budding.known_tags) {
+      console.log([tag, text, text.indexOf(tag)]);
+        if(text.indexOf(tag) != -1 && !budding.identified_tags[tag]) {
+          category = budding.known_tags[tag];
+          box = $('#' + category + '-fragments-end');
+          if(box.length) {
+            box.before($('<span class="tag ui-corner-all">' + tag.replace(' ', '&nbsp;') + '</span>'));
+            budding.identified_tags[tag] = true;
+          }
+        }
+      }
     };
     
     budding.make_fragments_clickable = function() {
@@ -227,19 +269,22 @@
         last_selected_text_block.removeClass('text-block-selected');
         last_selected_text_block.show();
         budding.ui.text_block_selected = false;
-      } else {
-
       }
-       
+      
       $('#text-block-ta').val("");
       var editor_controls = $('#editor-controls').detach();
       context.after(editor_controls);
       $('.insertion-point').show();
       context.hide();
+      console.log(budding.ui.insertion_point_index);
+      console.log('context.hide();');
       editor_controls.show();
+      $('#text-block-ta').focus();
     }
 
     budding.init = function() {
+      
+      budding.load_known_tags();
       
       this.parse_text_blocks();
       
@@ -263,19 +308,20 @@
       $('#text-block-ta').keypress(function(e) {
         if(e.which == 13) { // enter key
           var ta_val = $('#text-block-ta').val();
-          if(!ta_val.match(/^\s*$/)) {
-            budding.add_text_block(ta_val);
+          if(budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val) {
+            return false;
+          } else if(ta_val.match(/^\s*$/)) {
+            return false;
           }
+          budding.add_text_block(ta_val);
           return false;
         }
         return true;
       });
       
       
-      $('#text-block-ta').keyup(function() {
-        if($('#text-block-ta').val().match(/^\s*$/)) {
-          $('#text-block-ta').val("");
-        }
+      $('#text-block-ta').change(function() {
+        console.log($('#text-block-ta').text());
       });
       
       
@@ -343,6 +389,7 @@
       });
       
       $('.insertion-point').click(function() {
+        $('#text-block-ta').css('margin-top', '-5px');
         budding.place_editor_controls_at_insertion_point.click_handler($(this));
       });
 
@@ -437,7 +484,7 @@
 	      background: #F0E68C;
 	    }
 	    .text-block-selected {
-	      background: #BDB76B;
+	      background: #F0E68C; /* formerly: #BDB76B; */
 	    }
 	    
 	    .insertion-point {
@@ -445,7 +492,7 @@
 	      margin: -10px 0px 5px -5px;
 	    }
 	    .insertion-point:hover {
-	      background: #BDB76B;
+	      background: #F0E68C; /* formerly: #BDB76B; */
 	    }
 
 	    
@@ -476,7 +523,7 @@
 	    #text-block-type-buttonset  {
 	      float: left;
 	      margin-left: -5px;
-  		  font-size: 12px;
+  		  font-size: 11px;
         width: 500px;
       }
       #text-block-type-buttonset div {
@@ -487,8 +534,9 @@
         margin-right: 1px;
       }
       #editor-save {
-        position: absolute;
-        right: -3px;
+        margin-left: -5px;
+/*        position: absolute;*/
+/*        right: -3px;*/
   		  font-size: 12px;
       }
 	    .tagbox {
@@ -580,6 +628,10 @@
         -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
       }
       
+      .ta-text-block-selected {
+        margin-top: -15px;
+      }
+      
       
       #text-blocks p {
         margin-bottom: 10px;
@@ -660,16 +712,18 @@
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
             <div id="text-block-type-buttonset">
+              <input type="radio" name="radio-text-block-type" id="text-block-type-h1"><label for="text-block-type-h1">&lt;h1&gt;</label>
+              <input type="radio" name="radio-text-block-type" id="text-block-type-h2"><label for="text-block-type-h2">&lt;h2&gt;</label>
               <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p"><label for="text-block-type-p">&lt;p&gt;</label>
               <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
             </div>
             <div id="editor-save-box">
-              <input type="button" id="editor-save" value="Save">
             </div>
           </div>
-          <form id="editor-form" style="display: none;" method=post action=/documents>
+          <form id="editor-form" method=post action=/documents>
             <input type="hidden" name="title" value="">
             <input type="hidden" name="story" value="">
+            <input type="button" id="editor-save" value="Save">
           </form>
         </div>
       </div>
@@ -681,27 +735,24 @@
         </div>
         <div id="selected-fragments" class="tagbox ui-corner-all">
           <div class="box-label ui-corner-bl">&lt;selected&gt;</div> 
-          <span class="tag ui-corner-all">Steve Jobs</span> 
-          <span class="tag ui-corner-all">Steve Jobs&nbsp;</span>
-          <span class="tag ui-corner-all">Steve&nbsp;Jobs</span>
           <span id="fragments-end"></span>
         </div>
         <div id="dropboxes">
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
+            <span id="person-fragments-end"> </span>
+          </div>
+          <div class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
+            <span id="wikipedia-fragments-end"> </span>
+          </div>
           <div class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
             <span id="wikipedia-fragments-end"></span>
           </div>
           <div class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;google&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
-          </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
-          </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
+            <span id="google-fragments-end"> </span>
           </div>
         </div>
       </div>

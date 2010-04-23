@@ -17,62 +17,7 @@
       else return ids[0];
     };
     
-    budding = {
-      ui: {
-        form: '<%= flash.form %>',
-        forms: {
-          login: {
-            '#input-email': {color: '#bbb', name: 'email', placeholder: "Your e-mail", class: 'ui-widget'},
-            '#input-password': {color: '#bbb', name: 'password', placeholder: "Your password", class: 'ui-widget', type: 'password'},
-            '#info': {
-                html: "Welcome back. If you want, we can keep you signed in for a while. " +
-                      "<input id=keep_signed_in type=checkbox class=ui-widget style=\"margin-left: 5px;\" name=keep_signed_in>" +
-                      "<label for=keep_signed_in style=\"margin-left: 5px;\">Sounds good.</label>"
-            }
-          },
-          signup: {
-            '#input-email': {color: '#bbb', name: 'signup_email', placeholder: "Your e-mail", class: 'ui-widget'},
-            '#input-password': {color: '#bbb', name: 'signup_password', placeholder: "Your password", class: 'ui-widget'},
-            '#info': {html: "Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed."}
-          }
-        },
-        listeners: {
-          '#signup-button': function() {
-            $('#signup-button').attr('checked', true);
-            $('#auth').buttonset('refresh');
-            $('#authform').attr('action', '/signup');
-            $('#input-email').attr('name', budding.ui.forms.signup['#input-email'].name);
-            $('#input-password-login').hide();
-            $('#input-password-signup').show();
-            $('#info').removeClass('server_error');
-            $('#info').html(budding.ui.forms.signup['#info'].html);
-            budding.ui.form = 'signup';
-          },
-          '#login-button': function() {
-            $('#login-button').attr('checked', true);
-            $('#auth').buttonset('refresh');
-            $('#authform').attr('action', '/login');
-            $('#input-email').attr('name', budding.ui.forms.login['#input-email'].name);
-            $('#input-password-login').attr('name', budding.ui.forms.login['#input-password'].name);
-            $('#input-password-signup').hide();
-            $('#input-password-login').show();
-            $('#info').removeClass('server_error');
-            $('#info').html(budding.ui.forms.login['#info'].html);
-            $('#keep_signed_in').click(function() {
-              if($(this).is(":checked")) {
-                $('label[for=keep_signed_in]').css('font-weight', 'bold');
-                $('#authform').append('<input type=hidden name=keep_signed_in value=1>');
-              } else {
-                $('label[for=keep_signed_in]').css('font-weight', 'normal');
-                $('#authform input[name=keep_signed_in]').remove();
-              }
-            });
-            budding.ui.form = 'login';
-          },
-          
-        }
-      }
-    }
+    budding = {ui: {}};
     
     <% unless flash.info.nil? %>
     budding.ui.forms['<%= flash.form %>']['#info'].html = '<%= flash.info.gsub("'", "\\\\'") %>';
@@ -82,6 +27,7 @@
       var span, root = $('#potential-keywords');
       for(var i = 0, len = tags.length; i < len; i++) {
         span = $('<span class="tag ui-corner-all">' + tags[i].replace(" ", "&nbsp;") + '</span>');
+        span.draggable({zIndex: 2700});
         root.append(span);
         root.append(" ");
       }
@@ -91,33 +37,31 @@
     budding.init = function() {
 
       $('.top-button').button();
-      $("#tagger").buttonset();
+      $("#taggerform").buttonset();
+      $("#tags-submit").button();
       // $('#signup-button').click(budding.ui.listeners['#signup-button']);
       // $('#login-button').click(budding.ui.listeners['#login-button']);
 
-      $('#input-email, #input-password-signup, #input-password-login').focus(function(e) {
-        $(this).css({color: "#000"});
-      });
-
-      $('#input-email, #input-password-signup, #input-password-login').blur(function(e) {
-        var input = "#" + $(this).id();
-        if(input.match(/^#input-password/)) {
-          input = '#input-password';
+      $('.tagbox').droppable({
+        drop: function(event, ui) {
+          
+          var tag = ui.draggable.text().replace('\u00a0', ' ');;
+          var tag_category = $(this).attr('id').match(/([^-]*)-dropbox/)[1];
+          
+          var tag_elems = [
+            $('<input type="hidden" name="tags[][tag]" value="' + tag + '">'),
+            $('<input type="hidden" name="tags[][category]" value="' + tag_category + '">')
+          ];
+          
+          var tag_elem = $('<span class="tag ui-corner-all">' + tag + '</span>');
+          tag_elem.addClass('selected-tag');
+          $(this).find(":first-child").after(tag_elem);
+          $('#tags-submit').before(tag_elems[0]);
+          $('#tags-submit').before(tag_elems[1]);
+          ui.draggable.hide();
         }
-        if($(this).val() == $(this).attr('placeholder')) {
-          console.log("budding.ui.form: " + budding.ui.form);
-          console.log("input: " + input);
-          $(this).css({color: budding.ui.forms[budding.ui.form][input].color});
-        }
       });
-
-      if(budding.ui.form == 'login') {
-        budding.ui.listeners['#login-button'].call($('#login-button'));
-      } else if(budding.ui.form == 'signup') {
-        budding.ui.listeners['#signup-button'].call($('#signup-button'))
-      }
       
-      $('#auth').buttonset('refresh');
       $('#tagger').show();
       
       $('#tagger-submit').click(function() {
@@ -210,11 +154,11 @@
 		  }
 	    .tagbox {
         margin: 10px 8px 0px 0px;
-	      padding-top: 23px;
+        padding: 28px 10px 10px 10px;	      
 	      background-color: #eee;
 	      border: 1px solid #bbb;
-  		  height: 50px;
-  		  width: 203px;
+  		  min-height: 50px;
+  		  width: 187px;
   		  float: left; 
 	    }
 	    #potential-keywords {
@@ -232,6 +176,10 @@
 	      font-size: 11px;
 	      border: 1px solid #bbb;
 	    }
+	    .selected-tag {
+  		  float: left;
+  		  margin: 5px;
+	    }
 	    #dropboxes {
 	      padding: 0px;
 	      margin: 0px;
@@ -244,15 +192,8 @@
         height: 0;  
         font-size: 0;
 	    }
-	    .dropbox {
-        background-color: #ADD8E6;
-        float: left;
-        width: 62px;
-        padding: 10px;
-        margin: 10px 5px 10px 0px;
-        font-size: 12px;
-        font-family: georgia;
-        font-weight: bold;
+	    #dropbox-controls {
+        margin: 10px 5px 10px -10px;
 	    }
 	    .dropbox-last {
 	      margin-right: 0px;
@@ -262,7 +203,8 @@
         font-size: 12px;
         font-family: georgia;
         font-weight: bold;
-        margin-top: -24px;
+        margin-top: -29px;
+        margin-right: -11px;
         padding: 3px 5px 0px 5px;
         background: #BDBDBD;
         border: 1px solid #bbb;
@@ -285,8 +227,8 @@
 		  }
 		  
   	  #blurb {
-  	    position: fixed;
-  	    bottom: 25px;
+  	    clear: both;
+  	    padding-top: 100px;
         color: #F26722;
         font-family: times, Times New Roman, times-roman, georgia, serif;
         font-size: 18px;
@@ -315,29 +257,30 @@
 		</div>
     <div id="content">
 		  <div id="tagger">
-		    <form id="taggerform" action="/tagger" method="post" >
-          <input type="text" name="url" id="input-url" class="ui-widget" placeholder="URL to scrape">
+		    <form id="taggerform" action="/tagger" method="post">
+          <input type="text" name="url" id="input-url" class="ui-widget" placeholder="URL to scrape" value="http://en.wikipedia.org/wiki/Apple_Inc.">
           <input id="tagger-submit" type="button" style="margin-left: 10px;" value="Import">
 		    </form>
 		    <div id="potential-keywords" class="ui-corner-all">
 		    </div>
         <div id="dropboxes">
-          <div class="tagbox ui-corner-all">
+          <div id="wikipedia-dropbox" class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
-            <span id="wikipedia-fragments-end"></span>
           </div>
-          <div class="tagbox ui-corner-all">
+          <div id="google-dropbox" class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;google&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
           </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
+          <div id="person-dropbox" class="tagbox ui-corner-all">
+            <div class="box-label ui-corner-bl">&lt;person&gt;</div>
           </div>
-          <div class="tagbox ui-corner-all">
+          <div id="company-dropbox" class="tagbox ui-corner-all">
             <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
           </div>
+        </div>
+        <div id="dropbox-controls">
+		      <form id="tagsform" action="/tags" method="post">
+            <input id="tags-submit" type="submit" style="margin-left: 10px;" value="Register tags">
+		      </form>
         </div>
 		  </div>
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
