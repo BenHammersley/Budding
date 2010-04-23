@@ -126,6 +126,8 @@
 
       budding.make_fragments_clickable();
       
+      /* refactorable: automatically reassign event handlers for a given widget class */
+      
       $('#text-block-' + text_block_hash.id).click(function() {
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
@@ -220,13 +222,16 @@
         last_selected_text_block.removeClass('text-block-selected');
         last_selected_text_block.show();
         budding.ui.text_block_selected = false;
+      } else {
+
       }
        
       $('#text-block-ta').val("");
       var editor_controls = $('#editor-controls').detach();
-      context.hide();
       context.after(editor_controls);
-      $('#editor-controls').show();
+      $('.insertion-point').show();
+      context.hide();
+      editor_controls.show();
     }
 
     budding.init = function() {
@@ -460,7 +465,7 @@
 	    }
 	    #editor-controls {
         padding: 0px;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         display: none;
       }
 	    #text-block-type-buttonset  {
