@@ -4,8 +4,15 @@
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
   	<title>Budding: <%= @document_title %></title>
     <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+		<link rel="stylesheet" href="/css/prettyLoader.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
+	  <script type="text/javascript" src="/js/jquery.prettyLoader.js"></script>
+
+
+		<script src="js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+
+		
     <script type="text/javascript">
     
     jQuery.fn.id = function() {  
@@ -23,6 +30,7 @@
         currentFragments: {text: [], elements: []},
         text_block_selected: false,
         current_text_block: null,
+        current_text_block_type: null,
         insertion_point_index: 0
       },
       document: {
@@ -91,7 +99,7 @@
           $('#text-block-ta')[0].setSelectionRange(content_length, content_length);
         });
       }
-      this.ui.insertion_point_index = this.document.body.length-1;
+      this.ui.insertion_point_index = this.document.body.length ? this.document.body.length-1 : 0;
     }
     
     budding.remove_text_block = function(id) {
@@ -108,6 +116,7 @@
       var new_insertion_point = $('<div class="insertion-point"></div>');
       
       text_block_hash.id = budding.ui.insertion_point_index;
+      text_block_hash.tag = budding.ui.current_text_block_type;
       var old_length = budding.document.body.length;
       p.attr('id', 'text-block-' + text_block_hash.id);
             
@@ -181,6 +190,7 @@
     
     budding.update_text_block = function(text_block_id, text_block_value) {
       budding.document.body[text_block_id].text = text_block_value;
+      budding.document.body[text_block_id].tag = budding.ui.current_text_block_type;
     };
     
     budding.save_story = function() {
@@ -260,6 +270,7 @@
     }
 
     budding.place_editor_controls_at_insertion_point = function(index) {
+      console.log("index: " + index);
       var insertion_point = $('#insertion-point-' + index);
       budding.place_editor_controls_at_insertion_point.click_handler(insertion_point);
     }
@@ -299,7 +310,6 @@
       $('.top-button').button();
       $('#editor-save').button();
       $('#text-block-type-buttonset').buttonset();
-      
       
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
@@ -387,6 +397,20 @@
           }
           
           $("#document-title-text").show();
+        }
+      });
+      
+      $('input[name=radio-text-block-type]').change(function() { 
+        var tag = $('input[name=radio-text-block-type]:checked').val();
+        if(budding.ui.text_block_selected) {
+          var text_block = $('#text-block-' + budding.ui.current_text_block);
+          for(var text_block_class in ['h1', 'h2', 'p', 'blockquote']) {
+            text_block.removeClass('text-block-' + text_block_class);
+          }
+          text_block.addClass('text-block-' + tag);
+          this.document.body[budding.ui.text_block_selected].tag = tag;
+        } else {
+          budding.ui.current_text_block_type = tag;
         }
       });
       
@@ -492,6 +516,24 @@
 	    .text-block-selected {
 	      background: #F0E68C; /* formerly: #BDB76B; */
 	    }
+	    
+	    .text-block-p {	    
+	      font-size: 14px;
+	    }
+	    
+	    .text-block-h1 {
+	      font-size: 18px;
+	      font-weight: bold;
+      }
+      
+	    .text-block-h2 {
+	      font-size: 16px;
+      }
+      
+	    .text-block-blockquote {
+	      padding: 5px 10px 5px 5px;
+	      font-style: italic;
+      }
 	    
 	    .insertion-point {
 	      height: 10px;
@@ -718,10 +760,10 @@
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
             <div id="text-block-type-buttonset">
-              <input type="radio" name="radio-text-block-type" id="text-block-type-h1"><label for="text-block-type-h1">&lt;h1&gt;</label>
-              <input type="radio" name="radio-text-block-type" id="text-block-type-h2"><label for="text-block-type-h2">&lt;h2&gt;</label>
-              <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p"><label for="text-block-type-p">&lt;p&gt;</label>
-              <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
+              <input type="radio" name="radio-text-block-type" id="text-block-type-h1" value="h1"><label for="text-block-type-h1">&lt;h1&gt;</label>
+              <input type="radio" name="radio-text-block-type" id="text-block-type-h2" value="h2"><label for="text-block-type-h2">&lt;h2&gt;</label>
+              <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p" value="p"><label for="text-block-type-p">&lt;p&gt;</label>
+              <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote" value="blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
             </div>
             <div id="editor-save-box">
             </div>
