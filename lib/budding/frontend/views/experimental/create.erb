@@ -4,7 +4,7 @@
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
   	<title>Budding: <%= @document_title %></title>
     <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
-		<link rel="stylesheet" href="/css/prettyLoader.css" type="text/css" media="screen" charset="utf-8" />
+		<link type="text/css" href="/css/editor.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
 	  <script type="text/javascript" src="/js/jquery.prettyLoader.js"></script>
@@ -119,6 +119,8 @@
       text_block_hash.tag = budding.ui.current_text_block_type;
       var old_length = budding.document.body.length;
       p.attr('id', 'text-block-' + text_block_hash.id);
+      
+      p.addClass('text-block-' + text_block_hash.tag);
             
       var text_block = $('#text-block-' + text_block_hash.id);
       if(budding.ui.text_block_selected) {
@@ -169,9 +171,6 @@
           $('.insertion-point').show();
           $('.text-block').removeClass('text-block-selected');
           var editor_controls = $('#editor-controls').detach();
-          if(budding.ui.text_block_selected) {
-            $('#text-block-' + budding.ui.current_text_block).show();
-          }
           $(this).after(editor_controls);
           var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
           $('#text-block-ta').css('margin-top', '-10px');
@@ -181,8 +180,15 @@
           budding.ui.current_text_block = text_block_id;
           $(this).addClass('text-block-selected');
           $('#text-block-ta').focus();
-          var content_length = budding.document.body[text_block_id].text;
-          $('#text-block-ta')[0].setSelectionRange(content_length, content_length);
+          var content = budding.document.body[text_block_id].text;
+          $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
+          var metadata_editor = $('#metadata-editor').detach();
+          $('#text-block-' + text_block_id).before(metadata_editor);
+          var links = content.match(/<a>([^<]+)<\/a>/g);
+          for(var i = 0, len = links.length; i < len; i++) {
+            metadata_editor.append($('<span class="tag ui-corner-all">' + links[i].replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
+          }
+          metadata_editor.show();
         });
      }
       
@@ -422,320 +428,35 @@
         $('#text-block-ta').css('margin-top', '-5px');
         budding.place_editor_controls_at_insertion_point.click_handler($(this));
       });
+      
+      $('#button-raw-import').click(function() {
+        var ta_val = $('#text-block-ta').val();
+        if(budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val) {
+          return;
+        } else if(ta_val.match(/^\s*$/)) {
+          return;
+        }
+        var text_blocks = ta_val.split(/\n\n/);
+        for(var i = 0, len = text_blocks.length; i < len; i++) {
+          budding.add_text_block(text_blocks[i]);
+        }
+      });
 
     }
-    
     
     $(document).ready(function(){
       budding.init();
     });
     
     </script>
-  	<style type="text/css" media="screen">
-  	  * {
-    		margin: 0;
-    		padding: 0;
-	    }
-  		body {
-  		  width: 100%;
-  			font: normal 95% helvetica, sans-serif;
-  			color: #000;
-  			background-color: #fff;
-  		}
-  		#top {
-  		  padding: 0px;
-  		  padding-left: 20px;
-  		  padding-top: 10px;
-  		  padding-bottom: 5px;
-  		  margin: 0px;
-  		  background: #ccc;
-  		}
-  		#top h1 {
-        display: inline;
-        margin-right: 5px;
-  		}
-  		#top input.top-button {
-  		  font-size:12px;
-		  }
-  		#content {
-  		  padding: 0;
-  			margin: 20px;
-        width: 860px;
-  			margin-bottom: 10px;
-  		}
-  		#content:after {  
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-      }  
-  		#controls {
-  		  font-size: 14px;
-  		  padding: 0px;
-  		  padding-top: 10px;
-  		  padding-bottom: 10px;
-  		  padding-left: 20px;
-  		  margin: 0px;
-  		  background: #ececec;
-  		}
-  		#controls:after {  
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-      }  
-      #controls label {
-  		  font-size: 12px;
-		  }
-		  #controls ul {
-		    margin-top: 5px;
-		  }
-		  #controls li {
-		    margin-left: 25px;
-		    list-style-type: square;
-		  }
-		  #editor {
-		    width: 595px;
-		    float: left;
-	    }
-	    .text-block {
-	      position: relative;
-	      font-family: Georgia, times;
-	      margin: -5px 0px 0px -5px;
-	      padding: 5px 5px 5px 5px;
-/*        -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-*/	    }
-	    .text-block:hover { 
-	      background: #F0E68C;
-	    }
-	    .text-block-selected {
-	      background: #F0E68C; /* formerly: #BDB76B; */
-	    }
-	    
-	    .text-block-p {	    
-	      font-size: 14px;
-	    }
-	    
-	    .text-block-h1 {
-	      font-size: 18px;
-	      font-weight: bold;
-      }
-      
-	    .text-block-h2 {
-	      font-size: 16px;
-      }
-      
-	    .text-block-blockquote {
-	      padding: 5px 10px 5px 5px;
-	      font-style: italic;
-      }
-	    
-	    .insertion-point {
-	      height: 10px;
-	      margin: -10px 0px 5px -5px;
-	    }
-	    .insertion-point:hover {
-	      background: #F0E68C; /* formerly: #BDB76B; */
-	    }
-
-	    
-	    #fragments-container {
-	      float: left;
-	      position: relative;
-	      margin-left: 15px;
-	      width: 240px;	      
-	    }
-	    #fragments-container:after {  
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-	    }
-      #selected-fragments {
-        line-height: 2em;
-        padding-bottom: 14px;
-        text-align: center;
-	    }
-	    #editor-controls {
-        padding: 0px;
-        margin-bottom: 15px;
-        display: none;
-      }
-	    #text-block-type-buttonset  {
-	      float: left;
-	      margin-left: -5px;
-  		  font-size: 11px;
-        width: 500px;
-      }
-      #text-block-type-buttonset div {
-  		  height: 15px;
-      }
-      #editor-save-box {
-        position: relative;
-        margin-right: 1px;
-      }
-      #editor-save {
-        margin-left: -5px;
-/*        position: absolute;*/
-/*        right: -3px;*/
-  		  font-size: 12px;
-      }
-	    .tagbox {
-        margin-top: 5px;
-	      padding: 5px;
-	      padding-top: 23px;
-	      background-color: #eee;
-	      border: 1px solid #bbb;
-  		  height: 50px;
-	    }
-	    .tag {
-	      background-color: #ADD8E6;
-	      padding: 5px;
-	      cursor: pointer;
-	      font-size: 11px;
-	      border: 1px solid #bbb;
-	    }
-	    #dropboxes {
-	      padding: 0px;
-	      margin: 0px;
-	    }
-	    #dropboxes:after {
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-	    }
-	    .dropbox {
-        background-color: #ADD8E6;
-        float: left;
-        width: 62px;
-        padding: 10px;
-        margin: 10px 5px 10px 0px;
-        font-size: 12px;
-        font-family: georgia;
-        font-weight: bold;
-	    }
-	    .dropbox-last {
-	      margin-right: 0px;
-	    }
-	    #fragments p {
-	      margin-bottom: 5px;
-	    }
-	    .selected {
-	      margin-left: 3px;
-	      margin-right: 3px;
-	      padding: 1px;
-  		  -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-	      background: #778899;
-	      cursor: pointer;
-	    }
-	    .selectable {
-	      cursor: pointer;
-	      padding: 1px;
-  		  -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-	    }
-	    .selectable:hover {
-	      background: #BDB76B;
-	    }
-	    
-	    
-	    #editor-controls:after {
-        content: ".";  
-        visibility: hidden;  
-        display: block;  
-        clear: both;  
-        height: 0;  
-        font-size: 0;
-	    }
-	    
-      #text-block-ta {
-	      background: #FFFFE0; 
-  		  font-size: 14px;
-  		  outline: 0;
-        width: 587px;
-        height: 70px;
-        margin-bottom: 5px;
-	      margin: -5px 0px 0px -5px;
-        padding: 5px;
-      } 
-      
-      #text-block-ta:focus {
-        box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
-        -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
-        -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;  
-      }
-      
-      .ta-text-block-selected {
-        margin-top: -15px;
-      }
-      
-      
-      #text-blocks p {
-        margin-bottom: 10px;
-      }
-      #document-title {
-      	background: #eee;
-	      border: 1px solid #bbb;
-	      padding: 23px 5px 5px 5px;
-	      margin-bottom: 10px;
-	    }
-	    #document-title-input {
-	      font-size: 14px;
-	      width: 100%;
-	      padding: 2px 0px 2px 0px;
-	    }
-		  .server_error:before {
-		    content: "[!] ";
-		    font-weight: bold;
-		    color: #A52A2A;
-		    letter-spacing: 3px;
-		  }
-  	  #blurb {
-  	    clear: both;
-  	    padding-top: 100px;
-        color: #F26722;
-        font-family: times, Times New Roman, times-roman, georgia, serif;
-        font-size: 18px;
-	    }
-	    #blurb span.blurb {
-        padding: 10px;
-	      background: #ececec;
-	    }
-	    #blurb a:visited { 
-        color: #F26722;
-      }
-      div.box-label {
-        line-height: 1em;
-        position: absolute;
-        right: 0;
-        font-size: 12px;
-        font-family: georgia;
-        font-weight: bold;
-        margin-top: -24px;
-        padding: 3px 5px 0px 5px;
-        background: #BDBDBD;
-        border: 1px solid #bbb;
-      }
-  	</style>
   </head>
   <body>
-    <div id="top">
+    <div id="top" class="ui-corner-top">
       <h1>Budding</h1>
       <input type="button" id="button-dashboard" class="top-button" value="Dashboard">
       <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
-    <div id="controls">
+    <div id="controls" class="ui-corner-bottom">
       This is a document editor built with the specific goal of making annotation easier.
       <ul>
         <li>Each input box represents a block of text, click the [+] button to add more once you're done.</li>
@@ -747,6 +468,8 @@
     <div id="content">
       <div id="editor">
         <div id="text-blocks">
+          <div id="metadata-editor" class="ui-corner-top">
+          </div>
           <% if @text_blocks.length == 0 %>
             <div id="insertion-point-0" class="insertion-point"></div>
           <% else %>
@@ -760,6 +483,7 @@
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
             <div id="text-block-type-buttonset">
+              <input type="button" value="Raw text import" id="button-raw-import" style="height: 29px; margin-right: 2px;">
               <input type="radio" name="radio-text-block-type" id="text-block-type-h1" value="h1"><label for="text-block-type-h1">&lt;h1&gt;</label>
               <input type="radio" name="radio-text-block-type" id="text-block-type-h2" value="h2"><label for="text-block-type-h2">&lt;h2&gt;</label>
               <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p" value="p"><label for="text-block-type-p">&lt;p&gt;</label>
@@ -776,12 +500,12 @@
         </div>
       </div>
       <div id="fragments-container">
-        <div id="document-title" class="ui-corner-left ui-corner-br">
+        <div id="document-title" class="ui-corner-left ui-corner-br" style="display: none;">
           <div class="box-label ui-corner-bl">title</div> 
           <span id="document-title-text"><%= @has_title ? @document_title : "Click to add title" %></span>
           <textarea id="document-title-input" style="display: none;" class="ui-widget"><%= @has_title ? @document_title : "Click to add title" %></textarea>
         </div>
-        <div id="selected-fragments" class="tagbox ui-corner-all">
+        <div id="selected-fragments" class="tagbox ui-corner-all" style="display: none;">
           <div class="box-label ui-corner-bl">&lt;selected&gt;</div> 
           <span id="fragments-end"></span>
         </div>
