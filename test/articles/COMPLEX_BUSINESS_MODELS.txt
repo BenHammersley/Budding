@@ -1,0 +1,76 @@
+The Collapse of Complex Business Models
+I gave a talk last year to a group of TV executives gathered for an annual conference. From the Q&A after, it was clear that for them, the question wasn’t whether the internet was going to alter their business, but about the mode and tempo of that alteration. Against that background, though, they were worried about a much more practical matter: When, they asked, would online video generate enough money to cover their current costs?
+
+That kind of question comes up a lot. It’s a tough one to answer, not just because the answer is unlikely to make anybody happy, but because the premise is more important than the question itself.
+
+There are two essential bits of background here. The first is that most TV is made by for-profit companies, and there are two ways to generate a profit: raise revenues above expenses, or cut expenses below revenues. The other is that, for many media business, that second option is unreachable.
+
+Here’s why.
+
+* * *
+In 1988, Joseph Tainter wrote a chilling book called The Collapse of Complex Societies. Tainter looked at several societies that gradually arrived at a level of remarkable sophistication then suddenly collapsed: the Romans, the Lowlands Maya, the inhabitants of Chaco canyon. Every one of those groups had rich traditions, complex social structures, advanced technology, but despite their sophistication, they collapsed, impoverishing and scattering their citizens and leaving little but future archeological sites as evidence of previous greatness. Tainter asked himself whether there was some explanation common to these sudden dissolutions.
+
+The answer he arrived at was that they hadn’t collapsed despite their cultural sophistication, they’d collapsed because of it. Subject to violent compression, Tainter’s story goes like this: a group of people, through a combination of social organization and environmental luck, finds itself with a surplus of resources. Managing this surplus makes society more complex—agriculture rewards mathematical skill, granaries require new forms of construction, and so on.
+
+Early on, the marginal value of this complexity is positive—each additional bit of complexity more than pays for itself in improved output—but over time, the law of diminishing returns reduces the marginal value, until it disappears completely. At this point, any additional complexity is pure cost.
+
+Tainter’s thesis is that when society’s elite members add one layer of bureaucracy or demand one tribute too many, they end up extracting all the value from their environment it is possible to extract and then some.
+
+The ‘and them some’ is what causes the trouble. Complex societies collapse because, when some stress comes, those societies have become too inflexible to respond. In retrospect, this can seem mystifying. Why didn’t these societies just re-tool in less complex ways? The answer Tainter gives is the simplest one: When societies fail to respond to reduced circumstances through orderly downsizing, it isn’t because they don’t want to, it’s because they can’t.
+
+In such systems, there is no way to make things a little bit simpler – the whole edifice becomes a huge, interlocking system not readily amenable to change. Tainter doesn’t regard the sudden decoherence of these societies as either a tragedy or a mistake—”[U]nder a situation of declining marginal returns collapse may be the most appropriate response”, to use his pitiless phrase. Furthermore, even when moderate adjustments could be made, they tend to be resisted, because any simplification discomfits elites.
+
+When the value of complexity turns negative, a society plagued by an inability to react remains as complex as ever, right up to the moment where it becomes suddenly and dramatically simpler, which is to say right up to the moment of collapse. Collapse is simply the last remaining method of simplification.
+
+* * *
+In the mid-90s, I got a call from some friends at ATT, asking me to help them research the nascent web-hosting business. They thought ATT’s famous “five 9’s” reliability (services that work 99.999% of the time) would be valuable, but they couldn’t figure out how $20 a month, then the going rate, could cover the costs for good web hosting, much less leave a profit.
+
+I started describing the web hosting I’d used, including the process of developing web sites locally, uploading them to the server, and then checking to see if anything had broken.
+
+“But if you don’t have a staging server, you’d be changing things on the live site!” They explained this to me in the tone you’d use to explain to a small child why you don’t want to drink bleach. “Oh yeah, it was horrible”, I said. “Sometimes the servers would crash, and we’d just have to re-boot and start from scratch.” There was a long silence on the other end, the silence peculiar to conference calls when an entire group stops to think.
+
+The ATT guys had correctly understood that the income from $20-a-month customers wouldn’t pay for good web hosting. What they hadn’t understood, were in fact professionally incapable of understanding, was that the industry solution, circa 1996, was to offer hosting that wasn’t very good.
+
+This, for the ATT guys, wasn’t depressing so much as confusing. We finished up the call, and it was polite enough, but it was perfectly clear that there wasn’t going to be a consulting gig out of it, because it wasn’t a market they could get into, not because they didn’t want to, but because they couldn’t.
+
+It would be easy to regard this as short-sighted on their part, but that ignores the realities of culture. For a century, ATT’s culture had prized—insisted on—quality of service; they ran their own power grid to keep the dial-tone humming during blackouts. ATT, like most organizations, could not be good at the thing it was good at and good at the opposite thing at the same time. The web hosting business, because it followed the “Simplicity first, quality later” model, didn’t just present a new market, it required new cultural imperatives.
+
+* * *
+Dr. Amy Smith is a professor in the Department of Mechanical Engineering at MIT, where she runs the Development Lab, or D-Lab, a lab organized around simple and cheap engineering solutions for the developing world.
+
+Among the rules of thumb she offers for building in that environment is this: “If you want something to be 10 times cheaper, take out 90% of the materials.” Making media is like that now except, for “materials”, substitute “labor.”
+
+* * *
+About 15 years ago, the supply part of media’s supply-and-demand curve went parabolic, with a predictably inverse effect on price. Since then, a battalion of media elites have lined up to declare that exactly the opposite thing will start happening any day now.
+
+To pick a couple of examples more or less at random, last year Barry Diller of IAC said, of content available on the web, “It is not free, and is not going to be,” Steve Brill of Journalism Online said that users “just need to get back into the habit of doing so [paying for content] online”, and Rupert Murdoch of News Corp said “Web users will have to pay for what they watch and use.”
+
+Diller, Brill, and Murdoch seem be stating a simple fact—we will have to pay them—but this fact is not in fact a fact. Instead, it is a choice, one its proponents often decline to spell out in full, because, spelled out in full, it would read something like this:
+
+“Web users will have to pay for what they watch and use, or else we will have to stop making content in the costly and complex way we have grown accustomed to making it. And we don’t know how to do that.”
+
+* * *
+
+One of the interesting questions about Tainter’s thesis is whether markets and democracy, the core mechanisms of the modern world, will let us avoid complexity-driven collapse, by keeping any one group of elites from seizing unbroken control. This is, as Tainter notes in his book, an open question. There is, however, one element of complex society into which neither markets nor democracy reach—bureaucracy.
+
+Bureaucracies temporarily suspend the Second Law of Thermodynamics. In a bureaucracy, it’s easier to make a process more complex than to make it simpler, and easier to create a new burden than kill an old one.
+
+In spring of 2007, the web video comedy In the Motherhood made the move to TV. In the Motherhood started online as a series of short videos, with viewers contributing funny stories from their own lives and voting on their favorites. This tactic generated good ideas at low cost as well as endearing the show to its viewers; the show’s tag line was “By Moms, For Moms, About Moms.”
+
+The move to TV was an affirmation of this technique; when ABC launched the public forum for the new TV version, they told users their input “might just become inspiration for a story by the writers.”
+
+Or it might not. Once the show moved to television, the Writers Guild of America got involved. They were OK with For and About Moms, but By Moms violated Guild rules. The producers tried to negotiate, to no avail, so the idea of audience engagement was canned (as was In the Motherhood itself some months later, after failing to engage viewers as the web version had).
+
+The critical fact about this negotiation wasn’t about the mothers, or their stories, or how those stories might be used. The critical fact was that the negotiation took place in the grid of the television industry, between entities incorporated around a 20th century business logic, and entirely within invented constraints. At no point did the negotiation about audience involvement hinge on the question “Would this be an interesting thing to try?”
+
+* * *
+
+Here is the answer to that question from the TV executives.
+
+In the future, at least some methods of producing video for the web will become as complex, with as many details to attend to, as television has today, and people will doubtless make pots of money on those forms of production. It’s tempting, at least for the people benefitting from the old complexity, to imagine that if things used to be complex, and they’re going to be complex, then everything can just stay complex in the meantime. That’s not how it works, however.
+
+The most watched minute of video made in the last five years shows baby Charlie biting his brother’s finger. (Twice!) That minute has been watched by more people than the viewership of American Idol, Dancing With The Stars, and the Superbowl combined. (174 million views and counting.)
+
+Some video still has to be complex to be valuable, but the logic of the old media ecoystem, where video had to be complex simply to be video, is broken. Expensive bits of video made in complex ways now compete with cheap bits made in simple ways. “Charlie Bit My Finger” was made by amateurs, in one take, with a lousy camera. No professionals were involved in selecting or editing or distributing it. Not one dime changed hands anywhere between creator, host, and viewers. A world where that is the kind of thing that just happens from time to time is a world where complexity is neither an absolute requirement nor an automatic advantage.
+
+When ecosystems change and inflexible institutions collapse, their members disperse, abandoning old beliefs, trying new things, making their living in different ways than they used to. It’s easy to see the ways in which collapse to simplicity wrecks the glories of old. But there is one compensating advantage for the people who escape the old system: when the ecosystem stops rewarding complexity, it is the people who figure out how to work simply in the present, rather than the people who mastered the complexities of the past, who get to say what happens in the future.
