@@ -31,7 +31,8 @@
         text_block_selected: false,
         current_text_block: null,
         current_text_block_type: null,
-        insertion_point_index: 0
+        insertion_point_index: 0,
+        handlers: {}
       },
       document: {
         id: <%= @document_id || "null" %>,
@@ -45,6 +46,33 @@
       utils: {},
       identified_tags: {}
     };
+    
+    budding.ui.handlers.text_block = {
+      click: function() {
+        $('.insertion-point').show();
+        $('.text-block').removeClass('text-block-selected');
+        var editor_controls = $('#editor-controls').detach();
+        $(this).after(editor_controls);
+        var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+        $('#text-block-ta').css('margin-top', '-10px');
+        $('#text-block-ta').val(budding.document.body[text_block_id].text);
+        budding.ui.text_block_selected = true;
+        budding.ui.current_text_block = text_block_id;
+        $(this).addClass('text-block-selected');
+        $('#text-block-ta').focus();
+        var content = budding.document.body[text_block_id].text;
+        $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
+        var metadata_editor = $('#metadata-editor').detach();
+        $('#text-block-' + text_block_id).before(metadata_editor);
+        var links = content.match(/<a>([^<]+)<\/a>/g) || [];
+        if(links.length) {
+          for(var i = 0, len = links.length; i < len; i++) {
+            metadata_editor.append($('<span class="tag ui-corner-all">' + links[i].replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
+          }
+          metadata_editor.show();
+        }
+      }
+    }
     
     budding.utils.have_unclosed_tags = function(text) {
       // <a></a><b></b> = false
@@ -61,7 +89,6 @@
     
     budding.load_known_tags = function() {
       $.get('/tags', function(data) {
-        console.log(data);
         budding.known_tags = {};
         for(var i = 0, len = data.length; i < len; i++) {
           budding.known_tags[data[i].name] = data[i].category;
@@ -79,25 +106,7 @@
         text_block_hash = {text: $.trim($(text_blocks[i]).text())};
         this.document.body.push(text_block_hash);
         text_block_hash.id = this.document.body.length-1;
-        $(text_blocks[i]).click(function() {
-          $('.insertion-point').show();
-          $('.text-block').removeClass('text-block-selected');
-          var editor_controls = $('#editor-controls').detach();
-          if(budding.ui.text_block_selected) {
-            $('#text-block-' + budding.ui.current_text_block).show();
-          }
-          $(this).after(editor_controls);
-          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-          $('#text-block-ta').css('margin-top', '-10px');
-          console.log("$('#text-block-ta').addClass('ta-text-block-selected');");
-          $('#text-block-ta').val(budding.document.body[text_block_id].text);
-          budding.ui.text_block_selected = true;
-          budding.ui.current_text_block = text_block_id;
-          $(this).addClass('text-block-selected');
-          $('#text-block-ta').focus();
-          var content_length = budding.document.body[text_block_id].text;
-          $('#text-block-ta')[0].setSelectionRange(content_length, content_length);
-        });
+        $(text_blocks[i]).click(budding.ui.handlers.text_block.click);
       }
       this.ui.insertion_point_index = this.document.body.length ? this.document.body.length-1 : 0;
     }
@@ -108,7 +117,7 @@
       return to_be_removed; // whole object
     };
     
-    budding.add_text_block = function(text) {
+    budding.add_text_block = function(text, raw_text_import) {
       
       text = $.trim(text);
       var text_block_hash = {'text': text};
@@ -116,7 +125,8 @@
       var new_insertion_point = $('<div class="insertion-point"></div>');
       
       text_block_hash.id = budding.ui.insertion_point_index;
-      text_block_hash.tag = budding.ui.current_text_block_type;
+      text_block_hash.tag = raw_text_import ? 'p' : budding.ui.current_text_block_type;
+      
       var old_length = budding.document.body.length;
       p.attr('id', 'text-block-' + text_block_hash.id);
       
@@ -130,12 +140,10 @@
         // budding.make_fragments_clickable();
       } else {
         if(!text_block.length) { /* refactorable: if(document.is_empty()) */
-          console.log('document.is_emtpy(): true');
           this.document.body.splice(text_block_hash.id, 0, text_block_hash);
           p.attr('id', 'text-block-' + text_block_hash.id);
           $('#insertion-point-' + text_block_hash.id).before(p);
         } else {
-          console.log('document.is_emtpy(): false');
           $('#insertion-point-' + text_block_hash.id).show();
           text_block_hash.id += 1;
           var text_blocks = $('.text-block');
@@ -151,45 +159,18 @@
           new_insertion_point.before(p);
           new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
         }
-      
-        console.log('budding.add_text_block(), text_block_hash.id: ' + text_block_hash.id);
-        console.log('budding.add_text_block(), this.document.body: ' + this.document.body.toString());
         
         budding.identify_tags(text);
 
         budding.place_editor_controls_at_insertion_point(text_block_hash.id);
 
-        // budding.make_fragments_clickable();
-      
-        /* refactorable: automatically reassign event handlers for a given widget class */
+        // budding.make_fragments_clickable();      
       
         new_insertion_point.click(function() {
           budding.place_editor_controls_at_insertion_point.click_handler($(this));
         });
       
-        p.click(function() {
-          $('.insertion-point').show();
-          $('.text-block').removeClass('text-block-selected');
-          var editor_controls = $('#editor-controls').detach();
-          $(this).after(editor_controls);
-          var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
-          $('#text-block-ta').css('margin-top', '-10px');
-          console.log("$('#text-block-ta').addClass('ta-text-block-selected');");
-          $('#text-block-ta').val(budding.document.body[text_block_id].text);
-          budding.ui.text_block_selected = true;
-          budding.ui.current_text_block = text_block_id;
-          $(this).addClass('text-block-selected');
-          $('#text-block-ta').focus();
-          var content = budding.document.body[text_block_id].text;
-          $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
-          var metadata_editor = $('#metadata-editor').detach();
-          $('#text-block-' + text_block_id).before(metadata_editor);
-          var links = content.match(/<a>([^<]+)<\/a>/g);
-          for(var i = 0, len = links.length; i < len; i++) {
-            metadata_editor.append($('<span class="tag ui-corner-all">' + links[i].replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
-          }
-          metadata_editor.show();
-        });
+        p.click(budding.ui.handlers.text_block.click);
      }
       
     };
@@ -216,7 +197,6 @@
     budding.identify_tags = function(text) {
       var tag, category, box;
       for(tag in budding.known_tags) {
-      console.log([tag, text, text.indexOf(tag)]);
         if(text.indexOf(tag) != -1 && !budding.identified_tags[tag]) {
           category = budding.known_tags[tag];
           box = $('#' + category + '-fragments-end');
@@ -276,7 +256,6 @@
     }
 
     budding.place_editor_controls_at_insertion_point = function(index) {
-      console.log("index: " + index);
       var insertion_point = $('#insertion-point-' + index);
       budding.place_editor_controls_at_insertion_point.click_handler(insertion_point);
     }
@@ -284,7 +263,6 @@
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
 
       context = $(context);
-      console.log(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1]);
 
       if(budding.ui.text_block_selected) {
@@ -299,8 +277,6 @@
       context.after(editor_controls);
       $('.insertion-point').show();
       context.hide();
-      console.log(budding.ui.insertion_point_index);
-      console.log('context.hide();');
       editor_controls.show();
       $('#text-block-ta').focus();
     }
@@ -342,9 +318,9 @@
       });
       
       
-      $('#text-block-ta').change(function() {
-        console.log($('#text-block-ta').text());
-      });
+      // $('#text-block-ta').change(function() {
+      //   
+      // });
       
       
       $('body').keydown(function(e) { 
@@ -390,7 +366,6 @@
         $("#document-title-text").show();
       });
       
-      
       $(document).keypress(function(e) {
         if(e.which == 13) {
           var title = $("#document-title-input").val();
@@ -410,11 +385,12 @@
         var tag = $('input[name=radio-text-block-type]:checked').val();
         if(budding.ui.text_block_selected) {
           var text_block = $('#text-block-' + budding.ui.current_text_block);
-          for(var text_block_class in ['h1', 'h2', 'p', 'blockquote']) {
-            text_block.removeClass('text-block-' + text_block_class);
+          var classes = ['h1', 'h2', 'p', 'blockquote'];
+          for(var i = 0, len = classes.length; i < len; i++) {
+            text_block.removeClass('text-block-' + classes[i]);
           }
           text_block.addClass('text-block-' + tag);
-          this.document.body[budding.ui.text_block_selected].tag = tag;
+          budding.document.body[budding.ui.current_text_block].tag = tag;
         } else {
           budding.ui.current_text_block_type = tag;
         }
@@ -436,9 +412,12 @@
         } else if(ta_val.match(/^\s*$/)) {
           return;
         }
-        var text_blocks = ta_val.split(/\n\n/);
+        var text_block, text_blocks = ta_val.replace(/\n{2,}/, '\n').split(/\n/);
         for(var i = 0, len = text_blocks.length; i < len; i++) {
-          budding.add_text_block(text_blocks[i]);
+          text_block = $.trim(text_blocks[i]);
+          if(text_block.length) {
+            budding.add_text_block(text_blocks[i]);
+          }
         }
       });
 
