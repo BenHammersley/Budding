@@ -1,22 +1,3 @@
-* {
-	margin: 0;
-	padding: 0;
-}
-body {
-  margin: 15px auto;
-  width: 870px;
-	font: normal 95% helvetica, sans-serif;
-	color: #000;
-	background-color: #fff;
-}
-#top {
-  padding: 0px;
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 5px;
-  margin: 0px;
-  background: #ccc;
-}
 #top h1 {
   display: inline;
   margin-right: 5px;
@@ -271,21 +252,7 @@ body {
   color: #A52A2A;
   letter-spacing: 3px;
 }
-#blurb {
-  clear: both;
-  margin-left: -5px;
-  padding-top: 100px;
-  color: #F26722;
-  font-family: times, Times New Roman, times-roman, georgia, serif;
-  font-size: 18px;
-}
-#blurb span.blurb {
-  padding: 10px;
-  background: #ececec;
-}
-#blurb a:visited { 
-  color: #F26722;
-}
+
 
 div.box-label {
   line-height: 1em;

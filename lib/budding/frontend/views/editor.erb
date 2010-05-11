@@ -4,6 +4,7 @@
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
   	<title>Budding: <%= @document_title %></title>
     <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+		<link type="text/css" href="/css/common.css" rel="stylesheet" />
 		<link type="text/css" href="/css/editor.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
@@ -74,6 +75,21 @@
       }
     }
     
+    budding.ui.handlers.text_block_type_select = function() { 
+      var tag = $('input[name=radio-text-block-type]:checked').val();
+      if(budding.ui.text_block_selected) {
+        var text_block = $('#text-block-' + budding.ui.current_text_block);
+        var classes = ['h1', 'h2', 'p', 'blockquote'];
+        for(var i = 0, len = classes.length; i < len; i++) {
+          text_block.removeClass('text-block-' + classes[i]);
+        }
+        text_block.addClass('text-block-' + tag);
+        budding.document.body[budding.ui.current_text_block].tag = tag;
+      } else {
+        budding.ui.current_text_block_type = tag;
+      }
+    };
+    
     budding.utils.have_unclosed_tags = function(text) {
       // <a></a><b></b> = false
       // <a><b></b></a> = true
@@ -117,7 +133,10 @@
       return to_be_removed; // whole object
     };
     
+    
     budding.add_text_block = function(text, raw_text_import) {
+      console.log('start::add_text_block()')
+      console.log('budding.ui.insertion_point_index: ' + budding.ui.insertion_point_index)
       
       text = $.trim(text);
       var text_block_hash = {'text': text};
@@ -127,12 +146,11 @@
       text_block_hash.id = budding.ui.insertion_point_index;
       text_block_hash.tag = raw_text_import ? 'p' : budding.ui.current_text_block_type;
       
-      var old_length = budding.document.body.length;
       p.attr('id', 'text-block-' + text_block_hash.id);
-      
       p.addClass('text-block-' + text_block_hash.tag);
             
       var text_block = $('#text-block-' + text_block_hash.id);
+      
       if(budding.ui.text_block_selected) {
         budding.update_text_block(budding.ui.current_text_block, text);
         $('#text-block-' + budding.ui.current_text_block).text(text);
@@ -159,21 +177,19 @@
           new_insertion_point.before(p);
           new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
         }
-        
-        budding.identify_tags(text);
-
+        console.log('budding.place_editor_controls_at_insertion_point(' + text_block_hash.id + ');')
         budding.place_editor_controls_at_insertion_point(text_block_hash.id);
-        console.log("budding.place_editor_controls_at_insertion_point(" + text_block_hash.id + ");");
-
-        // budding.make_fragments_clickable();      
-      
+        budding.identify_tags(text);
+        // budding.make_fragments_clickable();            
         new_insertion_point.click(function() {
           budding.place_editor_controls_at_insertion_point.click_handler($(this));
         });
-      
         p.click(budding.ui.handlers.text_block.click);
-     }
+      }
       
+      console.log('end::add_text_block()')
+      console.log('budding.ui.insertion_point_index: ' + budding.ui.insertion_point_index)
+  
     };
     
     budding.update_text_block = function(text_block_id, text_block_value) {
@@ -264,7 +280,10 @@
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
 
       context = $(context);
-      budding.ui.insertion_point_index = parseInt(context.id().match(/.*(\d+)$/)[1]);
+      console.log('start::place_editor_controls_at_insertion_point.click_handler()');
+      console.log('budding.ui.insertion_point_index: ' + budding.ui.insertion_point_index);
+      budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);
+      console.log('context.id(): ' + context.id());
 
       if(budding.ui.text_block_selected) {
         var last_selected_text_block = $('#text-block-' + budding.ui.current_text_block);
@@ -280,13 +299,19 @@
       context.hide();
       editor_controls.show();
       $('#text-block-ta').focus();
+      console.log('end::place_editor_controls_at_insertion_point.click_handler()');
+      console.log('budding.ui.insertion_point_index: ' + budding.ui.insertion_point_index);
+
     }
 
     budding.init = function() {
+
       
       budding.load_known_tags();
       
       this.parse_text_blocks();
+      
+      budding.ui.handlers.text_block_type_select();
       
       budding.place_editor_controls_at_insertion_point(this.ui.insertion_point_index);
       
@@ -382,20 +407,7 @@
         }
       });
       
-      $('input[name=radio-text-block-type]').change(function() { 
-        var tag = $('input[name=radio-text-block-type]:checked').val();
-        if(budding.ui.text_block_selected) {
-          var text_block = $('#text-block-' + budding.ui.current_text_block);
-          var classes = ['h1', 'h2', 'p', 'blockquote'];
-          for(var i = 0, len = classes.length; i < len; i++) {
-            text_block.removeClass('text-block-' + classes[i]);
-          }
-          text_block.addClass('text-block-' + tag);
-          budding.document.body[budding.ui.current_text_block].tag = tag;
-        } else {
-          budding.ui.current_text_block_type = tag;
-        }
-      });
+      $('input[name=radio-text-block-type]').change(budding.ui.handlers.text_block_type_select);
       
       $('#editor-save').click(function() { 
         budding.save_story();
@@ -414,6 +426,7 @@
           return;
         }
         var text_block, text_blocks = ta_val.replace(/\n{2,}/, '\n').split(/\n/);
+        var j = 0;
         for(var i = 0, len = text_blocks.length; i < len; i++) {
           text_block = $.trim(text_blocks[i]);
           if(text_block.length) {

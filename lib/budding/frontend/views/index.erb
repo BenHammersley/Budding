@@ -4,6 +4,7 @@
   	<meta http-equiv="content-type" content="text/html; charset=utf-8;">
   	<title><%= @title %></title>
     <link type="text/css" href="/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />
+		<link type="text/css" href="/css/common.css" rel="stylesheet" />
     <link type="text/css" href="/css/index.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
@@ -119,11 +120,11 @@
     </script>
   </head>
   <body>
-    <div id="top">
+    <div id="top" class="ui-corner-top">
       <h1>Budding</h1>
       <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
     </div>
-    <div id="controls">
+    <div id="controls" class="ui-corner-bottom">
       <% if flash.info %>
       <span id="info" class="server_error"><%= flash.info %></span>
       <% else %>
