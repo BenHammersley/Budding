@@ -147,6 +147,7 @@
   font-size: 11px;
   border: 1px solid #bbb;
 }
+
 #dropboxes {
   padding: 0px;
   margin: 0px;
@@ -270,31 +271,51 @@ div.box-label {
   border: 1px solid #bbb;
 }
 
-.tag-editor {
+.tag-editor-box {
   display: none;
+  position: relative;
+  width: 100%;
+  margin-right: 15px;
+}
+
+.tag-editor {
+  width: 858px;
   margin-top: 5px;
   padding: 5px;
   padding-top: 23px;
+  margin-right: 15px;
+  margin-left: 10px;
   background-color: #eee;
   border: 1px solid #bbb;
   margin: 0px 0px 5px -5px;
 }
 
 div.tag-editor-label {
+  right: 0px;
+  position: absolute;
   line-height: 1em;
-  float: right;
   font-size: 12px;
   font-family: georgia;
   font-weight: bold;
   margin-top: -24px;
-  margin-right: -5px;
+  margin-right: 5px;
   padding: 3px 5px 0px 5px;
   background: #BDBDBD;
   border: 1px solid #bbb;
 }
 
 .tag-editor input {
-  height: 22px;
-  margin-left: 5px;
-  width: 400px;
+  font-size: 16px;
+  height: 27px;
+  margin-right: 2px;
+  width: 855px;
+}
+
+.editor-tag {
+  background-color: #ADD8E6;
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  border: 1px solid #bbb;
 }

@@ -70,8 +70,8 @@
           for(var i = 0, len = links.length; i < len; i++) {
             tag = links[i].match(/^<([^>]+)>/)[1];
             text = links[i].match(/^<[^>]+>([^<]+)/)[1];            
-            tag_editor = $($('.tag-editor')[0]).detach().clone();
-            tag_editor.append($('<span class="tag ui-corner-all">' + text.replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
+            tag_editor = $($('.tag-editor-box')[0]).clone(true);
+            tag_editor.find('.tag-editor').append($('<span class="editor-tag ui-corner-all">' + text.replace(' ', '&nbsp;') + '</span> '));
           }
           
           tag_editor.find('.tag-editor-label-text').text(tag);
@@ -129,7 +129,7 @@
     budding.parse_text_blocks = function() {
       var text_blocks = $('.text-block');
       for(var text_block_hash, i = 0, len = text_blocks.length; i < len; i++) {
-        text_block_hash = {text: $.trim($(text_blocks[i]).text())};
+        text_block_hash = {text: $.trim($(text_blocks[i]).html())};
         this.document.body.push(text_block_hash);
         text_block_hash.id = this.document.body.length-1;
         $(text_blocks[i]).click(budding.ui.handlers.text_block.click);
@@ -148,7 +148,7 @@
       
       text = $.trim(text);
       var text_block_hash = {'text': text};
-      var p = $('<p class="text-block"></p>').text(text);
+      var p = $('<p class="text-block"></p>').html(text);
       var new_insertion_point = $('<div class="insertion-point"></div>');
       
       text_block_hash.id = budding.ui.insertion_point_index;
@@ -161,7 +161,7 @@
       
       if(budding.ui.text_block_selected) {
         budding.update_text_block(budding.ui.current_text_block, text);
-        $('#text-block-' + budding.ui.current_text_block).text(text);
+        $('#text-block-' + budding.ui.current_text_block).html(text);
         budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
         // budding.make_fragments_clickable();
       } else {
@@ -233,7 +233,7 @@
       var blocks = $('#text-blocks p');
       for(var i = 0, len = blocks.length; i < len; i++) {
         var block = $(blocks[i]);
-        var text = $.trim(block.text());
+        var text = $.trim(block.html());
         var fragments = [];
         var pieces = text.split(' ');
         for(var piece, fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
@@ -460,8 +460,11 @@
     <div id="content">
       <div id="editor">
         <div id="text-blocks">
-          <div class="tag-editor" class="ui-corner-top">
-            <div class="tag-editor-label ui-corner-bl">&lt;<span class="tag-editor-label-text"></span>&gt;</div>
+          <div class="tag-editor-box">
+            <div class="tag-editor" class="ui-corner-top">
+              <div class="tag-editor-label ui-corner-bl">&lt;<span class="tag-editor-label-text"></span>&gt;</div>
+              <input type="input"><br>
+            </div>
           </div>
           <% if @text_blocks.length == 0 %>
             <div id="insertion-point-0" class="insertion-point"></div>
