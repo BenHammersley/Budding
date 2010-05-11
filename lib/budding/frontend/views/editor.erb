@@ -54,7 +54,7 @@
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
         $(this).after(editor_controls);
-        var text_block_id = parseInt($(this).id().match(/.*(\d+)$/)[1]);
+        var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
         $('#text-block-ta').css('margin-top', '-10px');
         $('#text-block-ta').val(budding.document.body[text_block_id].text);
         budding.ui.text_block_selected = true;
@@ -63,14 +63,24 @@
         $('#text-block-ta').focus();
         var content = budding.document.body[text_block_id].text;
         $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
-        var metadata_editor = $('#metadata-editor').detach();
-        $('#text-block-' + text_block_id).before(metadata_editor);
-        var links = content.match(/<a>([^<]+)<\/a>/g) || [];
+        var links = content.match(/<[^>]+>([^<]+)<\/[^>]+>/g) || [];
+        var tag_editors = {};
         if(links.length) {
+          var tag_editor, tag, text;
           for(var i = 0, len = links.length; i < len; i++) {
-            metadata_editor.append($('<span class="tag ui-corner-all">' + links[i].replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
+            tag = links[i].match(/^<([^>]+)>/)[1];
+            text = links[i].match(/^<[^>]+>([^<]+)/)[1];            
+            tag_editor = $($('.tag-editor')[0]).detach().clone();
+            tag_editor.append($('<span class="tag ui-corner-all">' + text.replace(' ', '&nbsp;') + '</span><input type="input"><br>'));
           }
-          metadata_editor.show();
+          
+          tag_editor.find('.tag-editor-label-text').text(tag);
+          tag_editors[tag] = tag_editor;
+        }
+        for(tag_editor in tag_editors) {
+          console.log($('#text-block-' + text_block_id).length);
+          $('#text-block-' + text_block_id).before(tag_editors[tag_editor]);
+          tag_editors[tag_editor].show();
         }
       }
     }
@@ -450,7 +460,8 @@
     <div id="content">
       <div id="editor">
         <div id="text-blocks">
-          <div id="metadata-editor" class="ui-corner-top">
+          <div class="tag-editor" class="ui-corner-top">
+            <div class="tag-editor-label ui-corner-bl">&lt;<span class="tag-editor-label-text"></span>&gt;</div>
           </div>
           <% if @text_blocks.length == 0 %>
             <div id="insertion-point-0" class="insertion-point"></div>
@@ -479,35 +490,6 @@
             <input type="hidden" name="story" value="">
             <input type="button" id="editor-save" value="Save">
           </form>
-        </div>
-      </div>
-      <div id="fragments-container">
-        <div id="document-title" class="ui-corner-left ui-corner-br" style="display: none;">
-          <div class="box-label ui-corner-bl">title</div> 
-          <span id="document-title-text"><%= @has_title ? @document_title : "Click to add title" %></span>
-          <textarea id="document-title-input" style="display: none;" class="ui-widget"><%= @has_title ? @document_title : "Click to add title" %></textarea>
-        </div>
-        <div id="selected-fragments" class="tagbox ui-corner-all" style="display: none;">
-          <div class="box-label ui-corner-bl">&lt;selected&gt;</div> 
-          <span id="fragments-end"></span>
-        </div>
-        <div id="dropboxes">
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;person&gt;</div> 
-            <span id="person-fragments-end"> </span>
-          </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;company&gt;</div> 
-            <span id="wikipedia-fragments-end"> </span>
-          </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;wikipedia&gt;</div> 
-            <span id="wikipedia-fragments-end"></span>
-          </div>
-          <div class="tagbox ui-corner-all">
-            <div class="box-label ui-corner-bl">&lt;google&gt;</div> 
-            <span id="google-fragments-end"> </span>
-          </div>
         </div>
       </div>
       <!--

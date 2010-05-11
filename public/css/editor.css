@@ -8,7 +8,7 @@
 #content {
   padding: 0;
 	margin: 20px 0px 20px 5px;
-  width: 860px;
+  width: 870px;
 	margin-bottom: 10px;
 }
 #content:after {  
@@ -49,14 +49,14 @@
 }
 
 #editor {
-  width: 605px;
+  width: 870px;
   float: left;
 }
 
 .text-block {
   position: relative;
   font-family: Georgia, times;
-  margin: -5px 0px 0px -5px;
+  margin: -5px 5px 0px -5px;
   padding: 5px 5px 5px 5px;
 }
 
@@ -138,14 +138,8 @@
 /*        right: -3px;*/
   font-size: 12px;
 }
-.tagbox {
-  margin-top: 5px;
-  padding: 5px;
-  padding-top: 23px;
-  background-color: #eee;
-  border: 1px solid #bbb;
-  height: 50px;
-}
+
+
 .tag {
   background-color: #ADD8E6;
   padding: 5px;
@@ -214,7 +208,7 @@
   background: #FFFFE0; 
   font-size: 14px;
   outline: 0;
-  width: 598px;
+  width: 857px;
   height: 70px;
   margin-bottom: 5px;
   margin: 5px 0px 0px -5px;
@@ -253,6 +247,15 @@
   letter-spacing: 3px;
 }
 
+.tagbox {
+    margin-top: 5px;
+  padding: 5px;
+  padding-top: 23px;
+  background-color: #eee;
+  border: 1px solid #bbb;
+  height: 50px;
+  margin: 0px 0px 5px -5px;
+}
 
 div.box-label {
   line-height: 1em;
@@ -267,15 +270,30 @@ div.box-label {
   border: 1px solid #bbb;
 }
 
-#metadata-editor {
+.tag-editor {
   display: none;
+  margin-top: 5px;
+  padding: 5px;
+  padding-top: 23px;
   background-color: #eee;
   border: 1px solid #bbb;
   margin: 0px 0px 5px -5px;
-  padding: 5px;
 }
 
-#metadata-editor input {
+div.tag-editor-label {
+  line-height: 1em;
+  float: right;
+  font-size: 12px;
+  font-family: georgia;
+  font-weight: bold;
+  margin-top: -24px;
+  margin-right: -5px;
+  padding: 3px 5px 0px 5px;
+  background: #BDBDBD;
+  border: 1px solid #bbb;
+}
+
+.tag-editor input {
   height: 22px;
   margin-left: 5px;
   width: 400px;

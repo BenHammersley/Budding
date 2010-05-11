@@ -2,7 +2,7 @@ http://diveintomark.org/archives/2004/01/14/thought_experiment
 
 Thought Experiment
 
-Norman Walsh (invalid XML), Danny Ayers (invalid XML), Brent Simmons (invalid XML), Nick Bradbury (invalid XML), and Joe Gregorio (invalid XML claiming to be HTML) have all denounced me as a heretic for pointing out that, perhaps, rejecting invalid XML on the client side is a bad idea. The reason I know that they have denounced me is that I read what they had to say, and the reason I was able to read what they had to say is that my browser is very forgiving of all their various XML wellformedness and validity errors.
+<a>Norman Walsh</a> (<a>invalid XML</a>), <a>Danny Ayers</a> (<a>invalid XML<a>), <a>Brent Simmons</a> (<a>invalid XML</a>), <a>Nick Bradbury</a> (<a>invalid XML</a>), and <a>Joe Gregorio</a> (<a>invalid XML claiming to be HTML</a>) have all denounced me as a heretic for pointing out that, perhaps, rejecting invalid XML on the client side is a bad idea. The reason I know that they have denounced me is that I read what they had to say, and the reason I was able to read what they had to say is that my browser is very forgiving of all their various XML wellformedness and validity errors.
 
 Tim Bray has chimed in by calling all of those people names, stating in no uncertain terms that anyone who can’t make … well-formed XML is an incompetent fool. Well, technically he was only talking about syndication feeds, but since XHTML is as much XML as Atom or RSS, I’m pretty sure he would apply the same measurement. So if you can’t make well-formed XML, don’t despair; you may be a fool, but you are, if nothing else, in outstanding company.
 
