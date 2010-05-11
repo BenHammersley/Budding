@@ -1,0 +1,31 @@
+http://diveintomark.org/archives/2004/01/14/thought_experiment
+
+Thought Experiment
+
+Norman Walsh (invalid XML), Danny Ayers (invalid XML), Brent Simmons (invalid XML), Nick Bradbury (invalid XML), and Joe Gregorio (invalid XML claiming to be HTML) have all denounced me as a heretic for pointing out that, perhaps, rejecting invalid XML on the client side is a bad idea. The reason I know that they have denounced me is that I read what they had to say, and the reason I was able to read what they had to say is that my browser is very forgiving of all their various XML wellformedness and validity errors.
+
+Tim Bray has chimed in by calling all of those people names, stating in no uncertain terms that anyone who can’t make … well-formed XML is an incompetent fool. Well, technically he was only talking about syndication feeds, but since XHTML is as much XML as Atom or RSS, I’m pretty sure he would apply the same measurement. So if you can’t make well-formed XML, don’t despair; you may be a fool, but you are, if nothing else, in outstanding company.
+
+Rather than call people names, I’d like to propose a thought experiment.
+
+Imagine, if you will, that all web browsers use strict XML parsers. That is, whenever they encounter an XHTML page, they parse it with a conforming XML parser and refuse to display the page unless it is well-formed XML. This part of the thought experiment is not terribly difficult to imagine, since Mozilla actually works this way under certain circumstances (if the server sends an XHTML page with the MIME type application/xhtml+xml, instead of the normal text/html). But imagine that all browsers worked this way, regardless of MIME type.
+
+Now imagine that you were using a publishing tool that prided itself on its standards compliance. All of its default templates were valid XHTML. It incorporated a nifty layout editor to ensure that you couldn’t introduce any invalid XHTML into the templates yourself. It incorporated a nifty validating editor to ensure that you couldn’t introduce any invalid XHTML into your authored content. It was all very nifty.
+
+Imagine that you posted a long rant about how this is the way the world should work, that clients should be the gatekeepers of wellformedness, and strictly reject any invalid XML that comes their way. You click ‘Publish’, you double-check that your page validates, and you merrily close your laptop and get on with your life.
+
+A few hours later, you start getting email from your readers that your site is broken. Some of them are nice enough to include a URL, others simply scream at you incoherently and tell you that you suck. (This part of the thought experiment should not be terribly difficult to imagine either, for anyone who has ever dealt with end-user bug reports.) You test the page, and lo and behold, they are correct: the page that you so happily and validly authored is now not well-formed, and it not showing up at all in any browser. You try validating the page with a third-party validator service, only to discover that it gives you an error message you’ve never seen before and that you don’t understand.
+
+You pore through the raw source code of the page and find what you think is the problem, but it’s not in your content. In fact, it’s in an auto-generated part of the page that you have no control over. What happened was, someone linked to you, and when they linked to you they sent a trackback with some illegal characters (illegal for you, not for them, since they declare a different character set than you do). But your publishing tool had a bug, and it automatically inserted their illegal characters into your carefully and validly authored page, and now all hell has broken loose.
+
+The emails are really pouring in now. You desperately jump to your administration page to delete the offending trackback, but oh no! The administration page itself tries to display the trackbacks you’ve received, and you get an XML processing error. The same bug that was preventing your readers from reading your published page is now preventing you from fixing it! You’re caught in a catch-22. And what’s worse, your site is part of a completely hosted solution, so you can’t even dig into the source or the underlying database and fix it yourself; all the code is locked away on someone else’s server, beyond your control. There’s nothing you can do now but fire off a desperate email to your hosting provider and hope they can fix the underlying problem and clean up your bad data. You know, whenever they get around to it.
+
+All the while, your page is completely inaccessible and visibly broken, and readers are emailing you telling you this over and over again. And of course the discussion you were trying to start with your eloquent words has come to a screeching halt; no new comments can be added because your comment form is on the same broken page.
+
+Here’s the thing: that wasn’t a thought experiment; it all really happened. It’s a funny story, actually, because it happened to Nick Bradbury, on the very page where he was explaining why it was so important for clients to reject non-wellformed XML. His original post was valid XHTML, and his surrounding page was valid XHTML, but a trackback came in with a character that wasn’t in his character set, and Typepad didn’t catch it, and suddenly his page became non-wellformed XML.
+
+Except that none of the rest of it happened, because Nick is not publishing his page as application/xhtml+xml, and browsers are forgiving by default. And although I did happen to notice the XML wellformedness error and report it, it wasn’t a critical problem for him. I was even able to report the error using the comment form on the broken page itself. And while SixApart should certainly fix the error, they are free to fix it on their own schedule; it is not a crisis for them or for Nick, no one is being flooded with angry emails, no one is caught in a catch-22 of invalidity.
+
+Want another thought experiment? Imagine Nick was serving Google ads on that page. Not so funny anymore, is it?
+
+The client is the wrong place to enforce data integrity. It’s just the wrong place. I hear otherwise intelligent people claim that if everyone did it, it would be okay. No, if everyone did it, it would be even worse. If you want to do it, of course I can’t stop you. But think about who it will hurt.
