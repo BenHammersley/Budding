@@ -64,7 +64,7 @@ module Budding
           @document_title = "Untitled document"
         end
         @languages = Language.all
-        erb :"experimental/create"
+        erb :editor
       end
       
     end
