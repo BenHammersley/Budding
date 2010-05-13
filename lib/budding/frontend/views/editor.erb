@@ -7,13 +7,7 @@
 		<link type="text/css" href="/css/common.css" rel="stylesheet" />
 		<link type="text/css" href="/css/editor.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
-	  <script type="text/javascript" src="/js/jquery.prettyLoader.js"></script>
-
-
-		<script src="js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-
-		
+    <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>		
     <script type="text/javascript">
     
     jQuery.fn.id = function() {  
@@ -54,6 +48,9 @@
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
         $(this).after(editor_controls);
+        var top_controls = $('#editor-controls-top').detach();
+        $(this).before(top_controls);
+
         var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
         $('#text-block-ta').css('margin-top', '-10px');
         $('#text-block-ta').val(budding.document.body[text_block_id].text);
@@ -64,24 +61,38 @@
         var content = budding.document.body[text_block_id].text;
         $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
         var links = content.match(/<[^>]+>([^<]+)<\/[^>]+>/g) || [];
-        var tag_editors = {};
         if(links.length) {
-          var tag_editor, tag, text;
+          var tags = [], tag, text;
           for(var i = 0, len = links.length; i < len; i++) {
             tag = links[i].match(/^<([^>]+)>/)[1];
-            text = links[i].match(/^<[^>]+>([^<]+)/)[1];            
-            tag_editor = $($('.tag-editor-box')[0]).clone(true);
-            tag_editor.find('.tag-editor').append($('<span class="editor-tag ui-corner-all">' + text.replace(' ', '&nbsp;') + '</span> '));
+            text = links[i].match(/^<[^>]+>([^<]+)/)[1];
+            if(tags[tag] == undefined) {
+              tags.push(tag);
+              tags[tag] = [];
+            }
+            tags[tag].push(text);
           }
-          
-          tag_editor.find('.tag-editor-label-text').text(tag);
-          tag_editors[tag] = tag_editor;
+          var tag_editor = $('#tag-editor-box').detach();
+          var tag_links, tag_editor_links;
+          for(var i = 0, len = tags.length; i < len; i++) {
+            tag_editor_links = tag_editor.find('.tag-editor');
+            tag_links = tags[tags[i]];
+            for(var j = 0, jlen = tag_links.length; j < jlen; j++) {
+              tag_editor_links.append($('<span class="editor-tag ui-corner-all">' + tag_links[j].replace(' ', '&nbsp;') + '</span>'));
+            }
+          }
+          $('.editor-tag').click(function() {
+            $(this).addClass('editor-tag-selected');
+            $(this).removeClass('editor-tag');
+          });
+          $('.editor-tag-selected').click(function() {
+            $(this).addClass('editor-tag');
+            $(this).removeClass('editor-tag-selected');
+          });
+          $('#text-block-' + text_block_id).before(tag_editor);
+          tag_editor.show();
         }
-        for(tag_editor in tag_editors) {
-          console.log($('#text-block-' + text_block_id).length);
-          $('#text-block-' + text_block_id).before(tag_editors[tag_editor]);
-          tag_editors[tag_editor].show();
-        }
+        
       }
     }
     
@@ -285,11 +296,13 @@
 
       context = $(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);
+      
+      var top_controls = $('#editor-controls-top').detach();
+      context.before(top_controls);
 
       if(budding.ui.text_block_selected) {
         var last_selected_text_block = $('#text-block-' + budding.ui.current_text_block);
         last_selected_text_block.removeClass('text-block-selected');
-        last_selected_text_block.show();
         budding.ui.text_block_selected = false;
       }
       
@@ -317,6 +330,7 @@
       $('.top-button').button();
       $('#editor-save').button();
       $('#text-block-type-buttonset').buttonset();
+      $('#tag-type-buttonset').buttonset();
       
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
@@ -406,6 +420,8 @@
         }
       });
       
+
+
       $('input[name=radio-text-block-type]').change(budding.ui.handlers.text_block_type_select);
       
       $('#editor-save').click(function() { 
@@ -460,10 +476,18 @@
     <div id="content">
       <div id="editor">
         <div id="text-blocks">
-          <div class="tag-editor-box">
+          <div id="editor-controls-top">
+            <div id="tag-type-buttonset">
+              <input type="radio" name="tag-type-radio" id="tag-type-a" value="a"><label for="tag-type-a">&lt;a&gt;</label>
+              <input type="radio" name="tag-type-radio" id="tag-type-google" value="google"><label for="tag-type-google">&lt;google&gt;</label>
+              <input type="radio" name="tag-type-radio" id="tag-type-wikipedia" value="wikipedia"><label for="tag-type-wikipedia">&lt;wikipedia&gt;</label>
+              <input type="radio" name="tag-type-radio" id="tag-type-person" value="person"><label for="tag-type-person">&lt;person&gt;</label>
+              <input type="radio" name="tag-type-radio" id="tag-type-company" value="company"><label for="tag-type-company">&lt;company&gt;</label>
+            </div>
+          </div>
+          <div id="tag-editor-box">
             <div class="tag-editor" class="ui-corner-top">
-              <div class="tag-editor-label ui-corner-bl">&lt;<span class="tag-editor-label-text"></span>&gt;</div>
-              <input type="input"><br>
+              <input type="input">
             </div>
           </div>
           <% if @text_blocks.length == 0 %>
@@ -479,11 +503,11 @@
           <div id="editor-controls">
             <textarea id="text-block-ta"></textarea>
             <div id="text-block-type-buttonset">
-              <input type="button" value="Raw text import" id="button-raw-import" style="height: 29px; margin-right: 2px;">
               <input type="radio" name="radio-text-block-type" id="text-block-type-h1" value="h1"><label for="text-block-type-h1">&lt;h1&gt;</label>
               <input type="radio" name="radio-text-block-type" id="text-block-type-h2" value="h2"><label for="text-block-type-h2">&lt;h2&gt;</label>
               <input type="radio" checked="true" name="radio-text-block-type" id="text-block-type-p" value="p"><label for="text-block-type-p">&lt;p&gt;</label>
               <input type="radio" name="radio-text-block-type" id="text-block-type-blockquote" value="blockquote"><label for="text-block-type-blockquote">&lt;blockquote&gt;</label>
+              <input type="button" value="Add" id="button-raw-import" style="height: 29px; margin-left: 5px;">
             </div>
             <div id="editor-save-box">
             </div>
