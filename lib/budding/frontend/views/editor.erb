@@ -26,6 +26,7 @@
         text_block_selected: false,
         current_text_block: null,
         current_text_block_type: null,
+        tag_editor_links: {},
         insertion_point_index: 0,
         handlers: {}
       },
@@ -42,8 +43,15 @@
       identified_tags: {}
     };
     
+    budding.ui.clean_up_tag_editor = function() {
+      budding.ui.tag_editor_links = {};
+      $('#tag-editor-box').hide();
+      $('.editor-tag').remove();
+    };
+    
     budding.ui.handlers.text_block = {
       click: function() {
+        budding.ui.clean_up_tag_editor();
         $('.insertion-point').show();
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
@@ -78,18 +86,21 @@
             tag_editor_links = tag_editor.find('.tag-editor');
             tag_links = tags[tags[i]];
             for(var j = 0, jlen = tag_links.length; j < jlen; j++) {
-              tag_editor_links.append($('<span class="editor-tag ui-corner-all">' + tag_links[j].replace(' ', '&nbsp;') + '</span>'));
+              tag_editor_links.append($('<span id="editor-tag-' + j + '" class="editor-tag ui-corner-all">' + tag_links[j].replace(' ', '&nbsp;') + '</span>'));
             }
           }
-          $('.editor-tag').click(function() {
-            $(this).addClass('editor-tag-selected');
-            $(this).removeClass('editor-tag');
-          });
-          $('.editor-tag-selected').click(function() {
-            $(this).addClass('editor-tag');
-            $(this).removeClass('editor-tag-selected');
-          });
           $('#text-block-' + text_block_id).before(tag_editor);
+          $('.editor-tag').click(function() {
+            console.log("omg");
+            var tag_id = $(this).id();
+            if(!budding.ui.tag_editor_links[tag_id]) {
+              budding.ui.tag_editor_links[tag_id] = true;
+              $(this).addClass('editor-tag-selected');
+            } else {
+              budding.ui.tag_editor_links[tag_id] = false;
+              $(this).removeClass('editor-tag-selected');
+            }
+          });
           tag_editor.show();
         }
         
@@ -110,7 +121,7 @@
         budding.ui.current_text_block_type = tag;
       }
     };
-    
+        
     budding.utils.have_unclosed_tags = function(text) {
       // <a></a><b></b> = false
       // <a><b></b></a> = true
@@ -293,6 +304,8 @@
     }
     
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
+      
+      budding.ui.clean_up_tag_editor();
 
       context = $(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);

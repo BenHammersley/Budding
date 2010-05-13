@@ -275,7 +275,8 @@ div.box-label {
   position: relative;
   width: 100%;
   display: none;
-  margin-bottom: 0px;
+  margin-top: 5px;
+  margin-bottom: -10px;
 }
 
 .tag-editor {
