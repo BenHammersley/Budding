@@ -1,24 +1,6 @@
-#top h1 {
-  display: inline;
-  margin-right: 5px;
-}
-#top input.top-button {
-  font-size:12px;
-}
-#content {
-  padding: 0;
-	margin: 20px 0px 20px 5px;
-  width: 870px;
-	margin-bottom: 10px;
-}
-#content:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}  
+
+/* controls */
+
 #controls {
   z-index: -1;
   font-size: 14px;
@@ -29,6 +11,7 @@
   margin: 0px 0px 0px 0px;
   background: #ececec;
 }
+
 #controls:after {  
   content: ".";  
   visibility: hidden;  
@@ -36,13 +19,16 @@
   clear: both;  
   height: 0;  
   font-size: 0;
-}  
+}
+
 #controls label {
   font-size: 12px;
 }
+
 #controls ul {
   margin-top: 5px;
 }
+
 #controls li {
   margin-left: 25px;
   list-style-type: square;
@@ -53,10 +39,12 @@
   float: left;
 }
 
+/* text-block */
+
 .text-block {
   position: relative;
   font-family: Georgia, times;
-  margin: 5px 5px 0px -5px;
+  margin: 5px 5px 5px -5px;
   padding: 5px 5px 5px 5px;
 }
 
@@ -88,113 +76,18 @@
 
 .insertion-point {
   height: 10px;
-  margin: -10px 0px 5px -5px;
+  margin: 0px 0px 5px -5px;
 }
+
 .insertion-point:hover {
   background: #F0E68C; /* formerly: #BDB76B; */
 }
 
-
-#fragments-container {
-  float: left;
-  position: relative;
-  margin-left: 15px;
-  width: 240px;	      
-}
-#fragments-container:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}
-#selected-fragments {
-  line-height: 2em;
-  padding-bottom: 14px;
-  text-align: center;
-}
 #editor-controls {
   padding: 0px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   display: none;
 }
-#text-block-type-buttonset  {
-  float: left;
-  margin-left: -5px;
-  font-size: 11px;
-  width: 500px;
-}
-#text-block-type-buttonset div {
-  height: 15px;
-}
-#editor-save-box {
-  position: relative;
-  margin-right: 1px;
-}
-#editor-save {
-  margin-left: -5px;
-/*        position: absolute;*/
-/*        right: -3px;*/
-  font-size: 12px;
-}
-
-
-.tag {
-  background-color: #ADD8E6;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 11px;
-  border: 1px solid #bbb;
-}
-
-#dropboxes {
-  padding: 0px;
-  margin: 0px;
-}
-#dropboxes:after {
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}
-.dropbox {
-  background-color: #ADD8E6;
-  float: left;
-  width: 62px;
-  padding: 0px 10px 10px 10px;
-  margin: 0px 5px 10px 0px;
-  font-size: 12px;
-  font-family: georgia;
-  font-weight: bold;
-}
-.dropbox-last {
-  margin-right: 0px;
-}
-#fragments p {
-  margin-bottom: 5px;
-}
-.selected {
-  margin-left: 3px;
-  margin-right: 3px;
-  padding: 1px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  background: #778899;
-  cursor: pointer;
-}
-.selectable {
-  cursor: pointer;
-  padding: 1px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-}
-.selectable:hover {
-  background: #BDB76B;
-}
-
 
 #editor-controls:after {
   content: ".";  
@@ -205,14 +98,43 @@
   font-size: 0;
 }
 
+#text-block-type-buttonset  {
+  float: left;
+  margin-left: -5px;
+  font-size: 11px;
+  width: 500px;
+}
+
+#text-block-type-buttonset div {
+  height: 15px;
+}
+
+#editor-save-box {
+  position: relative;
+  margin-right: 1px;
+}
+
+#editor-save {
+  margin-left: -5px;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.tag {
+  background-color: #ADD8E6;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  border: 1px solid #bbb;
+}
+
 #text-block-ta {
   background: #FFFFE0; 
   font-size: 14px;
   outline: 0;
   width: 857px;
   height: 70px;
-  margin-bottom: 5px;
-  margin: 5px 0px 0px -5px;
+  margin: -5px 0px 0px -5px;
   padding: 5px;
 } 
 
@@ -226,57 +148,16 @@
   margin-top: -15px;
 }
 
-
 #text-blocks p {
   margin-bottom: 10px;
 }
-#document-title {
-	background: #eee;
-  border: 1px solid #bbb;
-  padding: 23px 5px 5px 5px;
-  margin-bottom: 10px;
-}
-#document-title-input {
-  font-size: 14px;
-  width: 100%;
-  padding: 2px 0px 2px 0px;
-}
-.server_error:before {
-  content: "[!] ";
-  font-weight: bold;
-  color: #A52A2A;
-  letter-spacing: 3px;
-}
 
-.tagbox {
-    margin-top: 5px;
-  padding: 5px;
-  padding-top: 23px;
-  background-color: #eee;
-  border: 1px solid #bbb;
-  height: 50px;
-  margin: 0px 0px 5px -5px;
-}
-
-div.box-label {
-  line-height: 1em;
-  position: absolute;
-  right: 0;
-  font-size: 12px;
-  font-family: georgia;
-  font-weight: bold;
-  margin-top: -24px;
-  padding: 3px 5px 0px 5px;
-  background: #BDBDBD;
-  border: 1px solid #bbb;
-}
 
 #tag-editor-box {
   position: relative;
   width: 100%;
   display: none;
   margin-top: 5px;
-  margin-bottom: -10px;
 }
 
 .tag-editor {
@@ -337,7 +218,9 @@ div.tag-editor-label {
 
 #editor-controls-top {
   margin-left: -5px;
+  margin-bottom: 10px;
 }
+
 #tag-type-buttonset {
   font-size: 11px;
 }

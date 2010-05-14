@@ -52,6 +52,7 @@
     budding.ui.handlers.text_block = {
       click: function() {
         budding.ui.clean_up_tag_editor();
+        $('.text-block').css('margin-bottom', '5px');
         $('.insertion-point').show();
         $('.text-block').removeClass('text-block-selected');
         var editor_controls = $('#editor-controls').detach();
@@ -60,7 +61,9 @@
         $(this).before(top_controls);
 
         var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
-        $('#text-block-ta').css('margin-top', '-10px');
+        // $('#text-block-ta').css('margin-top', '-10px');
+        $('#text-block-' + text_block_id).css('margin-top', '-5px');
+        $('#text-block-' + text_block_id).css('margin-bottom', '5px');
         $('#text-block-ta').val(budding.document.body[text_block_id].text);
         budding.ui.text_block_selected = true;
         budding.ui.current_text_block = text_block_id;
@@ -306,6 +309,8 @@
     budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
       
       budding.ui.clean_up_tag_editor();
+      
+      $('.text-block').css('margin-bottom', '5px');
 
       context = $(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);
