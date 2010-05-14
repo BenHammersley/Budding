@@ -148,7 +148,12 @@
     }
     
     budding.document.body.single_string = function() {
-      return $.map(this, function(tb) { return tb.text; }).join("\n");
+      return $.map(this, function(tb) { 
+        var text_block_class = ['text-block-', tb.tag].join('');
+        var text_block_start = ['<', tb.tag, ' ', 'class="', text_block_class, '">'].join('');
+        var text_block_end = ['</', tb.tag, '>'].join('');
+        return [text_block_start, tb.text, text_block_end].join('');
+      }).join("\n");
     }
     
     budding.parse_text_blocks = function() {
@@ -311,6 +316,7 @@
       budding.ui.clean_up_tag_editor();
       
       $('.text-block').css('margin-bottom', '5px');
+      $('#editor-controls').css('margin-bottom', '5px');
 
       context = $(context);
       budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);
@@ -537,18 +543,6 @@
           </form>
         </div>
       </div>
-      <!--
-        Title
-        Short summary
-        Teaser
-        Complete copy
-        Metadata
-        Locations
-        People
-        Companies
-        Keywords
-        Language
-      -->
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>
