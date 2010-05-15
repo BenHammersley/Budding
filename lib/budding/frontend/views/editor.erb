@@ -125,6 +125,61 @@
         budding.ui.current_text_block_type = tag;
       }
     };
+    
+    budding.utils.parse_tags = function() {
+      var extract_tag = arguments.callee.extract_tag;
+      var current_tag = null;
+      var tags = [];
+      for(var c, i = 0, len = s.length; i < len; i++) {
+        c = s.charAt(i);
+        if(c == '<') {
+          var tag = extract_tag(i, s.substr(i+1));
+          if(tag) {
+            if(tag.start) {
+              tags.push(tag);
+              current_tag = tags.length-1;
+              tags[current_tag].content = [];
+            } else if(tag.end) {
+              console.log("tag.end");
+              console.log(tags[current_tag]);
+              console.log(tag);
+              if(tag.name == tags[current_tag].name){
+                tags[current_tag].closed = true;
+                tags[current_tag].content = tags[current_tag].content.join('');
+                tags[current_tag].end_index = tag.end_index;
+              }
+            }
+            i = tag.next_index;
+          }
+        } else if(current_tag != null) {
+          tags[current_tag].content.push(c);
+        }   
+      }
+    }
+
+    budding.utils.parse_tags.extract_tag = function(i, str) {
+      var tag = {};
+      var start_tag = str.match(/^([-az]+)>/i);
+      var end_tag = str.match(/^\/([-az]+)>/i);
+      // console.log("str: ");
+      // console.log(str);
+      // console.log("end_tag: ");
+      // console.log(end_tag);
+      if(start_tag) {
+        tag.name = start_tag[1];
+        tag.start = true;
+        tag.start_index = i;
+        tag.next_index = i+start_tag[0].length;
+      } else if(end_tag) {
+        tag.name = end_tag[1];
+        tag.end = true;
+        tag.end_index = 1+(i+end_tag[0].length);
+        tag.next_index = tag.end_index;
+      } else {
+        return false;
+      }
+      return tag;
+    }
         
     budding.utils.have_unclosed_tags = function(text) {
       // <a></a><b></b> = false
