@@ -94,8 +94,9 @@
           }
           $('#text-block-' + text_block_id).before(tag_editor);
           $('.editor-tag').click(function() {
-            console.log("omg");
+            $('.editor-tag').removeClass('editor-tag-selected');
             var tag_id = $(this).id();
+            budding.ui.current_tag_editor_link = tag_id;
             if(!budding.ui.tag_editor_links[tag_id]) {
               budding.ui.tag_editor_links[tag_id] = true;
               $(this).addClass('editor-tag-selected');
