@@ -71,26 +71,15 @@
         $('#text-block-ta').focus();
         var content = budding.document.body[text_block_id].text;
         $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
-        var links = content.match(/<[^>]+>([^<]+)<\/[^>]+>/g) || [];
+        var links = budding.utils.parse_tags(content);
         if(links.length) {
-          var tags = [], tag, text;
-          for(var i = 0, len = links.length; i < len; i++) {
-            tag = links[i].match(/^<([^>]+)>/)[1];
-            text = links[i].match(/^<[^>]+>([^<]+)/)[1];
-            if(tags[tag] == undefined) {
-              tags.push(tag);
-              tags[tag] = [];
-            }
-            tags[tag].push(text);
-          }
           var tag_editor = $('#tag-editor-box').detach();
-          var tag_links, tag_editor_links;
-          for(var i = 0, len = tags.length; i < len; i++) {
-            tag_editor_links = tag_editor.find('.tag-editor');
-            tag_links = tags[tags[i]];
-            for(var j = 0, jlen = tag_links.length; j < jlen; j++) {
-              tag_editor_links.append($('<span id="editor-tag-' + j + '" class="editor-tag ui-corner-all">' + tag_links[j].replace(' ', '&nbsp;') + '</span>'));
-            }
+          tag_editor_links = tag_editor.find('.tag-editor');
+          var content, tag_id;
+          for(var i = 0, len = links.length; i < len; i++) {
+            content = links[i].content.replace(' ', '&nbsp;');
+            tag_id = ['editor-tag-', i].join('');
+            tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
           }
           $('#text-block-' + text_block_id).before(tag_editor);
           $('.editor-tag').click(function() {
@@ -132,10 +121,8 @@
       var tags = [];
       for(var c, i = 0, len = s.length; i < len; i++) {
         c = s.charAt(i);
-        console.log(c);
         if(c == '<') {
           var tag = extract_tag(i, s.substr(i));
-          console.log(tag);
           if(tag) {
             if(tag.start) {
               tags.push(tag);
@@ -158,7 +145,6 @@
     }
 
     budding.utils.parse_tags.extract_tag = function(i, str) {
-      console.log([i, str]);
       var tag = {};
       var start_tag = str.match(/^<([-a-z]+)>/i);
       var end_tag = str.match(/^<\/([-a-z]+)>/i);
