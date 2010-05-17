@@ -39,6 +39,16 @@
   float: left;
 }
 
+#text-block-preview {
+  display: none;
+  background: #F0E68C;
+  position: relative;
+  font-family: Georgia, times;
+  margin: -5px 5px 5px -5px;
+  padding: 5px 5px 5px 5px;
+  height: 17px;
+}
+
 /* text-block */
 
 .text-block {
