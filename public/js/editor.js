@@ -15,8 +15,9 @@ budding = {
     text_block_selected: false,
     current_text_block: null,
     current_text_block_type: null,
+    current_tag_editor_tag: null,
     last_text_area_val: '',
-    tag_editor_links: {},
+    tag_editor_links: {list: []},
     text_block_preview_hide_timeout: null,
     insertion_point_index: 0,
     handlers: {}
@@ -34,6 +35,7 @@ budding = {
 
 budding.ui.clean_up_tag_editor = function() {
   budding.ui.tag_editor_links = {};
+  budding.ui.current_tag_editor_tag = null;
   $('#tag-editor-box').hide();
   $('.editor-tag').remove();
 };
@@ -70,17 +72,18 @@ budding.ui.handlers.text_block = {
         content = links[i].content.replace(' ', '&nbsp;');
         tag_id = ['editor-tag-', i].join('');
         tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
+        budding.ui.tag_editor_links.list.push(links[i]);
+        budding.ui.tag_editor_links[tag_id] = links[i];
       }
       $('#text-block-' + text_block_id).before(tag_editor);
       $('.editor-tag').click(function() {
         $('.editor-tag').removeClass('editor-tag-selected');
         var tag_id = $(this).id();
-        budding.ui.current_tag_editor_link = tag_id;
-        if(!budding.ui.tag_editor_links[tag_id]) {
-          budding.ui.tag_editor_links[tag_id] = true;
+        if(budding.ui.current_tag_editor_tag != tag_id) {
+          budding.ui.current_tag_editor_tag = tag_id;
           $(this).addClass('editor-tag-selected');
         } else {
-          budding.ui.tag_editor_links[tag_id] = false;
+          budding.ui.current_tag_editor_tag = null;
           $(this).removeClass('editor-tag-selected');
         }
       });
@@ -123,6 +126,7 @@ budding.utils.parse_tags = function(s) {
             tags[current_tag].closed = true;
             tags[current_tag].content = tags[current_tag].content.join('');
             tags[current_tag].end_index = tag.end_index;
+            current_tag = null;
           }
         }
         i = tag.next_index;
@@ -134,8 +138,21 @@ budding.utils.parse_tags = function(s) {
   return tags;
 }
 
+budding.utils.parse_tags.Tag = function() {
+}
+
+$.extend(budding.utils.parse_tags.Tag.prototype, {
+  as_html: function() {
+    if(this.href) {
+      return ['<', this.name, ' href="', this.href.replace('"', '\\"'), '">', this.content, '</', this.name, '>'].join('');
+    } else {
+      return ['<', this.name, '>', this.content, '</', this.name, '>'].join('');
+    }
+  }
+});
+
 budding.utils.parse_tags.extract_tag = function(i, str) {
-  var tag = {};
+  var tag = new budding.utils.parse_tags.Tag;
   var start_tag = str.match(/^<([-a-z]+)>/i);
   var end_tag = str.match(/^<\/([-a-z]+)>/i);
   if(start_tag) {
@@ -504,7 +521,20 @@ budding.init = function() {
     }
   });
   
-
+  $('#tag-editor-input').keyup(function() {
+    var tag_id = budding.ui.current_tag_editor_tag;
+    if(tag_id != null) {
+      var link = budding.ui.tag_editor_links[tag_id];
+      link.href = $(this).val();
+      var text = $('#text-block-ta').val();
+      var a = text.substr(0, link.start_index);
+      var b = text.substr(link.end_index);
+      var result = a + link.as_html() + b;
+      budding.update_text_block(budding.ui.current_text_block, result);
+      $('#text-block-ta').val(result);
+      $('#text-block-' + budding.ui.current_text_block).html(result);      
+    }
+  });
 
   $('input[name=radio-text-block-type]').change(budding.ui.handlers.text_block_type_select);
   
