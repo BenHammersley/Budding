@@ -34,7 +34,7 @@ budding = {
 };
 
 budding.ui.clean_up_tag_editor = function() {
-  budding.ui.tag_editor_links = {};
+  budding.ui.tag_editor_links = {list: []};
   budding.ui.current_tag_editor_tag = null;
   $('#tag-editor-box').hide();
   $('.editor-tag').remove();
@@ -529,7 +529,9 @@ budding.init = function() {
       var text = $('#text-block-ta').val();
       var a = text.substr(0, link.start_index);
       var b = text.substr(link.end_index);
-      var result = a + link.as_html() + b;
+      var link_as_html = link.as_html();
+      var result = a + link_as_html + b;
+      link.end_index = link.start_index + link_as_html.length;
       budding.update_text_block(budding.ui.current_text_block, result);
       $('#text-block-ta').val(result);
       $('#text-block-' + budding.ui.current_text_block).html(result);      
