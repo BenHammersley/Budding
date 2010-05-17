@@ -4,16 +4,14 @@ unless Object.const_defined?(:BUDDING_ROOT)
   $:.push(File.join(BUDDING_ROOT, 'lib'))
 end
 
-require 'rubygems'
-
 require 'sinatra'
+require 'rubygems'
 require 'sequel'
 require 'sinatra/sequel'
 require 'yaml'
 
 module Budding
   CONFIG = {}
-  autoload :Frontend, 'budding/frontend'
   autoload :Database, File.join(BUDDING_ROOT, 'conf', 'database.rb')
   autoload :Frontend, 'budding/frontend'
   def self.setup_environment()

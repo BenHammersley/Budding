@@ -1,6 +1,6 @@
-require 'rubygems'
 require 'rack'
 require 'sinatra'
+require 'rubygems'
 require 'prawn'
 require 'rtf'
 require 'open-uri'
