@@ -166,8 +166,47 @@
 #tag-editor-box {
   position: relative;
   width: 100%;
-  display: none;
   margin-top: -5px;
+}
+
+#link-suggestions {
+  display: none;
+  margin: 0px 0px 0px 0px;
+}
+
+.link-suggestion {
+  cursor: pointer;
+  font-size: 13px;
+  padding: 5px;
+  margin-bottom: 5px;
+  border: 1px solid #bbb;
+  background-color: #c4c4c4;
+}
+
+.link-suggestion:hover {
+  background-color: #777;
+}
+
+.link-suggestion:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
+.link-suggestion-title {
+  float: left;
+  margin-right: 5px;
+}
+
+.link-suggestion-href {
+  font-size: 12px;
+  padding: 0px 5px 0px 5px;
+  float: left;
+  color: #e6e6e6;
+  background-color: #3c3c3c;
 }
 
 .tag-editor {

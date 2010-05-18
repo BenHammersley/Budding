@@ -3,6 +3,7 @@ require 'sinatra'
 require 'rubygems'
 require 'prawn'
 require 'rtf'
+require 'cgi'
 require 'open-uri'
 require 'nokogiri'
 require 'set'
@@ -175,9 +176,20 @@ module Budding
     end
     
     get '/tags' do
-      @tags = database[:tags].filter(~{:name => nil}).all
+      tags = database[:tags].filter(~{:name => nil}).all
       content_type :json, :charset => 'utf-8'
-      @tags.to_json
+      tags.to_json
+    end
+    
+    get '/google-query/:term' do
+      firefox_user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6 (.NET CLR 3.5.30729)'
+      url = ['http://www.google.com/search?q=', CGI::escape(params[:term])].join('')
+      google_html = Nokogiri::HTML(open(url, 'User-Agent' => firefox_user_agent))
+      google_results = google_html.xpath('//h3[@class="r"]/a').collect do |result|
+        {:href => result.attributes['href'].to_s, :title => result.text}
+      end
+      content_type :json, :charset => 'utf-8'
+      google_results.to_json
     end
     
     post '/tags' do

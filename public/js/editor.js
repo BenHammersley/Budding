@@ -40,6 +40,23 @@ budding.ui.clean_up_tag_editor = function() {
   $('.editor-tag').remove();
 };
 
+budding.ui.handlers.tag_editor_input_change = function() {
+  var tag_id = budding.ui.current_tag_editor_tag;
+  if(tag_id != null) {
+    var link = budding.ui.tag_editor_links[tag_id];
+    link.href = $('#tag-editor-input').val();
+    var text = $('#text-block-ta').val();
+    var a = text.substr(0, link.start_index);
+    var b = text.substr(link.end_index);
+    var link_as_html = link.as_html();
+    var result = a + link_as_html + b;
+    link.end_index = link.start_index + link_as_html.length;
+    budding.update_text_block(budding.ui.current_text_block, result);
+    $('#text-block-ta').val(result);
+    $('#text-block-' + budding.ui.current_text_block).html(result);      
+  }
+};
+
 budding.ui.handlers.text_block = {
   click: function() {
     budding.ui.clean_up_tag_editor();
@@ -82,6 +99,27 @@ budding.ui.handlers.text_block = {
         if(budding.ui.current_tag_editor_tag != tag_id) {
           budding.ui.current_tag_editor_tag = tag_id;
           $(this).addClass('editor-tag-selected');
+          console.log(budding.ui.tag_editor_links);
+          var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
+          var search_term = tag_obj.content;
+          $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
+            for(var i = 0; i < 3; i++) {
+              if(data[i].href.length > 70) {
+                data[i].href = data[i].href.substr(0, 70) + " ...";
+              }
+              $('#link-suggestions').append($([
+                '<div class="link-suggestion">',
+                '<div class="link-suggestion-title">' + data[i].title + '</div>',
+                '<div class="link-suggestion-href">' + data[i].href + '</div>'
+              ].join('')));
+            }
+            $('.link-suggestion').click(function() {
+              var href = $(this).find('.link-suggestion-href');
+              $('#tag-editor-input').val(href.text());
+              budding.ui.handlers.tag_editor_input_change();
+            });
+            $('#link-suggestions').show();
+          });
         } else {
           budding.ui.current_tag_editor_tag = null;
           $(this).removeClass('editor-tag-selected');
@@ -484,44 +522,7 @@ budding.init = function() {
     }
   });
   
-  
-  $('#document-title').click(function() {
-    if(!$("#document-title-input").is(":visible")) {
-      $("#document-title-input").show();
-      $("#document-title-input").val(budding.document.title);
-      $("#document-title-text").hide();
-    }
-  });
-  
-  
-  $('#document-title-input').blur(function(e) {
-    var title = $.trim($("#document-title-input").val());
-    $("#document-title-input").hide();
-    if(!title.match(/^\s*$/)) {
-      budding.document.title = title;
-      $("#document-title-text").text(title);
-    } else {
-      $("#document-title-text").text(budding.ui["#document-title-text"].val);
-    }        
-    $("#document-title-text").show();
-  });
-  
-  $(document).keypress(function(e) {
-    if(e.which == 13) {
-      var title = $("#document-title-input").val();
-      $("#document-title-input").hide();
-      if(!title.match(/^\s*$/)) {
-        budding.document.title = $("#document-title-input").val();
-        $("#document-title-text").text(budding.document.title);
-      } else {
-        $("#document-title-text").text(budding.ui["#document-title-text"].val);
-      }
-      
-      $("#document-title-text").show();
-    }
-  });
-  
-  $('#tag-editor-input').keyup(function() {
+  $('#tag-editor-input').change(function() {
     var tag_id = budding.ui.current_tag_editor_tag;
     if(tag_id != null) {
       var link = budding.ui.tag_editor_links[tag_id];
@@ -548,6 +549,8 @@ budding.init = function() {
     $('#text-block-ta').css('margin-top', '-5px');
     budding.place_editor_controls_at_insertion_point.click_handler($(this));
   });
+  
+  $('#tag-editor-input').change(budding.ui.handlers.tag_editor_input_change);
   
   $('#button-raw-import').click(function() {
     var ta_val = $('#text-block-ta').val();
