@@ -352,7 +352,9 @@ budding.save_story = function() {
   } else if(!$('#text-block-ta').val().match(/^\s*$/)) {
     budding.add_text_block($('#text-block-ta').val());
   }
-  $('#editor-form input[name=title]').val(this.document.title);
+  if(this.document.body[0].tag == 'h1') {
+    $('#editor-form input[name=title]').val(this.document.body[0].text);
+  }
   $('#editor-form input[name=story]').val(this.document.body.single_string());
   $('#editor-form').submit();
 };
