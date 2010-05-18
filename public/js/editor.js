@@ -192,12 +192,19 @@ $.extend(budding.utils.parse_tags.Tag.prototype, {
 budding.utils.parse_tags.extract_tag = function(i, str) {
   var tag = new budding.utils.parse_tags.Tag;
   var start_tag = str.match(/^<([-a-z]+)>/i);
+  var start_tag_with_href = str.match(/^<([-a-z]+) +href=["']([^"']*)["']>/i);
   var end_tag = str.match(/^<\/([-a-z]+)>/i);
   if(start_tag) {
     tag.name = start_tag[1];
     tag.start = true;
     tag.start_index = i;
     tag.next_index = i+start_tag[0].length-1;
+  } else if(start_tag_with_href) {
+    tag.name = start_tag_with_href[1];
+    tag.start = true;
+    tag.href = start_tag_with_href[2];
+    tag.start_index = i;
+    tag.next_index = i+start_tag_with_href[0].length-1;    
   } else if(end_tag) {
     tag.name = end_tag[1];
     tag.end = true;
