@@ -46,7 +46,7 @@
   font-family: Georgia, times;
   margin: -5px 5px 5px -5px;
   padding: 5px 5px 5px 5px;
-  height: 17px;
+  min-height: 17px;
 }
 
 /* text-block */
@@ -237,6 +237,19 @@ div.tag-editor-label {
   border: 1px solid #bbb;
 }
 
+#tag-editor-tags {
+  margin-bottom: -10px;
+}
+
+#tag-editor-tags:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
 .tag-editor input {
   display: block;
   font-size: 16px;
@@ -247,12 +260,15 @@ div.tag-editor-label {
 }
 
 .editor-tag {
+  display: block;
+  float: left;
   background-color: #ADD8E6;
   padding: 5px;
   cursor: pointer;
   font-size: 11px;
   border: 1px solid #bbb;
   margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 .editor-tag-selected, .editor-tag:hover {

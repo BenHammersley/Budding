@@ -83,7 +83,7 @@ budding.ui.handlers.text_block = {
     var links = budding.utils.parse_tags(content);
     if(links.length) {
       var tag_editor = $('#tag-editor-box').detach();
-      tag_editor_links = tag_editor.find('.tag-editor');
+      var tag_editor_links = tag_editor.find('#tag-editor-tags');
       var content, tag_id;
       for(var i = 0, len = links.length; i < len; i++) {
         content = links[i].content.replace(' ', '&nbsp;');
