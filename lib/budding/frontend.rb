@@ -59,7 +59,7 @@ module Budding
         @text_blocks = [] 
         if @document_id
           @document_title = @document.title || "Untitled document"
-          @text_blocks = @document.story.split(/(?:\r\n)+/) if @document.story
+          @text_blocks = Nokogiri::HTML(@document.story).xpath('//p')
           @has_title = true if @document_title
         else
           @document_title = "Untitled document"

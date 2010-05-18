@@ -241,8 +241,8 @@ budding.load_known_tags = function() {
 budding.document.body.single_string = function() {
   return $.map(this, function(tb) { 
     var text_block_class = ['text-block-', tb.tag].join('');
-    var text_block_start = ['<', tb.tag, ' ', 'class="', text_block_class, '">'].join('');
-    var text_block_end = ['</', tb.tag, '>'].join('');
+    var text_block_start = ['<p class="', text_block_class, '">'].join('');
+    var text_block_end = ['</p>'].join('');
     return [text_block_start, tb.text, text_block_end].join('');
   }).join("\n");
 }
