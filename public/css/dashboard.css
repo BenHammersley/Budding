@@ -1,57 +1,12 @@
 
-#top h1 {
-  display: inline;
-  margin-right: 5px;
-}
-#top input.top-button {
-  font-size:12px;
-}
-
-#content {
-  padding: 0;
-	margin: 20px;
-  width: 860px;
-	margin-bottom: 10px;
-}
-#content:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}
-
-#controls {
-  font-size: 14px;
-  padding: 0px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  margin: 0px;
-  background: #ececec;
-}
-#controls:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}  
-#content input {
-  font-size: 12px;
-}
-.foo {
-  font-size: 12px;		    
-  font-weight: bold;
-}
 #content label {
   font-size: 12px;
 }
+
 #content li {
   margin-bottom: 3px;
 }
+
 #content li:after {
   content: ".";  
   visibility: hidden;  
@@ -60,30 +15,37 @@
   height: 0;  
   font-size: 0;
 }  
+
 .inline-box {
   display: inline;
   background: #eee;
   border: 1px solid #bbb;
   padding: 5px;
 }
+
 #document-created-at, #document-title, #document-edit-button, #document-delete-button {
   display: block;
   float: left;
 }
+
 #document-created-at {
   width: 100px;
   text-align: center;
 }
+
 #document-delete-button {
   margin-left: -2px;
 }
+
 #document-edit-button, #document-delete-button {
   text-decoration: none;
   color: #000;
 }
+
 #document-edit-button:visited, #document-delete-button:visited, #document-edit-button:active, #document-delete-button:active {
   color: #000;
 }
+
 #document-edit-button:hover, #document-delete-button:hover {
   background: #fff;
   color: #000;
@@ -96,6 +58,7 @@
   padding: 5px 10px 5px 10px;
   width: 635px;
 }
+
 .server_error:before {
   content: "[!] ";
   font-weight: bold;

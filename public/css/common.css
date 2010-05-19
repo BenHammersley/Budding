@@ -39,6 +39,26 @@ body {
   font-size: 0px;
 }
 
+#controls {
+  z-index: -1;
+  font-size: 14px;
+  padding: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  margin: 0px 0px 0px 0px;
+  background: #ececec;
+}
+
+#controls:after {  
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
 .server_error:before {
   content: "[!] ";
   font-weight: bold;
@@ -54,7 +74,7 @@ body {
   color: #F26722;
   font-family: times, Times New Roman, times-roman, georgia, serif;
   font-size: 18px;
-  width: 865px;
+  width: 870px;
 }
 
 #blurb span.blurb {
