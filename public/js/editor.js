@@ -43,6 +43,7 @@ budding.ui.clean_up_tag_editor = function() {
 budding.ui.handlers.tag_editor_input_change = function() {
   var tag_id = budding.ui.current_tag_editor_tag;
   if(tag_id != null) {
+    budding.render_link_editor(budding.ui.current_text_block);
     var link = budding.ui.tag_editor_links[tag_id];
     link.href = $('#tag-editor-input').val();
     var text = $('#text-block-ta').val();
@@ -81,70 +82,19 @@ budding.ui.handlers.text_block = {
     $('#text-block-ta').focus();
     var content = budding.document.body[text_block_id].text;
     $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
-    var links = budding.utils.parse_tags(content);
-    if(links.length) {
-      var tag_editor = $('#tag-editor-box').detach();
-      var tag_editor_links = tag_editor.find('#tag-editor-tags');
-      var content, tag_id;
-      for(var i = 0, len = links.length; i < len; i++) {
-        content = links[i].content.replace(' ', '&nbsp;');
-        tag_id = ['editor-tag-', i].join('');
-        tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
-        budding.ui.tag_editor_links.list.push(links[i]);
-        budding.ui.tag_editor_links[tag_id] = links[i];
-      }
-      $('#text-block-' + text_block_id).before(tag_editor);
-      $('.editor-tag').click(function() {
-        $('.editor-tag').removeClass('editor-tag-selected');
-        var tag_id = $(this).id();
-        if(budding.ui.current_tag_editor_tag != tag_id) {
-          budding.ui.current_tag_editor_tag = tag_id;
-          $(this).addClass('editor-tag-selected');
-          console.log(budding.ui.tag_editor_links);
-          var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
-          var search_term = tag_obj.content;
-          $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
-            for(var i = 0; i < 3; i++) {
-              if(data[i].href.length > 70) {
-                data[i].href = data[i].href.substr(0, 70) + " ...";
-              }
-              $('#link-suggestions').append($([
-                '<div class="link-suggestion">',
-                '<div class="link-suggestion-title">' + data[i].title + '</div>',
-                '<div class="link-suggestion-href">' + data[i].href + '</div>'
-              ].join('')));
-            }
-            $('.link-suggestion').click(function() {
-              var href = $(this).find('.link-suggestion-href');
-              $('#tag-editor-input').val(href.text());
-              budding.ui.handlers.tag_editor_input_change();
-            });
-            $('#link-suggestions').show();
-          });
-        } else {
-          budding.ui.current_tag_editor_tag = null;
-          $(this).removeClass('editor-tag-selected');
-        }
-      });
-      tag_editor.show();
-    }
-    
+    budding.render_link_editor(text_block_id);
   }
 }
 
 budding.ui.handlers.text_block_type_select = function() { 
   var tag = $('input[name=radio-text-block-type]:checked').val();
-  if(budding.ui.text_block_selected) {
-    var text_block = $('#text-block-' + budding.ui.current_text_block);
-    var classes = ['h1', 'h2', 'p', 'blockquote'];
-    for(var i = 0, len = classes.length; i < len; i++) {
-      text_block.removeClass('text-block-' + classes[i]);
-    }
-    text_block.addClass('text-block-' + tag);
-    budding.document.body[budding.ui.current_text_block].tag = tag;
-  } else {
-    budding.ui.current_text_block_type = tag;
+  var text_block_preview = $('#text-block-preview');
+  var classes = ['h1', 'h2', 'p', 'blockquote'];
+  for(var i = 0, len = classes.length; i < len; i++) {
+    text_block_preview.removeClass('text-block-' + classes[i]);
   }
+  text_block_preview.addClass('text-block-' + tag);
+  budding.ui.current_text_block_type = tag;
 };
 
 budding.utils.parse_tags = function(s) {
@@ -248,6 +198,72 @@ budding.document.body.single_string = function() {
   }).join("\n");
 }
 
+budding.render_link_editor = function(text_block_id) {
+  var render_links = arguments.callee.render_links;
+  var content = budding.document.body[text_block_id].text;
+  var tag_editor = render_links(content);
+  if(tag_editor) {
+    $('.editor-tag').click(function() {
+      $('.link-suggestion').remove();
+      $('.editor-tag').removeClass('editor-tag-selected');
+      var tag_id = $(this).id();
+      if(budding.ui.current_tag_editor_tag != tag_id) {
+        budding.ui.current_tag_editor_tag = tag_id;
+        $(this).addClass('editor-tag-selected');
+        console.log(budding.ui.tag_editor_links);
+        var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
+        if(tag_obj.href) {
+          $('#tag-editor-input').val(tag_obj.href);
+        }
+        var search_term = tag_obj.content;
+        $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
+          for(var i = 0; i < 3; i++) {
+            if(data[i].href.length > 70) {
+              data[i].href = data[i].href.substr(0, 70) + " ...";
+            }
+            $('#link-suggestions').append($([
+              '<div class="link-suggestion">',
+              '<div class="link-suggestion-title">' + data[i].title + '</div>',
+              '<div class="link-suggestion-href">' + data[i].href + '</div>',
+              '</div>'
+            ].join('')));
+          }
+          $('.link-suggestion').click(function() {
+            var href = $(this).find('.link-suggestion-href');
+            $('#tag-editor-input').val(href.text());
+            budding.ui.handlers.tag_editor_input_change();
+          });
+          $('#link-suggestions').show();
+        });
+      } else {
+        budding.ui.current_tag_editor_tag = null;
+        $(this).removeClass('editor-tag-selected');
+      }
+    });
+    tag_editor.show();
+  }
+};
+
+budding.render_link_editor.render_links = function(content) {
+  var links = budding.utils.parse_tags(content);
+  if(links.length) {
+    var tag_editor = $('#tag-editor-box').detach();
+    var tag_editor_links = tag_editor.find('#tag-editor-tags');
+    var content, tag_id;
+    for(var i = 0, len = links.length; i < len; i++) {
+      content = links[i].content.replace(' ', '&nbsp;');
+      tag_id = ['editor-tag-', i].join('');
+      tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
+      budding.ui.tag_editor_links.list.push(links[i]);
+      budding.ui.tag_editor_links[tag_id] = links[i];
+    }
+    $('#text-block-' + budding.ui.current_text_block).before(tag_editor);
+    return tag_editor;
+  } else {
+    return false;
+  }
+};
+
 budding.update_live_preview = function() {
   console.log('budding.update_live_preview()');
   clearTimeout(budding.ui.text_block_preview_hide_timeout);
@@ -306,6 +322,11 @@ budding.add_text_block = function(text, raw_text_import) {
   if(budding.ui.text_block_selected) {
     budding.update_text_block(budding.ui.current_text_block, text);
     $('#text-block-' + budding.ui.current_text_block).html(text);
+    var classes = ['h1', 'h2', 'p', 'blockquote'];
+    for(var i = 0, len = classes.length; i < len; i++) {
+      p.removeClass('text-block-' + classes[i]);
+    }
+    p.addClass('text-block-' + tag);
     budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
     // budding.make_fragments_clickable();
   } else {
