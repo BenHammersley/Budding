@@ -262,6 +262,7 @@ div.tag-editor-label {
 }
 
 #editor-controls-top {
+  display: none;
   margin-left: -5px;
   margin-bottom: 10px;
 }

@@ -55,7 +55,7 @@
           <% else %>
             <% @text_blocks.each_with_index do |value, index| %>
             <p id="text-block-<%= index %>" class="text-block <%= value.attributes['class'] %>">
-            <%= value.text %>
+            <%= value.inner_html %>
             </p>
             <div id="insertion-point-<%= index %>" class="insertion-point"></div>
             <% end %>
