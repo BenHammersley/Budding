@@ -8,6 +8,9 @@ require 'open-uri'
 require 'nokogiri'
 require 'set'
 require 'json'
+require 'redis'
+require 'resque'
+require 'jobs/doc_export'
 
 unless Object.const_defined?(:BUDDING_ROOT)
   BUDDING_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
@@ -278,10 +281,15 @@ module Budding
       }
       @document = Document.find(:document_id => params[:id])
       unless @document.user != current_user or @document.nil?
-        content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
-        content_disposition = 'inline; filename="%s.%s"' % [escape_html(@document.title), params[:filetype]]
-        response['Content-Disposition'] = content_disposition
-        erb :"document/export/#{params[:filetype]}"
+        if params[:filetype] == "doc"
+          Resque.enqueue(DocExporter, @document.document_id)
+          redirect "/waitdownload/#{params[:id]}"
+        else
+          content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
+          content_disposition = 'inline; filename="%s.%s"' % [escape_html(@document.title), params[:filetype]]
+          response['Content-Disposition'] = content_disposition
+          erb :"document/export/#{params[:filetype]}"
+        end
       else
         #erb :"document/not_found"
         raise ::Sinatra::NotFound
@@ -291,6 +299,21 @@ module Budding
     get '/test_url/(' do
       params[:id]
     end
-            
+
+    get '/waitdownload/:id' do
+      db = Redis.new
+      filename = redis.get("Budding::v1::DocExport:#{params[:id]}")
+      unless filename
+        @document = Document.find(:document_id => params[:id])
+        content_type "application/msword; charset=utf-8"
+        content_disposition = 'inline; filename="%s.doc"' % [escape_html(@document.title)]
+        response['Content-Disposition'] = content_disposition
+        File.read(filename)
+      else
+        redirect "/waitdownload/#{params[:id]}"
+        "You're being <a href='/waitdownload/#{params[:id]}'>redirected to your download</a>."
+      end
+    end
+
   end
 end
