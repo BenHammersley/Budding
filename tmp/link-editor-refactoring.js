@@ -1,6 +1,6 @@
 
           // Goals of this refactoring:
-          
+          // 
           // * To make the link editor appear dynamically as you're typing in the text area
           // * To make links be automatically be assigned when fragments of the text match known resources
           // * To make naming of widgets and data consistent, I seem to have been using 'tag' and 'link' interchangeably lately -- Not Good
@@ -39,16 +39,11 @@
               $('#button-raw-import').val('Update');
               var editor_controls = $('#editor-controls').detach();
               $(this).after(editor_controls);
-              // var top_controls = $('#editor-controls-top').detach();
-              // $(this).before(top_controls);
               var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
-              // $('#text-block-ta').css('margin-top', '-10px');
               $('#text-block-' + text_block_id).hide();
               $('#editor-controls').before($('#text-block-preview').detach());
               $('#text-block-preview').show();
               $('#text-block-preview').html(budding.document.body[text_block_id].text);
-              // $('#text-block-' + text_block_id).css('margin-top', '-5px');
-              // $('#text-block-' + text_block_id).css('margin-bottom', '5px');
               $('#text-block-ta').val(budding.document.body[text_block_id].text);
               budding.ui.text_block_selected = true;
               budding.ui.current_text_block = text_block_id;
@@ -58,6 +53,55 @@
               budding.render_link_editor(text_block_id);
             }
           }
+          budding.ui.handlers.editor_textarea = {
+            keypress: function(e) {
+              if(e.which == 13) { // enter key
+                var ta_val = $('#text-block-ta').val();
+                var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
+                var empty = ta_val.match(/^\s*$/);
+                if(not_changed || empty) {
+                  budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
+                  return false;
+                }
+                budding.add_text_block(ta_val);
+                return false;
+              }
+            },
+            keyup: function(e) {
+              budding.update_live_preview();
+              var ta_val = $('#text-block-ta').val();
+              var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
+              var empty = ta_val.match(/^\s*$/);
+              if(not_changed || empty) {
+                $('#button-raw-import').attr('disabled', 'disabled');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              } else {
+                $('#button-raw-import').attr('disabled', '');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              }
+            }
+          }
+          budding.ui.handlers.link_editor_href_input = {
+            change: function() {
+              var tag_id = budding.ui.current_tag_editor_tag;
+              if(tag_id != null) {
+                var link = budding.ui.tag_editor_links[tag_id];
+                link.href = $(this).val();
+                var text = $('#text-block-ta').val();
+                var a = text.substr(0, link.start_index);
+                var b = text.substr(link.end_index);
+                var link_as_html = link.as_html();
+                var result = a + link_as_html + b;
+                link.end_index = link.start_index + link_as_html.length;
+                budding.update_text_block(budding.ui.current_text_block, result);
+                $('#text-block-ta').val(result);
+                $('#text-block-' + budding.ui.current_text_block).html(result);
+                budding.render_link_editor.update_links(budding.document.body[budding.ui.current_text_block].text);
+                $('#button-raw-import').attr('disabled', 'disabled');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              }
+            }
+          };
 
           budding.render_link_editor = function(text_block_id) {
             var render_links = arguments.callee.render_links;
@@ -138,50 +182,12 @@
             }
           }
           
+          $('#text-block-ta').keypress(budding.ui.handlers.editor_textarea.keypress);
+          $('#text-block-ta').keyup(budding.ui.handlers.editor_textarea.keyup);
+          $('#tag-editor-input').change(budding.ui.handlers.link_editor_href_input.change);
           
-          $('#tag-editor-input').change(function() {
-            console.log("$('#tag-editor-input').change()");
-            var tag_id = budding.ui.current_tag_editor_tag;
-            if(tag_id != null) {
-              var link = budding.ui.tag_editor_links[tag_id];
-              link.href = $(this).val();
-              var text = $('#text-block-ta').val();
-              var a = text.substr(0, link.start_index);
-              var b = text.substr(link.end_index);
-              var link_as_html = link.as_html();
-              var result = a + link_as_html + b;
-              link.end_index = link.start_index + link_as_html.length;
-              budding.update_text_block(budding.ui.current_text_block, result);
-              $('#text-block-ta').val(result);
-              $('#text-block-' + budding.ui.current_text_block).html(result);      
-            }
-          });
-          
-          $('#text-block-ta').keypress(function(e) {
-            if(e.which == 13) { // enter key
-              var ta_val = $('#text-block-ta').val();
-              var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
-              var empty = ta_val.match(/^\s*$/);
-              if(not_changed || empty) {
-                budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
-                return false;
-              }
-              budding.add_text_block(ta_val);
-              return false;
-            }
-          });
-  
-          $('#text-block-ta').keyup(function(e) {
-            budding.update_live_preview();
-            var ta_val = $('#text-block-ta').val();
-            var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
-            var empty = ta_val.match(/^\s*$/);
-            if(not_changed || empty) {
-              $('#button-raw-import').attr('disabled', 'disabled');
-              $('#text-block-type-buttonset').buttonset('refresh');
-            } else {
-              $('#button-raw-import').attr('disabled', '');
-              $('#text-block-type-buttonset').buttonset('refresh');
-            }
-          });
+          // Proposed renamings:
+          //
+          // #text-block-ta => #editor-textarea
+          // #tag-editor-input => #editor-link-href-input
           
