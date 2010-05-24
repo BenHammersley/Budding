@@ -10,7 +10,6 @@ jQuery.fn.id = function() {
 
 budding = {
   ui: {
-    '#document-title-text': {val: "Click to add title"},
     currentFragments: {text: [], elements: []},
     text_block_selected: false,
     current_text_block: null,
@@ -209,6 +208,7 @@ budding.render_link_editor = function(text_block_id) {
     $('.editor-tag').click(function() {
       $('#tag-editor-input').val('');
       $('.link-suggestion').remove();
+      console.log("$('.link-suggestion').remove();");
       $('.editor-tag').removeClass('editor-tag-selected');
       var tag_id = $(this).id();
       if(budding.ui.current_tag_editor_tag != tag_id) {
@@ -238,11 +238,13 @@ budding.render_link_editor = function(text_block_id) {
           });
           $('#link-suggestions').show();
         });
+        $('#tag-editor-input').show();
       } else {
         budding.ui.current_tag_editor_tag = null;
         $(this).removeClass('editor-tag-selected');
       }
     });
+    $('#tag-editor-input').hide();
     tag_editor.show();
   }
 };
@@ -536,11 +538,6 @@ budding.init = function() {
     window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
   });
   
-  
-  $('#document-title-text').keypress(function(e) {
-    return e.keyCode == 13;
-  });
-  
   $('#text-block-ta').keypress(function(e) {
     if(e.which == 13) { // enter key
       var ta_val = $('#text-block-ta').val();
@@ -567,12 +564,7 @@ budding.init = function() {
       $('#button-raw-import').attr('disabled', '');
       $('#text-block-type-buttonset').buttonset('refresh');
     }
-  });  
-  
-  // $('#text-block-ta').change(function() {
-  //   
-  // });
-  
+  });
   
   $('body').keydown(function(e) { 
     budding.ui.shiftKey = e.shiftKey;
@@ -596,6 +588,7 @@ budding.init = function() {
   });
   
   $('#tag-editor-input').change(function() {
+    console.log("$('#tag-editor-input').change()");
     var tag_id = budding.ui.current_tag_editor_tag;
     if(tag_id != null) {
       var link = budding.ui.tag_editor_links[tag_id];
