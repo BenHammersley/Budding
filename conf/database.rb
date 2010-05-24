@@ -37,6 +37,51 @@ module Sinatra
   end
 end
 
+=begin
+
+  users
+  -----
+  user_id int
+  email varchar(60)
+  password varchar(60)
+  
+  documents
+  ---------
+  document_id bigint
+  user_id int
+  title varchar(255)
+  short_summary varchar(255)
+  teaser varchar(255)
+  story text
+  locations varchar(255)
+  people varchar(255)
+  companies varchar(255)
+  keywords varchar(255)
+  language_id int
+  created_on datetime
+  
+  languages
+  ---------
+  language_id int
+  name varchar(255)
+  
+  tags
+  ----
+  tag_id bigint
+  name varchar(255)
+  canonical_resource varchar(255)
+  suggested_resources varchar(255)
+  created_at datetime
+  category varchar(60)
+  
+  migrations
+  ----------
+  id int
+  name varchar(255)
+  ran_at timestamp
+
+=end
+
 module Budding
   module Database
     set :database, Budding::CONFIG[:dbparams]
