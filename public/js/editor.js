@@ -100,7 +100,12 @@ budding.ui.clean_up_tag_editor = function() {
             
             keyup: function(e) {
               budding.update_live_preview();
-              var ta_val = $('#text-block-ta').val();
+              var ta_val = budding.identify_tags($('#text-block-ta').val());
+              $('#text-block-ta').val(ta_val);
+              // if(text_with_identified_tags != budding.document.body[budding.ui.current_text_block].text) {
+              //   budding.document.body[budding.ui.current_text_block].text = text_with_identified_tags;
+              // }
+              // var ta_val = budding.document.body[budding.ui.current_text_block].text;
               var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
               var empty = ta_val.match(/^\s*$/);
               if(not_changed || empty) {
@@ -444,7 +449,6 @@ budding.add_text_block = function(text, raw_text_import) {
       new_insertion_point.attr('id', 'insertion-point-' + text_block_hash.id);
     }
     budding.place_editor_controls_at_insertion_point(text_block_hash.id);
-    budding.identify_tags(text);
     // budding.make_fragments_clickable();            
     new_insertion_point.click(function() {
       budding.place_editor_controls_at_insertion_point.click_handler($(this));
@@ -476,17 +480,19 @@ budding.save_story = function() {
 
 
 budding.identify_tags = function(text) {
-  var tag, category, box;
+  var tag, category, box, index_of_tag;
   for(tag in budding.known_tags) {
-    if(text.indexOf(tag) != -1 && !budding.identified_tags[tag]) {
+    var index_of_tag = text.indexOf(tag);
+    if(index_of_tag != -1 && !budding.identified_tags[tag]) {
       category = budding.known_tags[tag];
-      box = $('#' + category + '-fragments-end');
-      if(box.length) {
-        box.before($('<span class="tag ui-corner-all">' + tag.replace(' ', '&nbsp;') + '</span>'));
-        budding.identified_tags[tag] = true;
-      }
+      var a = text.substr(0, index_of_tag);
+      var content = text.substr(index_of_tag, tag.length);
+      var b = text.substr(index_of_tag + tag.length);
+      budding.identified_tags[tag] = true;
+      text = [a, '<', category, '>', tag, '</', category, '>'].join('');
     }
   }
+  return text;
 };
 
 budding.make_fragments_clickable = function() {
