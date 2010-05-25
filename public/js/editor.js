@@ -16,6 +16,7 @@ budding = {
     current_text_block_type: null,
     current_tag_editor_tag: null,
     last_text_area_val: '',
+    tag_editor_enabled: false,
     tag_editor_links: {list: []},
     text_block_preview_hide_timeout: null,
     insertion_point_index: 0,
@@ -35,58 +36,198 @@ budding = {
 budding.ui.clean_up_tag_editor = function() {
   budding.ui.tag_editor_links = {list: []};
   budding.ui.current_tag_editor_tag = null;
+  budding.ui.tag_editor_enabled = false;
   $('#tag-editor-box').hide();
   $('.editor-tag').remove();
+  $('.link-suggestion').remove();
 };
 
-budding.ui.handlers.tag_editor_input_change = function() {
-  var tag_id = budding.ui.current_tag_editor_tag;
-  if(tag_id != null) {
-    var link = budding.ui.tag_editor_links[tag_id];
-    link.href = $('#tag-editor-input').val();
-    var text = $('#text-block-ta').val();
-    var a = text.substr(0, link.start_index);
-    var b = text.substr(link.end_index);
-    var link_as_html = link.as_html();
-    var result = a + link_as_html + b;
-    link.end_index = link.start_index + link_as_html.length;
-    budding.update_text_block(budding.ui.current_text_block, result);
-    $('#text-block-ta').val(result);
-    $('#text-block-' + budding.ui.current_text_block).html(result);
-    budding.render_link_editor.update_links(budding.document.body[budding.ui.current_text_block].text);
-    $('#button-raw-import').attr('disabled', 'disabled');
-    $('#text-block-type-buttonset').buttonset('refresh');
-  }
-};
+          budding.ui.handlers.text_block = {
+            click: function() {
+              
+              $('#button-raw-import').val('Update');
+              
+              $('.text-block').css('margin-bottom', '5px');
+              $('.text-block').show();
+              
+              budding.ui.clean_up_tag_editor();
+              
+              $('.insertion-point').show();
+              
+              var editor_controls = $('#editor-controls').detach();
+              $(this).after(editor_controls);
+              
+              var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
+              
+              $('#text-block-' + text_block_id).hide();
+              
+              var content = budding.document.body[text_block_id].text;
+              
+              $('#editor-controls').before($('#text-block-preview').detach());
+              $('#text-block-preview').html(content);
+              $('#text-block-preview').show();
+              
+              $('#text-block-ta').val(content);
+              
+              budding.ui.text_block_selected = true;
+              budding.ui.current_text_block = text_block_id;
+              
+              $('#text-block-ta').focus();
+              $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
+              
+              budding.render_link_editor(text_block_id);
+              
+            }
+          }
 
-budding.ui.handlers.text_block = {
-  click: function() {
-    $('.text-block').show();
-    budding.ui.clean_up_tag_editor();
-    $('.text-block').css('margin-bottom', '5px');
-    $('.insertion-point').show();
-    $('#button-raw-import').val('Update');
-    var editor_controls = $('#editor-controls').detach();
-    $(this).after(editor_controls);
-    // var top_controls = $('#editor-controls-top').detach();
-    // $(this).before(top_controls);
-    var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
-    // $('#text-block-ta').css('margin-top', '-10px');
-    $('#text-block-' + text_block_id).hide();
-    $('#editor-controls').before($('#text-block-preview').detach());
-    $('#text-block-preview').show();
-    $('#text-block-preview').html(budding.document.body[text_block_id].text);
-    // $('#text-block-' + text_block_id).css('margin-top', '-5px');
-    // $('#text-block-' + text_block_id).css('margin-bottom', '5px');
-    $('#text-block-ta').val(budding.document.body[text_block_id].text);
-    budding.ui.text_block_selected = true;
-    budding.ui.current_text_block = text_block_id;
-    $('#text-block-ta').focus();
-    var content = budding.document.body[text_block_id].text;
-    $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
-    budding.render_link_editor(text_block_id);
-  }
-}
+          budding.ui.handlers.editor_textarea = {
+            
+            keypress: function(e) {
+              if(e.which == 13) { // enter key
+                var ta_val = $('#text-block-ta').val();
+                var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
+                var empty = ta_val.match(/^\s*$/);
+                if(not_changed || empty) {
+                  budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
+                  return false;
+                }
+                budding.add_text_block(ta_val);
+                return false;
+              }
+            },
+            
+            keyup: function(e) {
+              budding.update_live_preview();
+              var ta_val = $('#text-block-ta').val();
+              var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
+              var empty = ta_val.match(/^\s*$/);
+              if(not_changed || empty) {
+                $('#button-raw-import').attr('disabled', 'disabled');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              } else {
+                $('#button-raw-import').attr('disabled', '');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              }
+              budding.render_link_editor(ta_val);
+            }
+            
+          }
+          
+          budding.ui.handlers.link_editor_href_input = {
+            change: function() {
+              var tag_id = budding.ui.current_tag_editor_tag;
+              if(tag_id != null) {
+                var link = budding.ui.tag_editor_links[tag_id];
+                link.href = $(this).val();
+                var text = $('#text-block-ta').val();
+                var a = text.substr(0, link.start_index);
+                var b = text.substr(link.end_index);
+                var link_as_html = link.as_html();
+                var result = a + link_as_html + b;
+                link.end_index = link.start_index + link_as_html.length;
+                budding.update_text_block(budding.ui.current_text_block, result);
+                $('#text-block-ta').val(result);
+                $('#text-block-' + budding.ui.current_text_block).html(result);
+                budding.render_link_editor.update_links(budding.document.body[budding.ui.current_text_block].text);
+                $('#button-raw-import').attr('disabled', 'disabled');
+                $('#text-block-type-buttonset').buttonset('refresh');
+              }
+            }
+          };
+          
+          budding.ui.handlers.link_editor_link_button = {
+            click: function() {
+              $('#tag-editor-input').val('');
+              $('.link-suggestion').remove();
+              console.log("$('.link-suggestion').remove();");
+              $('.editor-tag').removeClass('editor-tag-selected');
+              var tag_id = $(this).id();
+              if(budding.ui.current_tag_editor_tag != tag_id) {
+                budding.ui.current_tag_editor_tag = tag_id;
+                $(this).addClass('editor-tag-selected');
+                var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
+                if(tag_obj.href) {
+                  $('#tag-editor-input').val(tag_obj.href);
+                }
+                var search_term = tag_obj.content;
+                $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
+                  for(var i = 0; i < 3; i++) {
+                    if(data[i].href.length > 70) {
+                      data[i].href = data[i].href.substr(0, 70) + " ...";
+                    }
+                    $('#link-suggestions').append($([
+                      '<div class="link-suggestion">',
+                      '<div class="link-suggestion-title">' + data[i].title + '</div>',
+                      '<div class="link-suggestion-href">' + data[i].href + '</div>',
+                      '</div>'
+                    ].join('')));
+                  }
+                  $('.link-suggestion').click(function() {
+                    var href = $(this).find('.link-suggestion-href');
+                    $('#tag-editor-input').val(href.text());
+                    budding.ui.handlers.tag_editor_input_change();
+                  });
+                  $('#link-suggestions').show();
+                });
+                $('#tag-editor-input').show();
+              } else {
+                budding.ui.current_tag_editor_tag = null;
+                $(this).removeClass('editor-tag-selected');
+              }
+            }
+          };
+          
+          budding.render_link_editor = function(text) {
+            var links = budding.utils.parse_tags(text);
+            if(links && links.length) {
+              var tag_editor = $('#tag-editor-box').detach();
+              var tag_editor_links = tag_editor.find('#tag-editor-tags');
+              var new_link, content, tag_id;
+              var total_current_links = budding.ui.tag_editor_links.list.length;
+              for(var i = 0, len = links.length; i < len; i++) {
+                new_link = links[i];
+                
+                content = new_link.content.replace(' ', '&nbsp;');
+                tag_id = ['editor-tag-', i].join('');
+                if(budding.ui.tag_editor_enabled && i < total_current_links) {
+                  var current_link = budding.ui.tag_editor_links.list[i];
+                  if(current_link.content != new_link.content) {
+                    $('#editor-tag-' + i).html(content);
+                    current_link.content = new_link.content;
+                  }
+                  current_link.start_index = new_link.start_index;
+                  current_link.end_index = new_link.end_index;
+                  current_link.href = new_link.href;
+                } else {
+                  budding.ui.tag_editor_links.list.push(links[i]);
+                  budding.ui.tag_editor_links[tag_id] = links[i];
+                  tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
+                }
+              }
+              if(budding.ui.text_block_selected) {
+                $('#text-block-' + budding.ui.current_text_block).before(tag_editor);
+              } else {
+                $('#text-block-preview').before(tag_editor);
+              }
+              $('.editor-tag').click(budding.ui.handlers.link_editor_link_button.click);
+              $('#tag-editor-input').hide();
+              tag_editor.show();
+              budding.ui.tag_editor_enabled = true;
+            } else {
+              budding.ui.clean_up_tag_editor();
+              return false;
+            }
+          };
+
+          budding.render_link_editor.update_links = function(content) {
+            var links = budding.utils.parse_tags(content);
+            var tag_id;
+            for(var i = 0, len = links.length; i < len; i++) {
+              tag_id = ['editor-tag-', i].join('');
+              budding.ui.tag_editor_links.list[i] = links[i];
+              budding.ui.tag_editor_links[tag_id] = links[i];
+            }
+          };
 
 budding.ui.handlers.text_block_type_select = function() { 
   var tag = $('input[name=radio-text-block-type]:checked').val();
@@ -107,6 +248,7 @@ budding.utils.parse_tags = function(s) {
     c = s.charAt(i);
     if(c == '<') {
       var tag = extract_tag(i, s.substr(i));
+      console.log('tag.end: ' + tag.end);
       if(tag) {
         if(tag.start) {
           tags.push(tag);
@@ -125,6 +267,11 @@ budding.utils.parse_tags = function(s) {
     } else if(current_tag != null) {
       tags[current_tag].content.push(c);
     }   
+  }
+  for(var i = 0, len = tags.length; i < len; i++) {
+    if(typeof tags[i].closed == 'undefined') {
+      return false;
+    }
   }
   return tags;
 }
@@ -169,18 +316,24 @@ budding.utils.parse_tags.extract_tag = function(i, str) {
   return tag;
 }
     
-budding.utils.have_unclosed_tags = function(text) {
-  // <a></a><b></b> = false
-  // <a><b></b></a> = true
-  // <a><b></b> = true
-  var tags = text.match(/<([^/>]+)>/g);
-  for(var tag in tags) {
-    if(!text.match(new RegExp(tags[tag] + '[^>]*</' + tags[tag].substr(1)))) {
-      return true;
-    }
-  }
-  return false;
-}
+// budding.utils.have_unclosed_tags = function(text) {
+//   // <a></a><b></b> = false
+//   // <a><b></b></a> = true
+//   // <a><b></b> = true
+//   var missing_closing_tag = false;
+//   var tags = text.match(/(<[^/>]+>)/g);
+//   var pos = 0;
+//   if(tags != null) {
+//     for(var i = 0, len = tags.length; i < len; i++) {
+//       if(!text.match(new RegExp('(' + tags[i] + '[^>]*</' + tags[i].substr(1)) + ')')) {
+//         missing_closing_tag = true;
+//         text = text.substr(i);
+//       }
+//       text = 
+//     }
+//   }
+//   return false;
+// }
 
 budding.load_known_tags = function() {
   $.get('/tags', function(data) {
@@ -198,86 +351,7 @@ budding.document.body.single_string = function() {
     var text_block_end = ['</p>'].join('');
     return [text_block_start, tb.text, text_block_end].join('');
   }).join("\n");
-}
-
-budding.render_link_editor = function(text_block_id) {
-  var render_links = arguments.callee.render_links;
-  var content = budding.document.body[text_block_id].text;
-  var tag_editor = render_links(content);
-  if(tag_editor) {
-    $('.editor-tag').click(function() {
-      $('#tag-editor-input').val('');
-      $('.link-suggestion').remove();
-      console.log("$('.link-suggestion').remove();");
-      $('.editor-tag').removeClass('editor-tag-selected');
-      var tag_id = $(this).id();
-      if(budding.ui.current_tag_editor_tag != tag_id) {
-        budding.ui.current_tag_editor_tag = tag_id;
-        $(this).addClass('editor-tag-selected');
-        var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
-        if(tag_obj.href) {
-          $('#tag-editor-input').val(tag_obj.href);
-        }
-        var search_term = tag_obj.content;
-        $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
-          for(var i = 0; i < 3; i++) {
-            if(data[i].href.length > 70) {
-              data[i].href = data[i].href.substr(0, 70) + " ...";
-            }
-            $('#link-suggestions').append($([
-              '<div class="link-suggestion">',
-              '<div class="link-suggestion-title">' + data[i].title + '</div>',
-              '<div class="link-suggestion-href">' + data[i].href + '</div>',
-              '</div>'
-            ].join('')));
-          }
-          $('.link-suggestion').click(function() {
-            var href = $(this).find('.link-suggestion-href');
-            $('#tag-editor-input').val(href.text());
-            budding.ui.handlers.tag_editor_input_change();
-          });
-          $('#link-suggestions').show();
-        });
-        $('#tag-editor-input').show();
-      } else {
-        budding.ui.current_tag_editor_tag = null;
-        $(this).removeClass('editor-tag-selected');
-      }
-    });
-    $('#tag-editor-input').hide();
-    tag_editor.show();
-  }
 };
-
-budding.render_link_editor.render_links = function(content) {
-  var links = budding.utils.parse_tags(content);
-  if(links.length) {
-    var tag_editor = $('#tag-editor-box').detach();
-    var tag_editor_links = tag_editor.find('#tag-editor-tags');
-    var content, tag_id;
-    for(var i = 0, len = links.length; i < len; i++) {
-      content = links[i].content.replace(' ', '&nbsp;');
-      tag_id = ['editor-tag-', i].join('');
-      tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
-      budding.ui.tag_editor_links.list.push(links[i]);
-      budding.ui.tag_editor_links[tag_id] = links[i];
-    }
-    $('#text-block-' + budding.ui.current_text_block).before(tag_editor);
-    return tag_editor;
-  } else {
-    return false;
-  }
-};
-
-budding.render_link_editor.update_links = function(content) {
-  var links = budding.utils.parse_tags(content);
-  var tag_id;
-  for(var i = 0, len = links.length; i < len; i++) {
-    tag_id = ['editor-tag-', i].join('');
-    budding.ui.tag_editor_links.list[i] = links[i];
-    budding.ui.tag_editor_links[tag_id] = links[i];
-  }
-}
 
 budding.update_live_preview = function() {
   clearTimeout(budding.ui.text_block_preview_hide_timeout);
@@ -476,7 +550,6 @@ budding.place_editor_controls_at_insertion_point.click_handler = function(contex
   
   budding.ui.insertion_point_index = parseInt(context.id().match(/(\d+)$/)[1]);
   
-  console.log(budding.ui.insertion_point_index == 0 && !budding.document.body[budding.ui.insertion_point_index]);
   if(budding.ui.insertion_point_index == 0 && !budding.document.body[budding.ui.insertion_point_index]) {
     $('#text-block-type-p, #text-block-type-h2, #text-block-type-blockquote').attr('checked', 'false');
     $('#text-block-type-h1').attr('checked', 'true');
@@ -518,13 +591,9 @@ budding.place_editor_controls_at_insertion_point.click_handler = function(contex
 
 budding.init = function() {
 
-  
-  budding.load_known_tags();
-  
+  this.load_known_tags();
   this.parse_text_blocks();
-  
   budding.ui.handlers.text_block_type_select();
-  
   budding.place_editor_controls_at_insertion_point(this.ui.insertion_point_index);
   
   $('.top-button').button();
@@ -538,38 +607,9 @@ budding.init = function() {
     window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
   });
   
-  $('#text-block-ta').keypress(function(e) {
-    if(e.which == 13) { // enter key
-      var ta_val = $('#text-block-ta').val();
-      var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
-      var empty = ta_val.match(/^\s*$/);
-      if(not_changed || empty) {
-        budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
-        return false;
-      }
-      budding.add_text_block(ta_val);
-      return false;
-    }
-  });
-  
-  $('#text-block-ta').keyup(function(e) {
-    budding.update_live_preview();
-    var ta_val = $('#text-block-ta').val();
-    var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
-    var empty = ta_val.match(/^\s*$/);
-    if(not_changed || empty) {
-      $('#button-raw-import').attr('disabled', 'disabled');
-      $('#text-block-type-buttonset').buttonset('refresh');
-    } else {
-      $('#button-raw-import').attr('disabled', '');
-      $('#text-block-type-buttonset').buttonset('refresh');
-    }
-  });
-  
   $('body').keydown(function(e) { 
     budding.ui.shiftKey = e.shiftKey;
   });
-  
   
   $('body').keyup(function() { 
     if(budding.ui.shiftKey) {
@@ -587,25 +627,13 @@ budding.init = function() {
     }
   });
   
-  $('#tag-editor-input').change(function() {
-    console.log("$('#tag-editor-input').change()");
-    var tag_id = budding.ui.current_tag_editor_tag;
-    if(tag_id != null) {
-      var link = budding.ui.tag_editor_links[tag_id];
-      link.href = $(this).val();
-      var text = $('#text-block-ta').val();
-      var a = text.substr(0, link.start_index);
-      var b = text.substr(link.end_index);
-      var link_as_html = link.as_html();
-      var result = a + link_as_html + b;
-      link.end_index = link.start_index + link_as_html.length;
-      budding.update_text_block(budding.ui.current_text_block, result);
-      $('#text-block-ta').val(result);
-      $('#text-block-' + budding.ui.current_text_block).html(result);      
-    }
-  });
-
   $('input[name=radio-text-block-type]').change(budding.ui.handlers.text_block_type_select);
+  
+  $('#text-block-ta').keypress(budding.ui.handlers.editor_textarea.keypress);
+  
+  $('#text-block-ta').keyup(budding.ui.handlers.editor_textarea.keyup);
+  
+  $('#tag-editor-input').change(budding.ui.handlers.link_editor_href_input.change);
   
   $('#editor-save').click(function() { 
     budding.save_story();
@@ -615,8 +643,6 @@ budding.init = function() {
     $('#text-block-ta').css('margin-top', '-5px');
     budding.place_editor_controls_at_insertion_point.click_handler($(this));
   });
-  
-  $('#tag-editor-input').change(budding.ui.handlers.tag_editor_input_change);
   
   $('#button-raw-import').click(function() {
     var ta_val = $('#text-block-ta').val();
@@ -634,7 +660,11 @@ budding.init = function() {
       }
     }
   });
-
+  
+  // refactored 2010-05-24
+  
+  
+  
 }
 
 $(document).ready(function(){
