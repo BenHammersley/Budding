@@ -37,7 +37,9 @@ budding.ui.clean_up_tag_editor = function() {
   budding.ui.tag_editor_links = {list: []};
   budding.ui.current_tag_editor_tag = null;
   budding.ui.tag_editor_enabled = false;
+  budding.ui.link_editor_href_input_last_value = null;
   $('#tag-editor-box').hide();
+  $('#tag-editor-input').hide();
   $('.editor-tag').remove();
   $('.link-suggestion').remove();
 };
@@ -75,7 +77,7 @@ budding.ui.clean_up_tag_editor = function() {
               $('#text-block-ta').focus();
               $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
               
-              budding.render_link_editor(text_block_id);
+              budding.render_link_editor(content);
               
             }
           }
@@ -114,35 +116,38 @@ budding.ui.clean_up_tag_editor = function() {
           }
           
           budding.ui.handlers.link_editor_href_input = {
-            change: function() {
-              var tag_id = budding.ui.current_tag_editor_tag;
-              if(tag_id != null) {
-                var link = budding.ui.tag_editor_links[tag_id];
-                link.href = $(this).val();
-                var text = $('#text-block-ta').val();
-                var a = text.substr(0, link.start_index);
-                var b = text.substr(link.end_index);
-                var link_as_html = link.as_html();
-                var result = a + link_as_html + b;
-                link.end_index = link.start_index + link_as_html.length;
-                budding.update_text_block(budding.ui.current_text_block, result);
-                $('#text-block-ta').val(result);
-                $('#text-block-' + budding.ui.current_text_block).html(result);
-                budding.render_link_editor.update_links(budding.document.body[budding.ui.current_text_block].text);
-                $('#button-raw-import').attr('disabled', 'disabled');
-                $('#text-block-type-buttonset').buttonset('refresh');
+            keyup: function(e) {
+              var current_value = $(this).val();
+              if(budding.ui.link_editor_href_input_last_value != current_value) {
+                var tag_id = budding.ui.current_tag_editor_tag;
+                if(tag_id != null) {
+                  var link = budding.ui.tag_editor_links[tag_id];
+                  link.href = current_value;
+                  var text = $('#text-block-ta').val();
+                  var a = text.substr(0, link.start_index);
+                  var b = text.substr(link.end_index);
+                  var link_as_html = link.as_html();
+                  var result = a + link_as_html + b;
+                  link.end_index = link.start_index + link_as_html.length;
+                  $('#text-block-ta').val(result);
+                  budding.ui.handlers.editor_textarea.keyup.call($('#text-block-ta'));
+                  $('#button-raw-import').attr('disabled', '');
+                  $('#text-block-type-buttonset').buttonset('refresh');
+                }
+                budding.ui.link_editor_href_input_last_value = current_value;
               }
             }
           };
           
           budding.ui.handlers.link_editor_link_button = {
             click: function() {
+              console.log('OH HAI');
+              $('#tag-editor-input').show();
               $('#tag-editor-input').val('');
               $('.link-suggestion').remove();
-              console.log("$('.link-suggestion').remove();");
-              $('.editor-tag').removeClass('editor-tag-selected');
               var tag_id = $(this).id();
               if(budding.ui.current_tag_editor_tag != tag_id) {
+                $('.editor-tag').removeClass('editor-tag-selected');
                 budding.ui.current_tag_editor_tag = tag_id;
                 $(this).addClass('editor-tag-selected');
                 var tag_obj = budding.ui.tag_editor_links[budding.ui.current_tag_editor_tag];
@@ -165,12 +170,13 @@ budding.ui.clean_up_tag_editor = function() {
                   $('.link-suggestion').click(function() {
                     var href = $(this).find('.link-suggestion-href');
                     $('#tag-editor-input').val(href.text());
-                    budding.ui.handlers.tag_editor_input_change();
+                    budding.ui.handlers.link_editor_href_input.keyup.call($('#tag-editor-input'));
                   });
                   $('#link-suggestions').show();
                 });
                 $('#tag-editor-input').show();
               } else {
+                $('#tag-editor-input').hide();
                 budding.ui.current_tag_editor_tag = null;
                 $(this).removeClass('editor-tag-selected');
               }
@@ -186,13 +192,12 @@ budding.ui.clean_up_tag_editor = function() {
               var total_current_links = budding.ui.tag_editor_links.list.length;
               for(var i = 0, len = links.length; i < len; i++) {
                 new_link = links[i];
-                
                 content = new_link.content.replace(' ', '&nbsp;');
                 tag_id = ['editor-tag-', i].join('');
                 if(budding.ui.tag_editor_enabled && i < total_current_links) {
                   var current_link = budding.ui.tag_editor_links.list[i];
                   if(current_link.content != new_link.content) {
-                    $('#editor-tag-' + i).html(content);
+                    $('#' + tag_id).html(content);
                     current_link.content = new_link.content;
                   }
                   current_link.start_index = new_link.start_index;
@@ -209,11 +214,13 @@ budding.ui.clean_up_tag_editor = function() {
               } else {
                 $('#text-block-preview').before(tag_editor);
               }
+              $('.editor-tag').unbind('click', budding.ui.handlers.link_editor_link_button.click);
               $('.editor-tag').click(budding.ui.handlers.link_editor_link_button.click);
-              $('#tag-editor-input').hide();
               tag_editor.show();
               budding.ui.tag_editor_enabled = true;
+              $(budding.ui.current_focus).focus();
             } else {
+              console.log('budding.ui.clean_up_tag_editor();');
               budding.ui.clean_up_tag_editor();
               return false;
             }
@@ -248,7 +255,6 @@ budding.utils.parse_tags = function(s) {
     c = s.charAt(i);
     if(c == '<') {
       var tag = extract_tag(i, s.substr(i));
-      console.log('tag.end: ' + tag.end);
       if(tag) {
         if(tag.start) {
           tags.push(tag);
@@ -268,12 +274,11 @@ budding.utils.parse_tags = function(s) {
       tags[current_tag].content.push(c);
     }   
   }
+  var closed_tags = [];
   for(var i = 0, len = tags.length; i < len; i++) {
-    if(typeof tags[i].closed == 'undefined') {
-      return false;
-    }
+    if(tags[i].closed) closed_tags.push(tags[i]);
   }
-  return tags;
+  return closed_tags;
 }
 
 budding.utils.parse_tags.Tag = function() {
@@ -414,7 +419,7 @@ budding.add_text_block = function(text, raw_text_import) {
     for(var i = 0, len = classes.length; i < len; i++) {
       p.removeClass('text-block-' + classes[i]);
     }
-    p.addClass('text-block-' + tag);
+    p.addClass('text-block-' + text_block_hash.tag);
     budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
     // budding.make_fragments_clickable();
   } else {
@@ -633,7 +638,11 @@ budding.init = function() {
   
   $('#text-block-ta').keyup(budding.ui.handlers.editor_textarea.keyup);
   
-  $('#tag-editor-input').change(budding.ui.handlers.link_editor_href_input.change);
+  $('#text-block-ta').focus(function() { budding.ui.current_focus = '#text-block-ta'; });
+
+  $('#tag-editor-input').focus(function() { budding.ui.current_focus = '#tag-editor-input'; });
+
+  $('#tag-editor-input').keyup(budding.ui.handlers.link_editor_href_input.keyup);
   
   $('#editor-save').click(function() { 
     budding.save_story();
