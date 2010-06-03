@@ -73,8 +73,11 @@ body {
   padding-top: 100px;
   color: #F26722;
   font-family: times, Times New Roman, times-roman, georgia, serif;
-  font-size: 18px;
-  width: 870px;
+  font-size: 16px;
+  width: 875px;
+}
+#blurb a {
+  color: #F26722;
 }
 
 #blurb span.blurb {

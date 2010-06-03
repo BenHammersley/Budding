@@ -17,6 +17,7 @@
   padding-left: 20px;
   margin: 0px;
   background: #ccc;
+  display: none;
 }
 
 #controls:after {  
@@ -75,6 +76,7 @@
   float: left;
 }
 #auth {
+  margin-left: 20px;
   float: left;
 }
 #banner-3:after {
@@ -91,3 +93,35 @@
   text-shadow: 0px 2px 3px #555;
   background: #ececec;
 }
+#authform-submit-button {
+  margin-left: 10px;
+  text-shadow: 0px 2px 3px #555;
+}
+
+/* blurb (differs from common.css) */
+
+#blurb {
+  clear: both;
+  padding: 0px;
+  margin: 0px;
+  color: #F26722;
+  font-family: times, Times New Roman, times-roman, georgia, serif;
+  font-size: 16px;
+  width: 875px;
+}
+
+#blurb a {
+  color: #F26722;
+}
+
+#blurb span.blurb {
+  display: block; 
+  padding: 10px;
+  border-top: thick solid #F26722;
+  background: #40404F;
+}
+
+#blurb a:visited { 
+  color: #F26722;
+}
+

@@ -8,6 +8,10 @@
     <link type="text/css" href="/css/index.css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript"> 
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script> 
     <script type="text/javascript">
         
     jQuery.fn.id = function() {  
@@ -33,7 +37,7 @@
             }
           },
           signup: {
-            '#input-email': {color: '#bbb', name: 'signup_email', placeholder: "Your e-mail", 'class': 'ui-widget'},
+            '#input-email': {color: '#bbb', name: 'entry.0.single', placeholder: "Interested? Enter your e-mail and we'll get in touch", 'class': 'ui-widget'},
             '#input-password': {color: '#bbb', name: 'signup_password', placeholder: "Your password", 'class': 'ui-widget'},
             '#info': {html: "Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed."}
           }
@@ -42,10 +46,12 @@
           '#signup-button': function() {
             $('#signup-button').attr('checked', true);
             $('#auth').buttonset('refresh');
-            $('#authform').attr('action', '/signup');
+            $('#authform').attr('action', 'https://spreadsheets.google.com/formResponse?formkey=dF9kWE5NaWtKaGNDcS1jQ3dWOFI5cUE6MA&amp;ifq');
             $('#input-email').attr('name', budding.ui.forms.signup['#input-email'].name);
+            $('#input-email').attr('placeholder', budding.ui.forms.signup['#input-email'].placeholder);
             $('#input-password-login').hide();
-            $('#input-password-signup').show();
+            // $('#input-password-signup').show();
+            $('#input-email').css('width', '338px');
             $('#info').removeClass('server_error');
             $('#info').html(budding.ui.forms.signup['#info'].html);
             budding.ui.form = 'signup';
@@ -56,8 +62,10 @@
             $('#authform').attr('action', '/login');
             $('#input-email').attr('name', budding.ui.forms.login['#input-email'].name);
             $('#input-password-login').attr('name', budding.ui.forms.login['#input-password'].name);
-            $('#input-password-signup').hide();
+            $('#input-email').attr('placeholder', budding.ui.forms.login['#input-email'].placeholder);
+            // $('#input-password-signup').hide();
             $('#input-password-login').show();
+            $('#input-email').css('width', '141px');
             $('#info').removeClass('server_error');
             $('#info').html(budding.ui.forms.login['#info'].html);
             $('#keep_signed_in').click(function() {
@@ -137,12 +145,12 @@
               <input type="text" name="signup_email" id="input-email" class="ui-widget" placeholder="Your email">
               <input name="signup_password" id="input-password-signup" class="ui-widget" placeholder="Your password">
               <input name="password" type="password" id="input-password-login" class="ui-widget" placeholder="Your password">
-              <input id="authform-submit-button" type="button" style="margin-left: 10px;"><label for="authform-submit-button">Go</label>
+              <input id="authform-submit-button" type="submit" value="Go">
     		    </form>
     		  </div>
         </div>
 
-  	    <p id="banner-4">Print isn't web, web isn't mobile, and mobile devices aren't hardbacks. They all tell stories in different ways. <b>Budding</b> makes it easy to write, edit, enrich and archive your work across any platform. <b>Budding</b> works with each medium's specific qualities, removing complexity and leaving what readers want: beautiful storytelling.</p>
+  	    <p id="banner-4">Print isn't web, web isn't mobile, and mobile devices aren't hardbacks. They all tell stories in different ways. Budding makes it easy to <b>write</b>, <b>edit</b>, <b>enrich</b> and <b>archive</b> your work across any platform. Budding works with each medium's specific qualities, removing complexity and leaving what readers want: <b>beautiful storytelling</b>.</p>
       </div>
       <div id="controls" class="ui-corner-bottom">
         <% if flash.info %>
@@ -152,7 +160,17 @@
         <% end %>
   		</div>
 
-      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
+      <div id="blurb">
+        <span class="blurb ui-corner-bottom">
+        <b>Budding</b> is coming to you from the people at <a href="http://dangerousprecedent.com">Dangerous Precedent Ltd</a>. Email us at <a href="mailto:info@dangerousprecedent.com">info@dangerousprecedent.com</a>.
+        </span>
+      </div>
     </div>
   </body>
+  <script type="text/javascript"> 
+  try {
+    var pageTracker = _gat._getTracker("UA-1853800-6");
+    pageTracker._trackPageview();
+  } catch(err) {}
+  </script> 
 </html>
