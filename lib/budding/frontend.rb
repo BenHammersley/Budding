@@ -140,6 +140,8 @@ module Budding
     end
     
     post '/tagger' do
+      # http://ai-depot.com/articles/the-easy-way-to-extract-useful-text-from-arbitrary-html/
+      # http://www.savedmyday.com/2008/04/25/how-to-extract-text-from-html-using-rubyhpricot/
       url = params[:url] # testing with http://en.wikipedia.org/wiki/Special:Export/Apple_Inc.
       is_wikipedia = url.match(/^http:\/\/([^.]*).?wikipedia\.org\/wiki\/(.*)/)
       firefox_user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6 (.NET CLR 3.5.30729)'

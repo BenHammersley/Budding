@@ -121,27 +121,37 @@
   </head>
   <body>
     <div id="top" class="ui-corner-top">
-      <h1>Budding</h1>
+      <h1>Welcome to Budding</h1>
       <span style="margin-left: 5px; margin-top: -5px; font-weight: bold; text-decoration: underline; color: #A52A2A;">An innovative authoring tool for multi-platform content.</span>
     </div>
-    <div id="controls" class="ui-corner-bottom">
-      <% if flash.info %>
-      <span id="info" class="server_error"><%= flash.info %></span>
-      <% else %>
-      <span id="info">Signing up is as easy as logging in: we'll send you an e-mail with your password, but no activation is needed.</span>
-      <% end %>
-		</div>
     <div id="content">
-		  <div id="auth">
-		    <form id="authform" action="/login" method="post" >
-          <input type="radio" id="login-button" name="auth"><label for="login-button">Login</label>
-          <input type="radio" id="signup-button" name="auth"><label for="signup-button">Sign up</label>
-          <input type="text" name="signup_email" id="input-email" class="ui-widget" placeholder="Your email">
-          <input name="signup_password" id="input-password-signup" class="ui-widget" placeholder="Your password">
-          <input name="password" type="password" id="input-password-login" class="ui-widget" placeholder="Your password">
-          <input type="submit" style="margin-left: 10px;" value="Go.">
-		    </form>
-		  </div>
+      <div id="banner">
+        <p id="banner-1"><b>Budding</b> helps writers and editors deliver content easily across multiple platforms.</p> 
+        <p id="banner-2">Publishing in print? And online? And for apps, ebooks, iPads and the next big thing?<p> 
+        <div id="banner-3">
+          <p id="banner-3-text"><b>Budding</b> is for you.</p>
+    		  <div id="auth">
+    		    <form id="authform" action="/login" method="post" >
+              <input type="radio" id="login-button" name="auth"><label for="login-button">Login</label>
+              <input type="radio" id="signup-button" name="auth"><label for="signup-button">Sign up</label>
+              <input type="text" name="signup_email" id="input-email" class="ui-widget" placeholder="Your email">
+              <input name="signup_password" id="input-password-signup" class="ui-widget" placeholder="Your password">
+              <input name="password" type="password" id="input-password-login" class="ui-widget" placeholder="Your password">
+              <input id="authform-submit-button" type="button" style="margin-left: 10px;"><label for="authform-submit-button">Go</label>
+    		    </form>
+    		  </div>
+        </div>
+
+  	    <p id="banner-4">Print isn't web, web isn't mobile, and mobile devices aren't hardbacks. They all tell stories in different ways. <b>Budding</b> makes it easy to write, edit, enrich and archive your work across any platform. <b>Budding</b> works with each medium's specific qualities, removing complexity and leaving what readers want: beautiful storytelling.</p>
+      </div>
+      <div id="controls" class="ui-corner-bottom">
+        <% if flash.info %>
+        <span id="info" class="server_error"><%= flash.info %></span>
+        <% else %>
+        <span id="info">Signing up is as easy as logging in: we'll send you an e-mail with your password, but no activation is needed.</span>
+        <% end %>
+  		</div>
+
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>
