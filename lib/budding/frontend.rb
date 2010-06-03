@@ -70,9 +70,9 @@ module Budding
       
     end
     
-    use Rack::Auth::Basic do |username, password|
-      username == 'budding' && password == 'zomgwtfl0lz'
-    end
+    # use Rack::Auth::Basic do |username, password|
+    #   username == 'budding' && password == 'zomgwtfl0lz'
+    # end
     
     use Rack::Flash, :accessorize => [:info, :form]
 
