@@ -45,6 +45,11 @@ namespace :user do
     Budding::Database::User.find({:email => ENV['EMAIL']}).delete()
     puts("Removed user '#{ENV['EMAIL']}'.")
   end
+  task :list do
+    for user in Budding::Database::User.all
+      puts(user.email)
+    end
+  end
 end
 
 task :web do
