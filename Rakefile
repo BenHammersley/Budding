@@ -36,6 +36,17 @@ task :setup_db => :setup_environment do
   Budding::Database::setup()
 end
 
+namespace :user do
+  task :add do
+    Budding::Database::User.new({:email => ENV['EMAIL'], :password => ENV['PASSWORD']}).save()
+    puts("Added user '#{ENV['EMAIL']}' with password 'ENV['PASSWORD']'.")
+  end
+  task :remove do
+    Budding::Database::User.find({:email => ENV['EMAIL']}).delete()
+    puts("Removed user '#{ENV['EMAIL']}'.")
+  end
+end
+
 task :web do
   hostname = {'staging' => 'li147-10.members.linode.com', 'local' => 'localhost'}[ENV.fetch('BUDDING_ENV', 'local')]
   Budding::Frontend::run!(:host => hostname, :port => 8080)
