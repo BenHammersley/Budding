@@ -39,7 +39,7 @@ end
 namespace :user do
   task :add do
     Budding::Database::User.new({:email => ENV['EMAIL'], :password => ENV['PASSWORD']}).save()
-    puts("Added user '#{ENV['EMAIL']}' with password 'ENV['PASSWORD']'.")
+    puts("Added user '#{ENV['EMAIL']}' with password '#{ENV['PASSWORD']}'.")
   end
   task :remove do
     Budding::Database::User.find({:email => ENV['EMAIL']}).delete()
