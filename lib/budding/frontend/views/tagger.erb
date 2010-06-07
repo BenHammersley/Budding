@@ -75,6 +75,9 @@
     
     $(document).ready(function(){
       budding.init();
+      $('.top-button').click(function(elem) {
+        window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
+      });
     });
     
     </script>
