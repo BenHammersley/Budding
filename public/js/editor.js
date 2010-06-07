@@ -49,17 +49,24 @@ budding.ui.handlers.text_block = {
     
     $('#button-raw-import').val('Update');
     
-    $('.text-block').css('margin-bottom', '5px');
+    $('#text-block-preview').css('margin-top', '0px');
+    
+    // $('#editor-controls').css('margin-bottom', '5px');
     $('.text-block').show();
     
     budding.ui.clean_up_tag_editor();
-    
-    $('.insertion-point').show();
     
     var editor_controls = $('#editor-controls').detach();
     $(this).after(editor_controls);
     
     var text_block_id = parseInt($(this).id().match(/(\d+)$/)[1]);
+    
+    $('.insertion-point').css('margin-bottom', '0px');
+    var insertion_point_above = $('#insertion-point-' + (text_block_id-1));
+    if(insertion_point_above.length) {
+      insertion_point_above.css('margin-bottom', '5px');
+    }
+    $('.insertion-point').show();
     
     $('#text-block-' + text_block_id).hide();
     
@@ -554,8 +561,9 @@ budding.place_editor_controls_at_insertion_point.click_handler = function(contex
   $('#text-block-preview').hide();
   budding.ui.last_text_area_val = '';
   $('#button-raw-import').val('Add');
-  // $('.text-block').css('margin-bottom', '5px');
-  $('#editor-controls').css('margin-bottom', '5px');
+  $('#editor-controls').css('margin-top', '10px');
+  $('#text-block-preview').css('margin-top', '5px');
+  $('#text-block-preview').css('margin-bottom', '-5px');
   $('.text-block').show();
   
   context = $(context);  
@@ -656,7 +664,6 @@ budding.init = function() {
   });
   
   $('.insertion-point').click(function() {
-    $('#text-block-ta').css('margin-top', '-5px');
     budding.place_editor_controls_at_insertion_point.click_handler($(this));
   });
   
