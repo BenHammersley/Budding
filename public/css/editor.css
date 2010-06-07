@@ -34,7 +34,7 @@
 .text-block {
   position: relative;
   font-family: Georgia, times;
-  margin: 5px 0px 5px 0px;
+  margin: 5px 0px 0px 0px;
   padding: 5px 5px 5px 5px;
 }
 
@@ -47,21 +47,22 @@
 }
 
 .text-block-p {	    
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .text-block-h1 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
 }
 
 .text-block-h2 {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .text-block-blockquote {
   padding: 5px 10px 5px 5px;
   font-style: italic;
+  font-size: 16px;
 }
 
 .insertion-point {
@@ -198,7 +199,7 @@
   margin-bottom: 20px;
   background-color: #eee;
   border: 1px solid #bbb;
-  margin: 0px 0px 10px -5px;
+  margin: 0px 0px 10px 0px;
 }
 
 div.tag-editor-label {
