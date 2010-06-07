@@ -104,7 +104,7 @@ budding.ui.handlers.editor_textarea = {
   keypress: function(e) {
     if(e.which == 13) { // enter key
       var ta_val = $('#text-block-ta').val();
-      var not_changed = (budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val);
+      var not_changed = !budding.has_text_block_changed();
       var empty = ta_val.match(/^\s*$/);
       if(not_changed || empty) {
         budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
@@ -437,12 +437,14 @@ budding.add_text_block = function(text, raw_text_import) {
   
   if(budding.ui.text_block_selected) {
     budding.update_text_block(budding.ui.current_text_block, text);
-    $('#text-block-' + budding.ui.current_text_block).html(text);
+    p = $('#text-block-' + budding.ui.current_text_block);
+    p.html(text);
     var classes = ['h1', 'h2', 'p', 'blockquote'];
     for(var i = 0, len = classes.length; i < len; i++) {
       p.removeClass('text-block-' + classes[i]);
     }
     p.addClass('text-block-' + text_block_hash.tag);
+    console.log("p.attr('class'): " + p.attr('class'));
     budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
     // budding.make_fragments_clickable();
   } else {
@@ -480,6 +482,17 @@ budding.update_text_block = function(text_block_id, text_block_value) {
   budding.document.body[text_block_id].text = text_block_value;
   budding.document.body[text_block_id].tag = budding.ui.current_text_block_type;
 };
+
+budding.has_text_block_changed = function() {
+  if(budding.ui.text_block_selected) {
+    var ta_val = $('#text-block-ta').val();
+    var content_changed = budding.document.body[budding.ui.current_text_block].text != ta_val;
+    var tag_changed = budding.document.body[budding.ui.current_text_block].tag != budding.ui.current_text_block_type;
+    return content_changed || tag_changed;
+  } else {
+    return false;
+  }
+}
 
 budding.save_story = function() {
   if(this.document.id != null)
@@ -679,24 +692,26 @@ budding.init = function() {
   
   $('#button-raw-import').click(function() {
     var ta_val = $('#text-block-ta').val();
-    if(budding.ui.text_block_selected && budding.document.body[budding.ui.current_text_block].text == ta_val) {
+    if(budding.ui.text_block_selected) {
+      var not_changed = !budding.has_text_block_changed();
+      var empty = ta_val.match(/^\s*$/);
+      if(not_changed || empty) {
+        budding.place_editor_controls_at_insertion_point(budding.ui.insertion_point_index);
+        return;
+      }
+      budding.add_text_block(ta_val);
       return;
-    } else if(ta_val.match(/^\s*$/)) {
-      return;
-    }
-    var text_block, text_blocks = ta_val.replace(/\n{2,}/, '\n').split(/\n/);
-    var j = 0;
-    for(var i = 0, len = text_blocks.length; i < len; i++) {
-      text_block = $.trim(text_blocks[i]);
-      if(text_block.length) {
-        budding.add_text_block(text_blocks[i]);
+    } else {
+      var text_block, text_blocks = ta_val.replace(/\n{2,}/, '\n').split(/\n/);
+      var j = 0;
+      for(var i = 0, len = text_blocks.length; i < len; i++) {
+        text_block = $.trim(text_blocks[i]);
+        if(text_block.length) {
+          budding.add_text_block(text_blocks[i]);
+        }
       }
     }
   });
-  
-  // refactored 2010-05-24
-  
-  
   
 }
 
