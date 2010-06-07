@@ -24,7 +24,7 @@
   background: #F0E68C;
   position: relative;
   font-family: Georgia, times;
-  margin: -5px 5px 5px -5px;
+  margin: -5px 0px 5px 0px;
   padding: 5px 5px 5px 5px;
   min-height: 17px;
 }
@@ -34,7 +34,7 @@
 .text-block {
   position: relative;
   font-family: Georgia, times;
-  margin: 5px 5px 5px -5px;
+  margin: 5px 0px 5px 0px;
   padding: 5px 5px 5px 5px;
 }
 
@@ -90,7 +90,6 @@
 
 #text-block-type-buttonset  {
   float: left;
-  margin-left: -5px;
   font-size: 11px;
   width: 500px;
 }
@@ -105,7 +104,6 @@
 }
 
 #editor-save {
-  margin-left: -5px;
   margin-top: 10px;
   font-size: 12px;
 }
@@ -124,7 +122,7 @@
   outline: 0;
   width: 857px;
   height: 70px;
-  margin: -5px 0px 0px -5px;
+  margin: -5px 0px 0px 0px;
   padding: 5px;
 } 
 
@@ -263,7 +261,6 @@ div.tag-editor-label {
 
 #editor-controls-top {
   display: none;
-  margin-left: -5px;
   margin-bottom: 10px;
 }
 
