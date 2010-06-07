@@ -265,6 +265,16 @@ budding.ui.handlers.text_block_type_select = function() {
   }
   text_block_preview.addClass('text-block-' + tag);
   budding.ui.current_text_block_type = tag;
+  if(budding.ui.text_block_selected) {
+    var tag = budding.document.body[budding.ui.current_text_block].tag;
+    if(tag != budding.ui.current_text_block_type) {
+      $('#button-raw-import').attr('disabled', '');
+      $('#text-block-type-buttonset').buttonset('refresh'); 
+    } else {
+      $('#button-raw-import').attr('disabled', 'disabled');
+      $('#text-block-type-buttonset').buttonset('refresh');       
+    }
+  }
 };
 
 budding.utils.parse_tags = function(s) {
