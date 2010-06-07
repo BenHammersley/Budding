@@ -72,7 +72,6 @@ budding.ui.handlers.text_block = {
         $('#text-block-type-' + classes[i]).attr('checked', 'false');
       } 
     }
-    console.log('tag: ' + tag);
     $('#text-block-type-' + tag).attr('checked', 'true');
     $('#text-block-type-buttonset').buttonset('refresh');
     budding.ui.handlers.text_block_type_select();
@@ -90,8 +89,6 @@ budding.ui.handlers.text_block = {
     $('#text-block-ta')[0].setSelectionRange(content.length, content.length);
     
     budding.render_link_editor(content);
-    
-    console.log(budding.ui.current_text_block_type);
   }
 }
 
@@ -159,7 +156,6 @@ budding.ui.handlers.link_editor_href_input = {
 
 budding.ui.handlers.link_editor_link_button = {
   click: function() {
-    console.log('OH HAI');
     $('#tag-editor-input').show();
     $('#tag-editor-input').val('');
     $('.link-suggestion').remove();
@@ -358,7 +354,6 @@ budding.document.body.single_string = function() {
 };
 
 budding.update_live_preview = function() {
-  console.log(budding.ui.current_text_block_type);
   clearTimeout(budding.ui.text_block_preview_hide_timeout);
   var ta_val = $('#text-block-ta').val();
   var parsed_tags = budding.utils.parse_tags(ta_val);
