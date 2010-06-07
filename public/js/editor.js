@@ -64,6 +64,18 @@ budding.ui.handlers.text_block = {
     $('#text-block-' + text_block_id).hide();
     
     var content = budding.document.body[text_block_id].text;
+    var tag = budding.document.body[text_block_id].tag;
+
+    var classes = ['h1', 'h2', 'blockquote', 'p'];
+    for(var i = 0, len = classes.length; i < len; i++) {
+      if(classes[i] != tag) {
+        $('#text-block-type-' + classes[i]).attr('checked', 'false');
+      } 
+    }
+    console.log('tag: ' + tag);
+    $('#text-block-type-' + tag).attr('checked', 'true');
+    $('#text-block-type-buttonset').buttonset('refresh');
+    budding.ui.handlers.text_block_type_select();
     
     $('#editor-controls').before($('#text-block-preview').detach());
     $('#text-block-preview').html(content);
@@ -79,6 +91,7 @@ budding.ui.handlers.text_block = {
     
     budding.render_link_editor(content);
     
+    console.log(budding.ui.current_text_block_type);
   }
 }
 
@@ -225,7 +238,6 @@ budding.render_link_editor = function(text) {
     budding.ui.tag_editor_enabled = true;
     $(budding.ui.current_focus).focus();
   } else {
-    console.log('budding.ui.clean_up_tag_editor();');
     budding.ui.clean_up_tag_editor();
     return false;
   }
@@ -346,6 +358,7 @@ budding.document.body.single_string = function() {
 };
 
 budding.update_live_preview = function() {
+  console.log(budding.ui.current_text_block_type);
   clearTimeout(budding.ui.text_block_preview_hide_timeout);
   var ta_val = $('#text-block-ta').val();
   var parsed_tags = budding.utils.parse_tags(ta_val);
@@ -557,12 +570,12 @@ budding.place_editor_controls_at_insertion_point.click_handler = function(contex
   if(budding.ui.insertion_point_index == 0 && !budding.document.body[budding.ui.insertion_point_index]) {
     $('#text-block-type-p, #text-block-type-h2, #text-block-type-blockquote').attr('checked', 'false');
     $('#text-block-type-h1').attr('checked', 'true');
-    $('#text_block_type_select').buttonset('refresh');
+    $('#text-block-type-buttonset').buttonset('refresh');
     budding.ui.current_text_block_type = 'h1';
   } else {
     $('#text-block-type-h1, #text-block-type-h2, #text-block-type-blockquote').attr('checked', 'false');
     $('#text-block-type-p').attr('checked', 'true');
-    $('#text_block_type_select').buttonset('refresh');
+    $('#text-block-type-buttonset').buttonset('refresh');
     budding.ui.current_text_block_type = 'p';
   }
   var text_block_preview = $('#text-block-preview');
