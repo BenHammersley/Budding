@@ -32,7 +32,7 @@
 /* text-block */
 
 .text-block {
-/*  border: 1px solid #ccc;*/
+  border: 1px solid #ccc;
   position: relative;
   font-family: Georgia, times;
   margin: 0px 0px 0px 0px;
@@ -141,7 +141,8 @@
 #tag-editor-box {
   position: relative;
   width: 100%;
-  margin-top: -5px;
+  margin-top: 0px;
+  margin-bottom: -10px;
 }
 
 #link-suggestions {

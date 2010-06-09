@@ -50,6 +50,8 @@ budding.ui.handlers.text_block = {
     $('#button-raw-import').val('Update');
     
     $('#text-block-preview').css('margin-top', '0px');
+    $('#tag-editor-box').css('margin-top', '0px');
+
     
     // $('#editor-controls').css('margin-bottom', '5px');
     $('.text-block').show();
@@ -587,6 +589,7 @@ budding.place_editor_controls_at_insertion_point.click_handler = function(contex
   $('#editor-controls').css('margin-top', '10px');
   $('#text-block-preview').css('margin-top', '5px');
   $('#text-block-preview').css('margin-bottom', '-5px');
+  $('#tag-editor-box').css('margin-top', '5px');
   $('.text-block').show();
   
   context = $(context);  
