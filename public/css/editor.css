@@ -15,6 +15,7 @@
 }
 
 #editor {
+  margin-top: 5px;
   width: 870px;
   float: left;
 }
@@ -32,7 +33,6 @@
 /* text-block */
 
 .text-block {
-  border: 1px solid #ccc;
   position: relative;
   font-family: Georgia, times;
   margin: 0px 0px 0px 0px;
@@ -264,4 +264,63 @@ div.tag-editor-label {
 
 #tag-type-buttonset {
   font-size: 11px;
+}
+
+#metadata-box {
+}
+
+#metadata-box:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
+#short-summary-box {
+  float: left;
+  width: 413px;
+  margin-right: 5px;
+}
+
+#short-summary-textarea {
+  width: 395px;
+  height: 163px;
+  font-size: 16px;
+  padding: 5px;
+}
+
+#metadata-fields-box {
+  float: left;
+  width: 450px;
+}
+
+.metadata-field-box {
+  border: 1px solid #bbb;
+}
+
+.metadata-field-box:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
+.metadata-field-label {
+  float: left;
+  background: #eee;
+  padding: 5px;
+  width: 140px;
+  border-right: 1px solid #bbb;
+  font-size: 15px;
+  text-align: right;
+}
+
+.metadata-field-content {
+  float: left;
+  padding: 5px;
+  width: 90px;
 }

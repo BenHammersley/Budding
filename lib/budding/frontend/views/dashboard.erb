@@ -52,7 +52,7 @@
         <% if @documents.empty? %>
         You don't have any documents yet. <a href="/editor">Should we get you started?</a>
         <% else %>
-        Listing <%= @documents.length %> document<%= @documents.length == 1 ? '': 's' %>. <a href="/editor">Start a new one?</a>
+        Listing <%= @documents.length %> document<%= @documents.length == 1 ? '' : 's' %>. <a href="/editor">Start a new one?</a>
         <% end %>
       </span>
       <% end %>

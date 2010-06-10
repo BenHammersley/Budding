@@ -22,8 +22,41 @@
       <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
     <div id="controls" class="ui-corner-bottom">
+      <div id="document-title"></div>
+      <div id="export-buttons"></div>
     </div>
     <div id="content">
+     <div id="metadata-box">
+        <div id="short-summary-box">
+          <textarea id="short-summary-textarea" placeholder="Click here to add a short summary"></textarea>
+        </div>
+        <div id="metadata-fields-box">
+          <div id="author-box" class="metadata-field-box ui-corner-top">
+            <div id="author-label" class="metadata-field-label">Author</div> 
+            <div id="author-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="author-location-box" class="metadata-field-box" style="margin-top: -2px;">
+            <div id="author-location-label" class="metadata-field-label">Author Location</div> 
+            <div id="author-location-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="language-box" class="metadata-field-box" style="margin-top: -2px;">
+            <div id="language-label" class="metadata-field-label">Language</div> 
+            <div id="language-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="keywords-box" class="metadata-field-box" style="margin-top: -2px;">
+            <div id="keywords-label" class="metadata-field-label">Keywords</div> 
+            <div id="keywords-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="last-modified-box" class="metadata-field-box" style="margin-top: -2px;">
+            <div id="last-modified-label" class="metadata-field-label">Last modified</div> 
+            <div id="last-modified-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="wordcount-box" class="metadata-field-box ui-corner-bottom" style="margin-top: -2px;">
+            <div id="wordcount-label" class="metadata-field-label">Wordcount</div> 
+            <div id="wordcount-content" class="metadata-field-content">...</div>
+          </div>
+        </div>
+      </div>
       <div id="editor">
         <div id="text-blocks">
           <div id="editor-controls-top">
