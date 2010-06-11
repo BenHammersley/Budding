@@ -22,13 +22,40 @@
       <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
     <div id="controls" class="ui-corner-bottom">
-      <div id="document-title"></div>
-      <div id="export-buttons"></div>
+      <div id="language-box">
+        <select name="language" id="language-box-dropdown">
+        <% for language in @languages %>
+          <% 
+          selected = ""
+          if @document.language == language
+            selected_language = language.language_id
+          else
+            selected_language = 10
+          end
+          %>
+          <% if language.language_id == selected_language; selected = "selected"; end %>
+          <%= "<option #{selected} value=\"#{language.language_id}\">#{language.name}</option>" %>
+        <% end %>
+        </select>
+      </div>
+      <div id="document-title-box" class="ui-corner-left ui-corner-right">Use first paragraph as title</div>
+      <div id="center-buttons-box">
+        <div id="center-buttons-buttonset">
+          <div id="button-save" class="ui-corner-left">Save</div>
+          <div id="button-share" class="ui-corner-right">Share</div>
+        </div>
+      </div>
+      <div id="export-buttons-box">
+        <div id="export-buttons-label">Export as</div>
+        <div id="button-export-html" class="ui-corner-left">HTML</div>
+        <div id="button-export-pdf" class="ui-corner-right">PDF</div>
+        <div id="button-export-doc" class="ui-corner-right">DOC</div>          
+      </div>
     </div>
     <div id="content">
      <div id="metadata-box">
         <div id="short-summary-box">
-          <textarea id="short-summary-textarea" placeholder="Click here to add a short summary"></textarea>
+          <textarea id="short-summary-textarea" placeholder="Click here to add a summary"></textarea>
         </div>
         <div id="metadata-fields-box">
           <div id="author-box" class="metadata-field-box ui-corner-top">
@@ -39,21 +66,17 @@
             <div id="author-location-label" class="metadata-field-label">Author Location</div> 
             <div id="author-location-content" class="metadata-field-content">...</div>
           </div>
-          <div id="language-box" class="metadata-field-box" style="margin-top: -2px;">
-            <div id="language-label" class="metadata-field-label">Language</div> 
-            <div id="language-content" class="metadata-field-content">...</div>
-          </div>
           <div id="keywords-box" class="metadata-field-box" style="margin-top: -2px;">
             <div id="keywords-label" class="metadata-field-label">Keywords</div> 
             <div id="keywords-content" class="metadata-field-content">...</div>
           </div>
-          <div id="last-modified-box" class="metadata-field-box" style="margin-top: -2px;">
-            <div id="last-modified-label" class="metadata-field-label">Last modified</div> 
-            <div id="last-modified-content" class="metadata-field-content">...</div>
-          </div>
           <div id="wordcount-box" class="metadata-field-box ui-corner-bottom" style="margin-top: -2px;">
             <div id="wordcount-label" class="metadata-field-label">Wordcount</div> 
             <div id="wordcount-content" class="metadata-field-content">...</div>
+          </div>
+          <div id="last-modified-box" class="metadata-field-box" style="margin-top: -2px;">
+            <div id="last-modified-label" class="metadata-field-label">Last modified</div> 
+            <div id="last-modified-content" class="metadata-field-content">...</div>
           </div>
         </div>
       </div>

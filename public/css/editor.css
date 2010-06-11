@@ -1,6 +1,17 @@
 
 /* controls */
 
+#controls {
+  z-index: -1;
+  font-size: 14px;
+  padding: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  margin: 0px 0px 0px 0px;
+  background: #ececec;
+}
+
 #controls label {
   font-size: 12px;
 }
@@ -12,6 +23,98 @@
 #controls li {
   margin-left: 25px;
   list-style-type: square;
+}
+
+#controls:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+#language-box {
+  float: left;
+  margin-right: 10px;
+  width: 210px;
+}
+#language-box-dropdown {
+  font-size: 14px;
+  height: 29px;
+  width: 200px;
+}
+#document-title-box {
+  width: 175px;
+  float:left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+  margin-right: 20px;
+  text-align: center;
+}
+#center-buttons-box {
+  width: 120px;
+  float:left;
+}
+
+#center-buttons-box:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
+#button-save {
+  float: left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+  margin-right: -2px;
+}
+
+#button-share {
+  float: left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+}
+
+#export-buttons-box {
+  width: 300px;
+  float:left;
+}
+
+#export-buttons-box:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
+#export-buttons-label {
+  float: left;
+  margin-right: 5px;
+  padding: 6px 7px 5px 7px;
+}
+
+#button-export-html {
+  float: left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+  margin-right: -2px;
+}
+#button-export-pdf {
+  float: left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+  margin-right: -2px;
+}
+#button-export-doc {
+  float: left;
+  border: 1px solid #bbb;
+  padding: 5px 7px 5px 7px;
+  margin-right: -2px;
 }
 
 #editor {
@@ -286,7 +389,7 @@ div.tag-editor-label {
 
 #short-summary-textarea {
   width: 395px;
-  height: 163px;
+  height: 134px;
   font-size: 16px;
   padding: 5px;
 }

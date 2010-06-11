@@ -56,6 +56,7 @@ module Budding
       end
 
       def ui_editor()
+        @languages = Language.all
         @text_blocks = [] 
         if @document_id
           @document_title = @document.title || "Untitled document"
