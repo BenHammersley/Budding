@@ -55,7 +55,7 @@
     <div id="content">
      <div id="metadata-box">
         <div id="short-summary-box">
-          <input type="input" id="document-title-input" placeholder="Click to add a title"<%= @has_title ? %Q{value="#{@document_title.gsub('"', '&quot;').strip}"} : "" %>>
+          <input type="input" id="document-title-input" disabled=disabled placeholder="Click to add a title"<%= @has_title ? %Q{value="#{@document_title.gsub('"', '&quot;').strip}"} : "" %>>
           <textarea id="short-summary-textarea" placeholder="Click to add a summary"></textarea>
         </div>
         <div id="metadata-fields-box">
@@ -137,6 +137,11 @@
           <form id="editor-form" method=post action=/documents>
             <input type="hidden" name="title" value="">
             <input type="hidden" name="story" value="">
+            <input type="hidden" name="author" value="">
+            <input type="hidden" name="author_location" value="">
+            <input type="hidden" name="keywords" value="">
+            <input type="hidden" name="language" value="">
+            <input type="hidden" name="summary" value="">
             <input type="button" id="editor-save" value="Save">
           </form>
         </div>

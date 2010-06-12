@@ -515,10 +515,13 @@ budding.save_story = function() {
   } else if(!$('#text-block-ta').val().match(/^\s*$/)) {
     budding.add_text_block($('#text-block-ta').val());
   }
-  if(this.document.body[0].tag == 'h1') {
-    $('#editor-form input[name=title]').val(this.document.body[0].text);
-  }
+  $('#editor-form input[name=title]').val(this.document.title);
   $('#editor-form input[name=story]').val(this.document.body.single_string());
+  $('#editor-form input[name=author]').val(this.document.author);
+  $('#editor-form input[name=author_location]').val(this.document.author_location);
+  $('#editor-form input[name=keywords]').val(this.document.keywords);
+  $('#editor-form input[name=language]').val(this.document.language);
+  $('#editor-form input[name=summary]').val(this.document.summary);
   $('#editor-form').submit();
 };
 
@@ -763,6 +766,12 @@ budding.init = function() {
       budding.ui.use_first_paragraph_as_title = true;
       $(this).addClass('editor-bar-button-selected');
     }
+  });
+  
+  budding.document.language = $('#language-box-dropdown').val();
+  
+  $('#language-box-dropdown').change(function() {
+    budding.document.language = $('#language-box-dropdown').val();
   });
   
   // $('#wordcount-content input')
