@@ -1,9 +1,88 @@
+
+  Test documents
+  --------------
+  http://www.reuters.com/article/idUSTRE65305820100604?type=technologyNews
+  http://pmarchive.com/
+
+  Relevant fragments from Reuters iPhone 4g article
+  -------------------------------------------------
+  Apple
+  iPhone
+  Steve Jobs
+  Google Inc
+  Android
+  Gartner
+  Carolina Milanesi
+  Research in Motion Ltd
+  Blackberry
+  HTC
+  Motorola Inc
+  Samsung Electronics
+  U.S.
+  China
+  AT&T
+  San Francisco
+  Broadpoint AmTech
+  Brian Marshall
+  RIM
+  Asia
+  Verizon
+  Piper Jaffray
+  Christopher Larsen
+  iTunes
+  Apple TV
+  Edwin Chan (editor)
+  Richard Chang (editor)
+  
+  Link types
+  ----------
+  Locations mentioned
+  People mentioned
+  Companies mentioned
+  <wikipedia>
+  <google>
+  <person>
+  <company>
+  <country>
+
+  Metadata
+  --------
+  Title [x]
+  Language [?]
+  Keywords [?]
+  Complete copy [x]
+  Author name [?]
+  Location of author [?]
+  Document started date [?]
+  Document completed date [?]
+  Wordcount [?]
+  Short summary [?]
+  Teaser [?]
+  
+  To-do
+  -----
+  - Make the language select box work
+  - Make the "Use first paragraph as title" checkbox work
+  - Make the new save button work
+  - Make the new share button work
+  - Make the new HTML export button work
+  - Make the summary text area work
+  - Make the author input field work
+  - Make the author's location input field work
+  - Make the keywords input field work
+  - Make the last modified input field work
+  - Make the wordcount input field work
+  - Add remove button to links in the link editor
+  - Add link type button set to the right of the URL input field in the link editor
+  - Add simple previous/next pagination to the link suggestions list
+  - Make the tagger import actually display all the text from the URL
+  - Implement fragment selector in the tagger's imported text pane
+  - Create /tags resource to add/edit/delete tag types and their query URLs
+  - Make document titles editable in the dashboard
+  - Make and admin that lets you add users with a personalized beta code.
   
   To-read
   -------
-  
   - http://ricardo.ecn.wfu.edu/~cottrell/wp.html
-  
   - http://www.redroom.com/blog/andyross/copy-editing-the-new-yorker-magazine-an-interview-with-mary-norris
-  
   - http://www.holovaty.com/writing/fundamental-change/
