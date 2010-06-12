@@ -22,16 +22,28 @@ budding = {
     insertion_point_index: 0,
     handlers: {}
   },
-  document: {
-    body: $.extend([], {'toString': function() { 
-      return $.map(this, function(elem) {
-        return [elem.id, elem.text].join(':');
-      }).join(',');
-    }})
-  },
   utils: {},
   identified_tags: {}
 };
+
+budding.Document = function() {
+  this.body = [];
+}
+
+$.extend(budding.Document.prototype, {
+  single_string: function() {
+    return $.map(this.body, function(tb) { 
+      var text_block_class = ['text-block-', tb.tag].join('');
+      var text_block_start = ['<p class="', text_block_class, '">'].join('');
+      var text_block_end = ['</p>'].join('');
+      return [text_block_start, tb.text, text_block_end].join('');
+    }).join("\n");
+  },
+  changed: function() {
+  }
+});
+
+budding.document = new budding.Document();
 
 budding.ui.clean_up_tag_editor = function() {
   budding.ui.tag_editor_links = {list: []};
@@ -229,7 +241,8 @@ budding.render_link_editor = function(text) {
       } else {
         budding.ui.tag_editor_links.list.push(links[i]);
         budding.ui.tag_editor_links[tag_id] = links[i];
-        tag_editor_links.append($('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>'));
+        var tag_elem = $('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>')
+        tag_editor_links.append(tag_elem);
       }
     }
     if(budding.ui.text_block_selected) {
@@ -363,13 +376,10 @@ budding.load_known_tags = function() {
   }, 'json');
 }
 
-budding.document.body.single_string = function() {
-  return $.map(this, function(tb) { 
-    var text_block_class = ['text-block-', tb.tag].join('');
-    var text_block_start = ['<p class="', text_block_class, '">'].join('');
-    var text_block_end = ['</p>'].join('');
-    return [text_block_start, tb.text, text_block_end].join('');
-  }).join("\n");
+budding.update_save_button = function() {
+  if(budding.document.changed()) {
+    //
+  }
 };
 
 budding.update_live_preview = function() {

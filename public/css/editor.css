@@ -43,6 +43,24 @@
   height: 29px;
   width: 200px;
 }
+
+.editor-bar-button {
+  color: #666;
+}
+
+.editor-bar-button:hover {
+  color: #000;
+/*  border: 1px solid #000 !important;*/
+  cursor: pointer;
+  background: #fff;
+}
+
+.editor-bar-button:active {
+  background: #ddd;
+  cursor: pointer;
+  color: #000;
+}
+
 #document-title-box {
   width: 175px;
   float:left;
@@ -389,9 +407,18 @@ div.tag-editor-label {
 
 #short-summary-textarea {
   width: 395px;
-  height: 134px;
+  height: 86px;
   font-size: 16px;
   padding: 5px;
+}
+
+#document-title-input {
+  width: 395px;
+  height: 27px;
+  font-size: 16px;
+  padding: 5px;
+  margin-bottom: 10px;
+
 }
 
 #metadata-fields-box {
@@ -424,6 +451,14 @@ div.tag-editor-label {
 
 .metadata-field-content {
   float: left;
-  padding: 5px;
-  width: 90px;
+  padding: 0px;
+  width: 282px;
+}
+
+.metadata-field-input {
+  height: 27px;
+  font-size: 16px;
+  width: 294px;
+  border: 0px;
+  padding-left: 3px;
 }
