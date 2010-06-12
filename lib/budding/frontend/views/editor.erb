@@ -38,7 +38,7 @@
         <% end %>
         </select>
       </div>
-      <div id="document-title-box" class="ui-corner-left ui-corner-right editor-bar-button">Use first paragraph as title</div>
+      <div id="document-title-box" class="ui-corner-left ui-corner-right editor-bar-button editor-bar-button-selected">Use first paragraph as title</div>
       <div id="center-buttons-box">
         <div id="center-buttons-buttonset">
           <div id="button-save" class="ui-corner-left editor-bar-button">Save</div>
@@ -55,7 +55,7 @@
     <div id="content">
      <div id="metadata-box">
         <div id="short-summary-box">
-          <input type="input" id="document-title-input" placeholder="Click to add a title">
+          <input type="input" id="document-title-input" placeholder="Click to add a title"<%= @has_title ? %Q{value="#{@document_title.gsub('"', '&quot;').strip}"} : "" %>>
           <textarea id="short-summary-textarea" placeholder="Click to add a summary"></textarea>
         </div>
         <div id="metadata-fields-box">
@@ -80,13 +80,13 @@
           <div id="wordcount-box" class="metadata-field-box ui-corner-bottom" style="margin-top: -2px;">
             <div id="wordcount-label" class="metadata-field-label">Wordcount</div> 
             <div id="wordcount-content" class="metadata-field-content">
-              <input type="input" class="metadata-field-input" placeholder="Click to edit">
+              <input type="input" class="metadata-field-input" disabled=disabled>
             </div>
           </div>
           <div id="last-modified-box" class="metadata-field-box" style="margin-top: -2px;">
             <div id="last-modified-label" class="metadata-field-label">Last modified</div> 
             <div id="last-modified-content" class="metadata-field-content">
-              <input type="input" class="metadata-field-input" placeholder="Click to edit">
+              <input type="input" class="metadata-field-input" disabled=disabled>
             </div>
           </div>
         </div>

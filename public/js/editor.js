@@ -11,6 +11,7 @@ jQuery.fn.id = function() {
 budding = {
   ui: {
     currentFragments: {text: [], elements: []},
+    use_first_paragraph_as_title: true,
     text_block_selected: false,
     current_text_block: null,
     current_text_block_type: null,
@@ -725,6 +726,47 @@ budding.init = function() {
       }
     }
   });
+  
+  $('#document-title-input').keyup(function() {
+    budding.document.title = $(this).val();
+  });
+  
+  $('#short-summary-textarea').keyup(function() {
+    budding.document.summary = $(this).val();
+  });
+  
+  $('#author-content input').keyup(function() {
+    budding.document.author = $(this).val();
+  });
+  
+  $('#author-location-content input').keyup(function() {
+    budding.document.author_location = $(this).val();
+  });
+
+  $('#keywords-content input').keyup(function() {
+    budding.document.keywords = $(this).val();
+  });
+  
+  $('#document-title-box').click(function() {
+    if(budding.ui.use_first_paragraph_as_title) {
+      console.log('foo');
+      $('#document-title-input').attr('disabled', '');
+      $('#document-title-input').val(budding.document.title);
+      budding.ui.use_first_paragraph_as_title = false;
+      $(this).removeClass('editor-bar-button-selected');
+    } else {
+      $('#document-title-input').attr('disabled', 'disabled');
+      if(budding.document.body.length) {
+        $('#document-title-input').val(budding.document.body[0].text);
+        budding.document.title = budding.document.body[0].text;
+      }
+      budding.ui.use_first_paragraph_as_title = true;
+      $(this).addClass('editor-bar-button-selected');
+    }
+  });
+  
+  // $('#wordcount-content input')
+  // $('#last-modified-content input')
   
 }
 

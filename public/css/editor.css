@@ -48,7 +48,7 @@
   color: #666;
 }
 
-.editor-bar-button:hover {
+.editor-bar-button-selected, .editor-bar-button:hover {
   color: #000;
 /*  border: 1px solid #000 !important;*/
   cursor: pointer;
