@@ -61,20 +61,14 @@
   
   To-do
   -----
-  - Make the language select box work
-  - Make the "Use first paragraph as title" checkbox work
-  - Make the new save button work
-  - Make the new share button work
-  - Make the new HTML export button work
-  - Make the summary text area work
-  - Make the author input field work
-  - Make the author's location input field work
-  - Make the keywords input field work
-  - Make the last modified input field work
-  - Make the wordcount input field work
   - Add remove button to links in the link editor
   - Add link type button set to the right of the URL input field in the link editor
   - Add simple previous/next pagination to the link suggestions list
+  - Make the new save button work
+  - Make the new share button work
+  - Make the new HTML export button work
+  - Make the last modified input field work
+  - Make the wordcount input field work
   - Make the tagger import actually display all the text from the URL
   - Implement fragment selector in the tagger's imported text pane
   - Create /tags resource to add/edit/delete tag types and their query URLs
