@@ -225,6 +225,19 @@ budding.ui.handlers.link_editor_link_button = {
   }
 };
 
+budding.ui.handlers.link_editor_link_remove_button = {
+  click: function() {
+    var tag_id = $(this).parent().attr('id').match(/(\d+)$/)[1];
+    var tag_obj = budding.ui.tag_editor_links.list[tag_id];
+    var ta_val = $('#text-block-ta').val();
+    var a = ta_val.substr(0, tag_obj.start_index);
+    var b = ta_val.substr(tag_obj.end_index);
+    ta_val = a + tag_obj.content + b;
+    $('#text-block-ta').val(ta_val);
+    budding.ui.handlers.editor_textarea.keyup();
+  }
+}
+
 budding.render_link_editor = function(text) {
   var links = budding.utils.parse_tags(text)[0];
   if(links && links.length) {
@@ -260,6 +273,8 @@ budding.render_link_editor = function(text) {
     } else {
       $('#text-block-preview').before(tag_editor);
     }
+    $('.editor-tag-close').unbind('click', budding.ui.handlers.link_editor_link_remove_button.click);
+    $('.editor-tag-close').click(budding.ui.handlers.link_editor_link_remove_button.click);
     $('.editor-tag').unbind('click', budding.ui.handlers.link_editor_link_button.click);
     $('.editor-tag').click(budding.ui.handlers.link_editor_link_button.click);
     tag_editor.show();
