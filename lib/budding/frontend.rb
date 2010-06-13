@@ -217,15 +217,14 @@ module Budding
         :story => params[:story]
       }      
       document_data[:user_id] = current_user.user_id
-      # document_data.merge!({
-      #   :short_summary => params[:summary],
-      #   :teaser => params[:teaser],
-      #   :locations => params[:locations],
-      #   :people => params[:people],
-      #   :companies => params[:companies],
-      #   :keywords => params[:keywords],
-      #   :language_id => params[:language]
-      # })
+      document_data.merge!({
+        :author => params[:author],
+        :author_location => params[:author_location],
+        :short_summary => params[:summary],
+        :keywords => params[:keywords],
+        :language_id => params[:language],
+        :editor_settings => params[:editor_settings]
+      })
       doc = Document.new(document_data)
       doc.save
       redirect "/documents/#{doc.document_id}"
@@ -237,6 +236,14 @@ module Budding
         :title => params[:title],
         :story => params[:story]
       }
+      document_data.merge!({
+        :author => params[:author],
+        :author_location => params[:author_location],
+        :short_summary => params[:summary],
+        :keywords => params[:keywords],
+        :language_id => params[:language],
+        :editor_settings => params[:editor_settings]
+      })
       @document = Document.find(:document_id => params[:id])
       redirect '/' unless document_owner?
       @document.update(document_data)

@@ -12,6 +12,9 @@
     <script type="text/javascript">
     budding.document.id = <%= @document_id || "null" %>;
     budding.document.title = <%= @has_title ? %Q{"#{@document_title.gsub('"', '\\"').strip}"} : "null" %>;
+    <% unless @document.editor_settings.nil? %>
+    budding.ui.editor_settings = <%= @document.editor_settings %>;
+    <% end %>
     </script>
   </head>
   <body>
@@ -38,7 +41,7 @@
         <% end %>
         </select>
       </div>
-      <div id="document-title-box" class="ui-corner-left ui-corner-right editor-bar-button editor-bar-button-selected">Use first paragraph as title</div>
+      <div id="document-title-box" class="ui-corner-left ui-corner-right editor-bar-button">Use first paragraph as title</div>
       <div id="center-buttons-box">
         <div id="center-buttons-buttonset">
           <div id="button-save" class="ui-corner-left editor-bar-button">Save</div>
@@ -55,26 +58,26 @@
     <div id="content">
      <div id="metadata-box">
         <div id="short-summary-box">
-          <input type="input" id="document-title-input" disabled=disabled placeholder="Click to add a title"<%= @has_title ? %Q{value="#{@document_title.gsub('"', '&quot;').strip}"} : "" %>>
-          <textarea id="short-summary-textarea" placeholder="Click to add a summary"></textarea>
+          <input type="input" id="document-title-input" placeholder="Click to add a title"<%= @has_title ? %Q{value="#{@document_title.gsub('"', '&quot;').strip}"} : "" %>>
+          <textarea id="short-summary-textarea" placeholder="Click to add a summary"><%= @document.short_summary %></textarea>
         </div>
         <div id="metadata-fields-box">
           <div id="author-box" class="metadata-field-box ui-corner-top">
             <div id="author-label" class="metadata-field-label">Author</div> 
             <div id="author-content" class="metadata-field-content">
-              <input type="input" class="metadata-field-input" placeholder="Click to edit">
+              <input type="input" class="metadata-field-input" placeholder="Click to edit" value="<%= @document.author %>">
             </div>
           </div>
           <div id="author-location-box" class="metadata-field-box" style="margin-top: -2px;">
             <div id="author-location-label" class="metadata-field-label">Author's location</div> 
             <div id="author-location-content" class="metadata-field-content">
-              <input type="input" class="metadata-field-input" placeholder="Click to edit">
+              <input type="input" class="metadata-field-input" placeholder="Click to edit" value="<%= @document.author_location %>">
             </div>
           </div>
           <div id="keywords-box" class="metadata-field-box" style="margin-top: -2px;">
             <div id="keywords-label" class="metadata-field-label">Keywords</div> 
             <div id="keywords-content" class="metadata-field-content">
-              <input type="input" class="metadata-field-input" placeholder="Click to edit">
+              <input type="input" class="metadata-field-input" placeholder="Click to edit" value="<%= @document.keywords %>">
             </div>
           </div>
           <div id="wordcount-box" class="metadata-field-box ui-corner-bottom" style="margin-top: -2px;">
@@ -142,6 +145,7 @@
             <input type="hidden" name="keywords" value="">
             <input type="hidden" name="language" value="">
             <input type="hidden" name="summary" value="">
+            <input type="hidden" name="editor_settings" value="">
             <input type="button" id="editor-save" value="Save">
           </form>
         </div>

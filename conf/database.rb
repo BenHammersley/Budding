@@ -59,6 +59,8 @@ end
   keywords varchar(255)
   language_id int
   created_on datetime
+  author varchar(255)
+  author_location varchar(255)
   
   languages
   ---------
@@ -138,6 +140,13 @@ module Budding
       end
       migration "add category to tags" do
         database.add_column(:tags, :category, String, :size => 60)
+      end
+      migration "add author info to documents" do
+        database.add_column(:documents, :author, String, :size => 255)
+        database.add_column(:documents, :author_location, String, :size => 255)
+      end
+      migration "add editor_settings to documents" do
+        database.add_column(:documents, :editor_settings, :text)
       end
     end
     class User < Sequel::Model
