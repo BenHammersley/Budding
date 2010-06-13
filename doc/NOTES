@@ -61,7 +61,6 @@
   
   To-do
   -----
-  - Add remove button to links in the link editor
   - Add link type button set to the right of the URL input field in the link editor
   - Add simple previous/next pagination to the link suggestions list
   - Make the new save button work
