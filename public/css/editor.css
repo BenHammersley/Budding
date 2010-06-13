@@ -359,24 +359,44 @@ div.tag-editor-label {
 .editor-tag {
   display: block;
   float: left;
-  background-color: #ADD8E6;
-  padding: 5px;
   cursor: pointer;
-  font-size: 11px;
-  border: 1px solid #bbb;
+  font-size: 12px;
   margin-right: 5px;
   margin-bottom: 5px;
+  border: 1px solid #ccc;
 }
 
 .editor-tag-selected, .editor-tag:hover {
-  background-color: #e1f1f6;
-  font-weight: bold;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 11px;
-  border: 1px solid #bbb;
-  margin-right: 5px;
+  border: 1px solid #999;
+  background-color: #fff;
 }
+
+.editor-tag-content {
+  color: #666;
+  padding: 5px 7px 5px 7px;
+  float: left;
+}
+
+.editor-tag-close {
+  float: left;
+  width: 8px;
+  height: 24px;
+  margin-left: -2px;
+  background-color: #bbb;
+}
+.editor-tag-close:hover {
+  background-color: #555;
+}
+
+.editor-tag:after {
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}
+
 
 #editor-controls-top {
   display: none;

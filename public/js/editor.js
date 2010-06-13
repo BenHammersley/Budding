@@ -248,8 +248,11 @@ budding.render_link_editor = function(text) {
       } else {
         budding.ui.tag_editor_links.list.push(links[i]);
         budding.ui.tag_editor_links[tag_id] = links[i];
-        var tag_elem = $('<span id="' + tag_id + '" class="editor-tag ui-corner-all">' + content + '</span>')
-        tag_editor_links.append(tag_elem);
+        var tag_elem = '<div id="' + tag_id + '" class="editor-tag ui-corner-all">';
+        tag_elem += '<div class="editor-tag-content">' + content + '</div>';
+        tag_elem += '<div class="editor-tag-close"></div>';
+        tag_elem += '</div>';
+        tag_editor_links.append($(tag_elem));
       }
     }
     if(budding.ui.text_block_selected) {
@@ -410,7 +413,7 @@ budding.update_live_preview = function() {
       $('#text-block-preview').text(ta_val);
     }
     if(budding.ui.use_first_paragraph_as_title && budding.ui.at_the_first_line()) {
-      $('#document-title-input').val(ta_val);
+      $('#document-title-input').val($('#text-block-preview').text());
     }
     if(ta_val.length == 0) {
       budding.ui.text_block_preview_hide_timeout = setTimeout(function() {
