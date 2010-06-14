@@ -37,6 +37,9 @@
   border: 1px solid #ccc;
   background-color: #eee;
 }
+.tag-box:hover {
+  border: 1px solid #555;
+}
 
 .tag-box:after {  
   content: ".";  
@@ -49,40 +52,60 @@
 
 .tag-name {
   float: left;
-  width: 150px;
+  width: 140px;
   height: 27px;
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+  padding: 0px 5px 0px 5px;
+  font-size: 16px !important;
 }
 
 .tag-description {
   float: left;
-  width: 250px;
+  width: 240px;
   height: 27px;
   margin-right: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+  padding: 0px 5px 0px 5px;
+  font-size: 16px !important;
 }
 
 .tag-query-url {
   float: left;
-  width: 350px;
+  width: 368px;
   height: 27px;
   margin-right: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+  padding: 0px 5px 0px 5px;
+  font-size: 16px !important;
 }
 
 .tag-save-button {
   float: left;
-  width: 79px;
-  height: 27px;
+  width: 40px;
+  height: 17px;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-right: 5px;
-  border: 1px solid #000;
+  border: 1px solid #ccc;
+  padding: 5px 7px 5px 7px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.tag-save-button:hover {
+  border: 1px solid #bbb;
+  cursor: pointer;
+  background: #fff;
+}
+.tag-save-button:active {
+  background: #ddd;
+  cursor: pointer;
+  color: #000;
 }
 
 .tag-remove {
@@ -96,6 +119,15 @@
   background-color: #555;
 }
 
+#tag-box-add {
+  float: left;
+  width: 868px;
+  height: 8px;
+  background-color: #bbb;
+}
+#tag-box-add:hover {
+  background-color: #555;
+}
 
 .server_error:before {
   content: "[!] ";
