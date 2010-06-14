@@ -148,7 +148,7 @@ budding.ui.handlers.editor_textarea = {
   
   keyup: function(e) {
     budding.update_live_preview();
-    var ta_val = budding.identify_tags($('#text-block-ta').val());
+    var ta_val = budding.identify_known_links($('#text-block-ta').val());
     $('#text-block-ta').val(ta_val);
     // if(text_with_identified_tags != budding.document.body[budding.ui.current_text_block].text) {
     //   budding.document.body[budding.ui.current_text_block].text = text_with_identified_tags;
@@ -402,11 +402,11 @@ budding.utils.parse_tags.extract_tag = function(i, str) {
   return tag;
 }
 
-budding.load_known_tags = function() {
+budding.load_known_links = function() {
   $.get('/links', function(data) {
-    budding.known_tags = {};
+    budding.known_links = {};
     for(var i = 0, len = data.length; i < len; i++) {
-      budding.known_tags[data[i].name] = data[i].category;
+      budding.known_links[data[i].title] = data[i].tag;
     }
   }, 'json');
 }
@@ -570,17 +570,17 @@ budding.save_story = function() {
 };
 
 
-budding.identify_tags = function(text) {
-  var tag, category, box, index_of_tag;
-  for(tag in budding.known_tags) {
-    var index_of_tag = text.indexOf(tag);
-    if(index_of_tag != -1 && !budding.identified_tags[tag]) {
-      category = budding.known_tags[tag];
-      var a = text.substr(0, index_of_tag);
-      var content = text.substr(index_of_tag, tag.length);
+budding.identify_known_links = function(text) {
+  var link, tag, box, index_of_link;
+  for(link in budding.known_links) {
+    var index_of_link = text.indexOf(link);
+    if(index_of_link != -1 && !budding.identified_links[link]) {
+      tag = budding.known_links[link];
+      var a = text.substr(0, index_of_link);
+      var content = text.substr(index_of_link, link.length);
       var b = text.substr(index_of_tag + tag.length);
-      budding.identified_tags[tag] = true;
-      text = [a, '<', category, '>', tag, '</', category, '>'].join('');
+      budding.identified_links[link] = true;
+      text = [a, '<', tag, '>', link, '</', tag, '>'].join('');
     }
   }
   return text;
@@ -703,7 +703,7 @@ budding.init = function() {
     $('#document-title-box').addClass('editor-bar-button-selected');
   }
 
-  this.load_known_tags();
+  this.load_known_links();
   this.parse_text_blocks();
   budding.ui.handlers.text_block_type_select();
   budding.place_editor_controls_at_insertion_point(this.ui.insertion_point_index);

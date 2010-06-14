@@ -51,8 +51,8 @@
           var tag_category = $(this).attr('id').match(/([^-]*)-dropbox/)[1];
           
           var tag_elems = [
-            $('<input type="hidden" name="tags[][tag]" value="' + tag + '">'),
-            $('<input type="hidden" name="tags[][category]" value="' + tag_category + '">')
+            $('<input type="hidden" name="links[][title]" value="' + tag + '">'),
+            $('<input type="hidden" name="links[][tag]" value="' + tag_category + '">')
           ];
           
           var tag_elem = $('<span class="tag ui-corner-all">' + tag + '</span>');

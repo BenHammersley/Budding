@@ -148,6 +148,27 @@ module Budding
       migration "add editor_settings to documents" do
         database.add_column(:documents, :editor_settings, :text)
       end
+      migration "rename tags to links" do
+        database.rename_table :tags, :links
+      end
+      migration "add new tags table" do
+        database.create_table :tags do
+          # id, name, category, canonical_resource, suggested_resources
+          primary_key :tag_id, :type => Bignum
+          String :name
+          String :description
+          String :query_url
+          DateTime :created_at
+        end
+      end
+      migration "rename links table attributes" do
+        database.run("alter table links change column tag_id link_id bigint(20) not null;")
+        database.rename_column :links, :canonical_resource, :href
+      end
+      migration "rename other links table attributes" do
+        database.rename_column :links, :category, :tag
+        database.rename_column :links, :name, :title
+      end
     end
     class User < Sequel::Model
       one_to_many :documents

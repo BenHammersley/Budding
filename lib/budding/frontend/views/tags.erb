@@ -19,62 +19,43 @@
       else return ids[0];
     };
     
-    budding = {ui: {}};
-    
-    <% unless flash.info.nil? %>
-    budding.ui.forms['<%= flash.form %>']['#info'].html = '<%= flash.info.gsub("'", "\\\\'") %>';
-    <% end %>
-    
-    budding.display_potential_keywords = function(tags) {
-      var span, root = $('#potential-keywords');
-      for(var i = 0, len = tags.length; i < len; i++) {
-        span = $('<span class="tag ui-corner-all">' + tags[i].replace(" ", "&nbsp;") + '</span>');
-        span.draggable({zIndex: 2700});
-        root.append(span);
-        root.append(" ");
+    budding = {
+      tags: {list: []},
+      ui: {
+        current_tag: 0
       }
-      root.show();
+    };
+    
+    budding.update_tag_list = function() {
+      var tags = $('.tag-box');
+      for(var i = 0, len = tags.length; i < len; i++) {
+        if(i < budding.tags.list.length) {
+          budding.tags.list[i].name = $(tags[i]).find('.tag-name').val();
+          budding.tags.list[i].description = $(tags[i]).find('.tag-description').val();
+          budding.tags.list[i].query_url = $(tags[i]).find('.tag-query-url').val();
+        } else {
+          budding.tags.list[i] = {
+            name: $(tags[i]).find('.tag-name').val(),
+            description: $(tags[i]).find('.tag-description').val(),
+            query_url: $(tags[i]).find('.tag-query-url').val()
+          }
+        }
+      }
+    }
+    
+    budding.ui.handlers = {};
+    budding.ui.handlers.save_button = {
+      click: function() {
+        budding.update_tag_list();
+        console.log('wtf: ' + budding.tags.list);
+        $.post('/tags', JSON.stringify(budding.tags.list), function(data) {console.log(data)}, 'json');
+      }
     }
     
     budding.init = function() {
 
       $('.top-button').button();
-      $("#taggerform").buttonset();
-      $("#tags-submit").button();
-      // $('#signup-button').click(budding.ui.listeners['#signup-button']);
-      // $('#login-button').click(budding.ui.listeners['#login-button']);
-
-      $('.tagbox').droppable({
-        drop: function(event, ui) {
-          
-          var tag = ui.draggable.text().replace('\u00a0', ' ');;
-          var tag_category = $(this).attr('id').match(/([^-]*)-dropbox/)[1];
-          
-          var tag_elems = [
-            $('<input type="hidden" name="tags[][tag]" value="' + tag + '">'),
-            $('<input type="hidden" name="tags[][category]" value="' + tag_category + '">')
-          ];
-          
-          var tag_elem = $('<span class="tag ui-corner-all">' + tag + '</span>');
-          tag_elem.addClass('selected-tag');
-          $(this).find(":first-child").after(tag_elem);
-          $('#tags-submit').before(tag_elems[0]);
-          $('#tags-submit').before(tag_elems[1]);
-          ui.draggable.hide();
-        }
-      });
       
-      $('#tagger').show();
-      
-      $('#tagger-submit').click(function() {
-        var url = $('#input-url').val();
-        $.post('/tagger', {url: url}, budding.display_potential_keywords, 'json');
-      });
-
-    }
-    
-    $(document).ready(function(){
-      budding.init();
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
@@ -83,7 +64,20 @@
         var new_tag = $('.tag-box:last').clone();
         new_tag.append(self);
         $('.tag-box:last').after(new_tag);
+        new_tag.find(".tag-name").val("");
+        new_tag.find(".tag-description").val("");
+        new_tag.find(".tag-query-url").val("");
+        $('.tag-save-button').unbind('click', budding.ui.handlers.save_button.click);
+        $('.tag-save-button').click(budding.ui.handlers.save_button.click);
       });
+      
+      $('.tag-save-button').unbind('click', budding.ui.handlers.save_button.click);
+      $('.tag-save-button').click(budding.ui.handlers.save_button.click);
+
+    }
+    
+    $(document).ready(function(){
+      budding.init();
     });
     
     </script>
@@ -101,10 +95,24 @@
       <% if flash.info %>
       <span id="info" class="server_error"><%= flash.info %></span>
       <% else %>
-      <span id="info">Budding will scan text from a URL and identify potential keywords for tagging.</span>
+      <span id="info">Define special link tags you can use in your documents.</span>
       <% end %>
 		</div>
     <div id="content">
+      <% if @tags.length > 0 %> 
+        <% for tag in @tags %>
+  		  <div class="tag-box ui-corner-all">
+  		    <input type="input" class="tag-name" placeholder="Tag name" value="<%= tag[:name] %>">
+  		    <input type="input" class="tag-description" placeholder="Tag description" value="<%= tag[:description] %>">
+  		    <input type="input" class="tag-query-url" placeholder="Tag query URL" value="<%= tag[:query_url] %>">
+  		    <div class="tag-save-button ui-corner-all">Save</div>
+  		    <div class="tag-remove"></div>
+  		    <% if tag == @tags[-1] %>
+  		      <div id="tag-box-add" class="ui-corner-bottom"></div>
+  		    <% end %>
+  		  </div>
+  		  <% end %>
+      <% else %>
 		  <div class="tag-box ui-corner-all">
 		    <input type="input" class="tag-name" placeholder="Tag name">
 		    <input type="input" class="tag-description" placeholder="Tag description">
@@ -113,6 +121,7 @@
 		    <div class="tag-remove"></div>
 		    <div id="tag-box-add" class="ui-corner-bottom"></div>
 		  </div>
+  		<% end %>
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>
   </body>

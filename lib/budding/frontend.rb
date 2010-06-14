@@ -135,11 +135,6 @@ module Budding
       erb :dashboard
     end
     
-    get '/tags' do
-      @title = "Budding: Tags"
-      erb :tags
-    end
-    
     get '/tagger' do
       @title = "Budding: Tagger"
       erb :tagger
@@ -183,12 +178,6 @@ module Budding
       @tags.to_json
     end
     
-    get '/links' do
-      tags = database[:tags].filter(~{:name => nil}).all
-      content_type :json, :charset => 'utf-8'
-      tags.to_json
-    end
-    
     get '/google-query/:term' do
       firefox_user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6 (.NET CLR 3.5.30729)'
       url = ['http://www.google.com/search?q=', CGI::escape(params[:term])].join('')
@@ -200,14 +189,53 @@ module Budding
       google_results.to_json
     end
     
+    get '/links' do
+      links = database[:links].filter(~{:title => nil}).all
+      content_type :json, :charset => 'utf-8'
+      links.to_json
+    end
+    
     post '/links' do
-      content_type 'text/plain', :encoding => "utf-8"
-      puts params[:tags].inspect
-      for tag in params[:tags]
-        database[:tags].insert({:name => tag["tag"], :category => tag["category"]})
+      for tag in params[:links]
+        database[:links].insert({:title => tag["title"], :tag => tag["tag"]})
       end
       redirect '/tagger'
     end
+    
+    get '/tags' do
+      @title = "Budding: Tags"
+      @tags = database[:tags].all
+      erb :tags
+    end
+              
+    post '/tags' do
+      body = request.body.read
+      puts "body: " + body
+      tags = JSON.parse(body)
+      database.run("delete from tags;")
+      for tag in tags
+        database[:tags].insert({
+          :name => tag["name"],
+          :description => tag["description"],
+          :query_url => tag["query_url"],
+          :created_at => Time.now
+        })
+      end
+      content_type :json, :charset => 'utf-8'
+      {:status => 0}.to_json
+    end
+    
+    # post '/tags/:id' do
+    #   tag = JSON.parse(request.body.read)
+    #   database[:tags].filter({
+    #     :name => tag["name"]
+    #   }).update(({
+    #     :name => tag["name"], 
+    #     :description => tag["description"], 
+    #     :query_url => tag["query_url"]
+    #   })
+    #   {:status => 0}.to_json
+    # end
     
     get '/editor' do
       redirect '/' unless logged?
