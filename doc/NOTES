@@ -68,7 +68,6 @@
   - Make the last modified input field work
   - Make the tagger import actually display all the text from the URL
   - Implement fragment selector in the tagger's imported text pane
-  - Create /tags resource to add/edit/delete tag types and their query URLs
   - Make document titles editable in the dashboard
   - Make and admin that lets you add users with a personalized beta code.
   
