@@ -25,7 +25,7 @@ budding = {
     handlers: {}
   },
   utils: {},
-  identified_tags: {}
+  identified_links: {}
 };
 
 budding.Document = function() {
@@ -207,7 +207,11 @@ budding.ui.handlers.link_editor_link_button = {
         $('#tag-editor-input').val(tag_obj.href);
       }
       var search_term = tag_obj.content;
-      $.get('/google-query/' + encodeURIComponent(search_term), function(data) {
+      if(budding.known_tags[tag_obj.name]) {
+        var query_url = budding.known_tags[tag_obj.name].query_url.split('q=')[1];
+        search_term = query_url.replace('%s', search_term);
+      }
+      $.get('/google-query/' + search_term, function(data) {
         for(var i = 0; i < 3; i++) {
           if(data[i].href.length > 70) {
             data[i].href = data[i].href.substr(0, 70) + " ...";
@@ -411,6 +415,15 @@ budding.load_known_links = function() {
   }, 'json');
 }
 
+budding.load_known_tags = function() {
+  $.get('/data-only/tags', function(data) {
+    budding.known_tags = {};
+    for(var i = 0, len = data.length; i < len; i++) {
+      budding.known_tags[data[i].name] = {query_url: data[i].query_url}
+    }
+  }, 'json');
+}
+
 budding.update_save_button = function() {
   if(budding.document.changed()) {
     //
@@ -578,7 +591,7 @@ budding.identify_known_links = function(text) {
       tag = budding.known_links[link];
       var a = text.substr(0, index_of_link);
       var content = text.substr(index_of_link, link.length);
-      var b = text.substr(index_of_tag + tag.length);
+      var b = text.substr(index_of_link + tag.length);
       budding.identified_links[link] = true;
       text = [a, '<', tag, '>', link, '</', tag, '>'].join('');
     }
@@ -702,7 +715,8 @@ budding.init = function() {
     $('#document-title-input').attr('disabled', 'disabled');
     $('#document-title-box').addClass('editor-bar-button-selected');
   }
-
+  
+  this.load_known_tags();
   this.load_known_links();
   this.parse_text_blocks();
   budding.ui.handlers.text_block_type_select();

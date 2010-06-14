@@ -5,6 +5,7 @@ require 'nokogiri'
 require 'set'
 require 'rake/clean'
 require 'fileutils'
+require 'open-uri'
 
 require 'budding'
 require 'conf/database'
@@ -72,6 +73,29 @@ task :stop_openoffice do
   oo_pid_file = File.join(BUDDING_ROOT, "conf", "oo_pid")
   oo_pid = File.read(oo_pid)
   `kill -s 9 #{oo_pid}`
+end
+
+def get_all_the_text(doc, text_list=nil)
+  text_list ||= []
+  for child in doc.children
+    unless ['meta link script style'].include?(child.name)
+      text = child.inner_html().strip
+      if text.length != 0
+        text_list << text
+      end
+    end
+    # if child.children.length > 1
+    #   get_all_the_text(child, text_list)
+    # end
+  end
+  return text_list
+end
+
+task :extract_text_from_html do
+  html = open('http://railstips.org/blog/archives/2009/04/01/crack-the-easiest-way-to-parse-xml-and-json/').read
+  doc = Nokogiri::HTML(html)
+  puts doc.xpath('//*/text()').select { |t| !["script", "style", "link"].include?(t.parent.name) }.collect { |t| t.text.strip }.select { |t| t != "" }
+  # puts get_all_the_text(doc)
 end
 
 task :read_wikipedia_xml do

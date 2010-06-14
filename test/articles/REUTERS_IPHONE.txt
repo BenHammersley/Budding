@@ -1,4 +1,5 @@
 Title: New Apple iPhone on tap but may fail to dazzle
+URL: http://www.reuters.com/article/idUSTRE65305820100604?type=technologyNews
 Author: Gabriel Madway
 Location: San Francisco
 Date: Fri Jun 4, 2010 2:25pm EDT
@@ -6,8 +7,9 @@ Keywords: TECHNOLOGY, MEDIA
 
 Short summary: (Reuters) - Apple Inc's next-generation iPhone, which CEO Steve Jobs is widely expected to unveil on Monday, will have to really set new standards in multimedia content and function to wow Wall Street and consumers.
 
-Text
-----
+--
+
+New Apple iPhone on tap but may fail to dazzle
 
 Apple's challenge may be to dream up game-changing innovations, since the iPhone is already an unqualified blockbuster that is the company's main profit growth driver, and its share price hovers near record highs. The bid is made tougher with the early success of the iPad tablet computer, which many say has already created a new market.
 

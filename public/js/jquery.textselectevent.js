@@ -37,8 +37,8 @@
 				result.text = $(el).val().substring(el.selectionStart, el.selectionEnd)
 			} else {
 			  if(winSel) {
-			    result.start = winSel.baseOffset;
-			    result.end = winSel.extentOffset;
+			    result.start = Math.min(winSel.extentOffset, winSel.baseOffset);
+			    result.end = Math.max(winSel.extentOffset, winSel.baseOffset);
 			    result.text = winSel.toString();
 			  } else if(docSel) {
           // result.start = docSel.?;

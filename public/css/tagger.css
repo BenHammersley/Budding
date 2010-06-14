@@ -34,7 +34,7 @@
   padding: 0px 3px 0px 5px;
   font-size: 16px !important;
   height: 27px !important;
-  width: 760px;
+  width: 777px;
 }
 #tagger {
   display: none;
@@ -45,12 +45,12 @@
   background-color: #eee;
   border: 1px solid #bbb;
   min-height: 50px;
-  width: 187px;
+  width: 20%;
   float: left; 
 }
-#potential-keywords {
+#selected-keywords, #potential-keywords {
   display: none;
-  margin: 10px 12px 0px 0px;
+  margin: 10px 0px 0px 0px;
   padding: 10px;
   background-color: #eee;
   border: 1px solid #bbb;
@@ -60,7 +60,7 @@
   background-color: #ADD8E6;
   padding: 5px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 15px;
   border: 1px solid #bbb;
 }
 .selected-tag {

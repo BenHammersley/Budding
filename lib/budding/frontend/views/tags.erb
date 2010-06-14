@@ -51,6 +51,27 @@
         $.post('/tags', JSON.stringify(budding.tags.list), function(data) {console.log(data)}, 'json');
       }
     }
+    budding.ui.handlers.tag_remove_button = {
+      click: function() {
+        var parent = $(this).parent()[0];
+        var total = $('.tag-box').length;
+        var last = $('.tag-box:last')[0];
+        if(parent != last) {
+          $(parent).remove();
+        } else {
+          if(total == 1) {
+            $(parent).find(".tag-name").val("");
+            $(parent).find(".tag-description").val("");
+            $(parent).find(".tag-query-url").val("");
+          } else {
+            var add_button = $('#tag-box-add').detach();
+            $(parent).remove();
+            $('.tag-box:last').append(add_button);
+          }
+          budding.tags.list = [];
+        }
+      }
+    }
     
     budding.init = function() {
 
@@ -69,8 +90,11 @@
         new_tag.find(".tag-query-url").val("");
         $('.tag-save-button').unbind('click', budding.ui.handlers.save_button.click);
         $('.tag-save-button').click(budding.ui.handlers.save_button.click);
+        $('.tag-remove').unbind('click', budding.ui.handlers.tag_remove_button.click);
+        $('.tag-remove').click(budding.ui.handlers.tag_remove_button.click);
       });
-      
+      $('.tag-remove').unbind('click', budding.ui.handlers.tag_remove_button.click);
+      $('.tag-remove').click(budding.ui.handlers.tag_remove_button.click);      
       $('.tag-save-button').unbind('click', budding.ui.handlers.save_button.click);
       $('.tag-save-button').click(budding.ui.handlers.save_button.click);
 

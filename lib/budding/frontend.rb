@@ -137,45 +137,17 @@ module Budding
     
     get '/tagger' do
       @title = "Budding: Tagger"
+      @tags = database[:tags].all
       erb :tagger
     end
     
-    post '/tagger' do
-      # http://ai-depot.com/articles/the-easy-way-to-extract-useful-text-from-arbitrary-html/
-      # http://www.savedmyday.com/2008/04/25/how-to-extract-text-from-html-using-rubyhpricot/
-      url = params[:url] # testing with http://en.wikipedia.org/wiki/Special:Export/Apple_Inc.
-      is_wikipedia = url.match(/^http:\/\/([^.]*).?wikipedia\.org\/wiki\/(.*)/)
-      firefox_user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6 (.NET CLR 3.5.30729)'
-      if is_wikipedia
-        url = "http://%s.wikipedia.org/wiki/Special:Export/%s" % [is_wikipedia[1], is_wikipedia[2]]
-        puts url
-        wxml = Nokogiri::XML(open(url, 'User-Agent' => firefox_user_agent))
-        # Nokogiri's XPATH implementation doesn't seem to parse 
-        # Wikipedia's XML format very well, which forces us to...
-        root = wxml.child
-        i = 0
-        i += 1 while root.children[i].name != "page"
-        page = root.children[i]
-        i = 0
-        i += 1 while page.children[i].name != "revision"
-        revision = page.children[i]
-        i = 0
-        i += 1 while (revision.children[i].text.length < 100)
-        text = revision.children[i].text
-      else
-        text = open(url, 'User-Agent' => firefox_user_agent).read
-      end
-      # puts text
-      potential_keywords = text.scan(/[A-Z]\w+(?:(?: )[A-Z]\w+)/m)
-      potential_keywords_freq = {}
-      for pk in potential_keywords
-        potential_keywords_freq[pk] ||= 1
-        potential_keywords_freq[pk] += 1
-      end
-      avg = potential_keywords_freq.values.sum/potential_keywords_freq.values.length
-      @tags = Set.new(potential_keywords_freq.collect { |k, v| k if v > avg }.compact).to_a      
+    post '/text-extractor' do
+      url = params[:url]
+      html = open(url).read
+      doc = Nokogiri::HTML(html)
+      text = doc.xpath('//*/text()').select { |t| !["script", "style", "link"].include?(t.parent.name) }.collect { |t| t.text.strip }.select { |t| t != "" }
       content_type :json, :charset => 'utf-8'
-      @tags.to_json
+      text.to_json
     end
     
     get '/google-query/:term' do
@@ -197,6 +169,7 @@ module Budding
     
     post '/links' do
       for tag in params[:links]
+        link =  database[:links].filter({:title => tag["title"], :tag => tag["tag"]})
         database[:links].insert({:title => tag["title"], :tag => tag["tag"]})
       end
       redirect '/tagger'
@@ -206,6 +179,14 @@ module Budding
       @title = "Budding: Tags"
       @tags = database[:tags].all
       erb :tags
+    end
+    
+    get '/data-only/tags' do
+      tags = database[:tags].all.collect do |tag|
+        {:name => tag[:name], :query_url => tag[:query_url]}
+      end
+      content_type :json, :charset => 'utf-8'
+      tags.to_json
     end
               
     post '/tags' do

@@ -169,6 +169,9 @@ module Budding
         database.rename_column :links, :category, :tag
         database.rename_column :links, :name, :title
       end
+      migration "fix links primary key" do
+        database.run("alter table links change column link_id link_id bigint(20) auto_increment not null;")
+      end
     end
     class User < Sequel::Model
       one_to_many :documents
