@@ -7,20 +7,6 @@
   font-size:12px;
 }
 
-#content {
-  padding: 0;
-	margin: 20px;
-  width: 860px;
-	margin-bottom: 10px;
-}
-#content:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}
 
 #controls {
   font-size: 14px;
@@ -45,25 +31,72 @@
 #content label {
   font-size: 12px;
 }
-#input-url {
-  padding: 0px 3px 0px 5px;
-  font-size: 16px !important;
-  height: 27px !important;
-  width: 760px;
+
+
+.tag-box {
+  border: 1px solid #ccc;
+  background-color: #eee;
 }
-#tagger {
-  display: none;
-}
-#input-email, #input-password-login, #input-password-signup {
-  margin-left: 10px; 
+
+.tag-box:after {  
+  content: ".";  
+  visibility: hidden;  
+  display: block;  
+  clear: both;  
+  height: 0;  
+  font-size: 0;
+}  
+
+.tag-name {
+  float: left;
+  width: 150px;
   height: 27px;
-  padding: 0px 5px 0px 5px;
-  color: #bbb;
-	width: 170px; 
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-#input-password-login, #input-password-signup {
-  display: none;
+
+.tag-description {
+  float: left;
+  width: 250px;
+  height: 27px;
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
+
+.tag-query-url {
+  float: left;
+  width: 350px;
+  height: 27px;
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.tag-save-button {
+  float: left;
+  width: 79px;
+  height: 27px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  border: 1px solid #000;
+}
+
+.tag-remove {
+  float: left;
+  width: 8px;
+  height: 39px;
+  background-color: #bbb;
+}
+
+.tag-remove:hover {
+  background-color: #555;
+}
+
+
 .server_error:before {
   content: "[!] ";
   font-weight: bold;

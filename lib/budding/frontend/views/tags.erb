@@ -19,106 +19,71 @@
       else return ids[0];
     };
     
-    budding = {
-      ui: {
-        form: '<%= flash.form %>',
-        forms: {
-          login: {
-            '#input-email': {color: '#bbb', name: 'email', placeholder: "Your e-mail", class: 'ui-widget'},
-            '#input-password': {color: '#bbb', name: 'password', placeholder: "Your password", class: 'ui-widget', type: 'password'},
-            '#info': {
-                html: "Welcome back. If you want, we can keep you signed in for a while. " +
-                      "<input id=keep_signed_in type=checkbox class=ui-widget style=\"margin-left: 5px;\" name=keep_signed_in>" +
-                      "<label for=keep_signed_in style=\"margin-left: 5px;\">Sounds good.</label>"
-            }
-          },
-          signup: {
-            '#input-email': {color: '#bbb', name: 'signup_email', placeholder: "Your e-mail", class: 'ui-widget'},
-            '#input-password': {color: '#bbb', name: 'signup_password', placeholder: "Your password", class: 'ui-widget'},
-            '#info': {html: "Signing up is as easy as logging in. We'll send you an e-mail with your password, but no activation is needed."}
-          }
-        },
-        listeners: {
-          '#signup-button': function() {
-            $('#signup-button').attr('checked', true);
-            $('#auth').buttonset('refresh');
-            $('#authform').attr('action', '/signup');
-            $('#input-email').attr('name', budding.ui.forms.signup['#input-email'].name);
-            $('#input-password-login').hide();
-            $('#input-password-signup').show();
-            $('#info').removeClass('server_error');
-            $('#info').html(budding.ui.forms.signup['#info'].html);
-            budding.ui.form = 'signup';
-          },
-          '#login-button': function() {
-            $('#login-button').attr('checked', true);
-            $('#auth').buttonset('refresh');
-            $('#authform').attr('action', '/login');
-            $('#input-email').attr('name', budding.ui.forms.login['#input-email'].name);
-            $('#input-password-login').attr('name', budding.ui.forms.login['#input-password'].name);
-            $('#input-password-signup').hide();
-            $('#input-password-login').show();
-            $('#info').removeClass('server_error');
-            $('#info').html(budding.ui.forms.login['#info'].html);
-            $('#keep_signed_in').click(function() {
-              if($(this).is(":checked")) {
-                $('label[for=keep_signed_in]').css('font-weight', 'bold');
-                $('#authform').append('<input type=hidden name=keep_signed_in value=1>');
-              } else {
-                $('label[for=keep_signed_in]').css('font-weight', 'normal');
-                $('#authform input[name=keep_signed_in]').remove();
-              }
-            });
-            budding.ui.form = 'login';
-          },
-          
-        }
-      }
-    }
+    budding = {ui: {}};
     
     <% unless flash.info.nil? %>
     budding.ui.forms['<%= flash.form %>']['#info'].html = '<%= flash.info.gsub("'", "\\\\'") %>';
     <% end %>
     
+    budding.display_potential_keywords = function(tags) {
+      var span, root = $('#potential-keywords');
+      for(var i = 0, len = tags.length; i < len; i++) {
+        span = $('<span class="tag ui-corner-all">' + tags[i].replace(" ", "&nbsp;") + '</span>');
+        span.draggable({zIndex: 2700});
+        root.append(span);
+        root.append(" ");
+      }
+      root.show();
+    }
+    
     budding.init = function() {
 
       $('.top-button').button();
-      $("#tagger").buttonset();
+      $("#taggerform").buttonset();
+      $("#tags-submit").button();
       // $('#signup-button').click(budding.ui.listeners['#signup-button']);
       // $('#login-button').click(budding.ui.listeners['#login-button']);
 
-      $('#input-email, #input-password-signup, #input-password-login').focus(function(e) {
-        $(this).css({color: "#000"});
-      });
-
-      $('#input-email, #input-password-signup, #input-password-login').blur(function(e) {
-        var input = "#" + $(this).id();
-        if(input.match(/^#input-password/)) {
-          input = '#input-password';
+      $('.tagbox').droppable({
+        drop: function(event, ui) {
+          
+          var tag = ui.draggable.text().replace('\u00a0', ' ');;
+          var tag_category = $(this).attr('id').match(/([^-]*)-dropbox/)[1];
+          
+          var tag_elems = [
+            $('<input type="hidden" name="tags[][tag]" value="' + tag + '">'),
+            $('<input type="hidden" name="tags[][category]" value="' + tag_category + '">')
+          ];
+          
+          var tag_elem = $('<span class="tag ui-corner-all">' + tag + '</span>');
+          tag_elem.addClass('selected-tag');
+          $(this).find(":first-child").after(tag_elem);
+          $('#tags-submit').before(tag_elems[0]);
+          $('#tags-submit').before(tag_elems[1]);
+          ui.draggable.hide();
         }
-        if($(this).val() == $(this).attr('placeholder')) {
-          console.log("budding.ui.form: " + budding.ui.form);
-          console.log("input: " + input);
-          $(this).css({color: budding.ui.forms[budding.ui.form][input].color});
-        }
       });
-
-      if(budding.ui.form == 'login') {
-        budding.ui.listeners['#login-button'].call($('#login-button'));
-      } else if(budding.ui.form == 'signup') {
-        budding.ui.listeners['#signup-button'].call($('#signup-button'))
-      }
       
-      $('#auth').buttonset('refresh');
       $('#tagger').show();
+      
+      $('#tagger-submit').click(function() {
+        var url = $('#input-url').val();
+        $.post('/tagger', {url: url}, budding.display_potential_keywords, 'json');
+      });
 
     }
     
     $(document).ready(function(){
       budding.init();
+      $('.top-button').click(function(elem) {
+        window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
+      });
     });
     
     </script>
+  	<style type="text/css" media="screen">
+
+  	</style>
   </head>
   <body>
     <div id="top" class="ui-corner-top">
@@ -134,11 +99,12 @@
       <% end %>
 		</div>
     <div id="content">
-		  <div id="tagger">
-		    <form id="taggerform" action="/tagger" method="post" >
-          <input type="text" name="url" id="input-url" class="ui-widget" placeholder="URL to scrape">
-          <input type="submit" style="margin-left: 10px;" value="Import">
-		    </form>
+		  <div class="tag-box">
+		    <input type="input" class="tag-name">
+		    <input type="input" class="tag-description">
+		    <input type="input" class="tag-query-url">
+		    <div class="tag-save-button"></div>
+		    <div class="tag-remove"></div>
 		  </div>
       <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
     </div>

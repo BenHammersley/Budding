@@ -403,7 +403,7 @@ budding.utils.parse_tags.extract_tag = function(i, str) {
 }
 
 budding.load_known_tags = function() {
-  $.get('/tags', function(data) {
+  $.get('/links', function(data) {
     budding.known_tags = {};
     for(var i = 0, len = data.length; i < len; i++) {
       budding.known_tags[data[i].name] = data[i].category;

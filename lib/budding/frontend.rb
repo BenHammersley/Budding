@@ -135,6 +135,11 @@ module Budding
       erb :dashboard
     end
     
+    get '/tags' do
+      @title = "Budding: Tags"
+      erb :tags
+    end
+    
     get '/tagger' do
       @title = "Budding: Tagger"
       erb :tagger
@@ -178,7 +183,7 @@ module Budding
       @tags.to_json
     end
     
-    get '/tags' do
+    get '/links' do
       tags = database[:tags].filter(~{:name => nil}).all
       content_type :json, :charset => 'utf-8'
       tags.to_json
@@ -195,7 +200,7 @@ module Budding
       google_results.to_json
     end
     
-    post '/tags' do
+    post '/links' do
       content_type 'text/plain', :encoding => "utf-8"
       puts params[:tags].inspect
       for tag in params[:tags]

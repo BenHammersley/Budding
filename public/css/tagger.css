@@ -7,21 +7,6 @@
   font-size:12px;
 }
 
-#content {
-  padding: 0;
-	margin: 20px;
-  width: 860px;
-	margin-bottom: 10px;
-}
-#content:after {  
-  content: ".";  
-  visibility: hidden;  
-  display: block;  
-  clear: both;  
-  height: 0;  
-  font-size: 0;
-}
-
 #controls {
   font-size: 14px;
   padding: 0px;
