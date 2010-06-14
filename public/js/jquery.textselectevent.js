@@ -30,9 +30,29 @@
 				evt.originalEvent.target :
 				undefined;
 
-			return el && +el.selectionEnd ? 
-				$(el).val().substring(el.selectionStart, el.selectionEnd) :
-				(winSel || docSel.createRange().text || "").toString();
+      var result = {}
+			if(el && +el.selectionEnd) {
+			  result.start = el.selectionStart;
+			  result.end = el.selectionEnd;
+				result.text = $(el).val().substring(el.selectionStart, el.selectionEnd)
+			} else {
+			  if(winSel) {
+			    result.start = winSel.baseOffset;
+			    result.end = winSel.extentOffset;
+			    result.text = winSel.toString();
+			  } else if(docSel) {
+          // result.start = docSel.?;
+          // result.end = docSel.?;
+			    result.text = docSel.createRange().text;
+			  } else {
+			    result.text = "";
+			  }
+			  return result;
+			}
+      // 
+      // return el && +el.selectionEnd ? 
+      //  $(el).val().substring(el.selectionStart, el.selectionEnd) :
+      //  (winSel || docSel.createRange().text || "").toString();
 		},
 
 		// Helper to grab which common ancestor the text has
