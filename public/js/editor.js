@@ -567,6 +567,11 @@ budding.save_story = function() {
   } else if(!$('#text-block-ta').val().match(/^\s*$/)) {
     budding.add_text_block($('#text-block-ta').val());
   }
+  if(this.document.title == null && budding.ui.use_first_paragraph_as_title) {
+    if(this.document.body.length) {
+      this.document.title = $('<dummy/>').html(this.document.body[0].text).text();
+    }
+  }
   $('#editor-form input[name=title]').val(this.document.title);
   $('#editor-form input[name=story]').val(this.document.single_string());
   $('#editor-form input[name=author]').val(this.document.author);

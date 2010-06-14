@@ -58,7 +58,7 @@
             $('<input type="hidden" name="links[][tag]" value="' + link_tag + '">')
           ];
           
-          var tag_elem = $('<span class="tag ui-corner-all">' + link_tag + '</span>');
+          var tag_elem = $('<span class="tag ui-corner-all">' + link + '</span>');
           tag_elem.addClass('selected-tag');
           $(this).find(":first-child").after(tag_elem);
           $('#tags-submit').before(tag_elems[0]);
@@ -117,6 +117,7 @@
     <div id="top" class="ui-corner-top">
       <h1>Budding</h1>
       <input type="button" id="button-dashboard" class="top-button" value="Dashboard">
+      <input type="button" id="button-editor" class="top-button" value="Tagger">
       <input type="button" id="button-tags" class="top-button" value="Tags">
       <input type="button" id="button-logout" class="top-button" value="Logout">
     </div>
