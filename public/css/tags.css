@@ -36,6 +36,7 @@
 .tag-box {
   border: 1px solid #ccc;
   background-color: #eee;
+  margin-bottom: 5px;
 }
 .tag-box:hover {
   border: 1px solid #555;

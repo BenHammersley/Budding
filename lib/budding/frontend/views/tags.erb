@@ -78,6 +78,12 @@
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
+      $('#tag-box-add').click(function() {
+        var self = $('#tag-box-add').detach();
+        var new_tag = $('.tag-box:last').clone();
+        new_tag.append(self);
+        $('.tag-box:last').after(new_tag);
+      });
     });
     
     </script>
