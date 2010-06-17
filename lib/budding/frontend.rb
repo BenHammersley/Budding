@@ -292,6 +292,39 @@ module Budding
       end
     end
     
+    get '/documents/:id/as/html' do
+      redirect '/' unless logged?
+      @document = Document.find(:document_id => params[:id])
+      unless @document.user != current_user or @document.nil?
+        @tags = database[:tags].all
+        @text_blocks = Nokogiri::HTML(@document.story).xpath('//p')
+        @document_title = @document.title || "Untitled document"
+        @html = []
+        @html << '<!DOCTYPE html>'
+        @html << '<head>'
+        @html << '<meta charset="utf-8">'
+        @html << '<title>%s</title>' % @document_title
+        @html << '</head>'
+        @html << '<body>'
+        for text_block in @text_blocks
+          block_type = text_block.attributes['class']
+          if block_type.text == 'text-block-' # FIXME
+            block_type = 'p' 
+          else
+            block_type = block_type.text.match(/-([^->]+)$/)[1]
+          end
+          for tag_type in @tags
+            content = text_block.inner_html.gsub('<%s' % tag_type[:name], '<a')
+            content = text_block.inner_html.gsub('</%s' % tag_type[:name], '</a')
+          end
+          @html << '<%s>%s</%s>' % [block_type, content, block_type]
+        end
+        @html << '</body>'
+        content_type "text/html; charset=utf-8"
+        @html.join("\n")
+      end
+    end
+    
     get '/documents/:id/as/:filetype' do
       redirect '/' unless logged?
       mime_type = {
