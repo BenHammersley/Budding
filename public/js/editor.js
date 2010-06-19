@@ -25,7 +25,7 @@ budding = {
     handlers: {}
   },
   utils: {},
-  identified_links: {}
+  identified_links_in_insertion_point: {}
 };
 
 budding.Document = function() {
@@ -242,11 +242,17 @@ budding.ui.handlers.link_editor_link_button = {
 budding.ui.handlers.link_editor_link_remove_button = {
   click: function() {
     var tag_id = $(this).parent().attr('id').match(/(\d+)$/)[1];
+    console.log(tag_id);
     var tag_obj = budding.ui.tag_editor_links.list[tag_id];
     var ta_val = $('#text-block-ta').val();
     var a = ta_val.substr(0, tag_obj.start_index);
     var b = ta_val.substr(tag_obj.end_index);
     ta_val = a + tag_obj.content + b;
+    if(budding.ui.text_block_selected) {
+      budding.document.body[budding.ui.current_text_block].identified_links[tag_id] = null;
+    } else {
+      budding.ui.identified_links_in_insertion_point[tag_id] = null;
+    }
     $('#text-block-ta').val(ta_val);
     budding.ui.handlers.editor_textarea.keyup();
   }
@@ -345,12 +351,15 @@ budding.utils.parse_tags = function(s) {
           current_tag = tags.length-1;
           tags[current_tag].content = [];
         } else if(tag.end) {
-          if(tag.name == tags[current_tag].name){
-            tags[current_tag].closed = true;
-            tags[current_tag].content = tags[current_tag].content.join('');
-            tags[current_tag].end_index = tag.end_index;
-            current_tag = null;
-          }
+          try {
+            if(tag.name == tags[current_tag].name){
+              tags[current_tag].closed = true;
+              tags[current_tag].content = tags[current_tag].content.join('');
+              tags[current_tag].end_index = tag.end_index;
+              current_tag = null;
+            }
+          } catch(exception) {
+          };
         }
         i = tag.next_index;
       }
@@ -466,7 +475,7 @@ budding.update_live_preview = function() {
 budding.parse_text_blocks = function() {
   var text_blocks = $('.text-block');
   for(var text_block_hash, i = 0, len = text_blocks.length; i < len; i++) {
-    text_block_hash = {text: $.trim($(text_blocks[i]).html())};
+    text_block_hash = {text: $.trim($(text_blocks[i]).html()), identified_links:{}};
     this.document.body.push(text_block_hash);
     text_block_hash.id = this.document.body.length-1;
     $(text_blocks[i]).click(budding.ui.handlers.text_block.click);
@@ -487,7 +496,8 @@ budding.add_text_block = function(text, raw_text_import) {
   var text_block_hash = {'text': text};
   var p = $('<p class="text-block"></p>').html(text);
   var new_insertion_point = $('<div class="insertion-point"></div>');
-  
+
+  text_block_hash.identified_links = {};  
   text_block_hash.id = budding.ui.insertion_point_index;
   text_block_hash.tag = raw_text_import ? 'p' : budding.ui.current_text_block_type;
   
@@ -588,66 +598,82 @@ budding.save_story = function() {
 
 budding.identify_known_links = function(text) {
   var link, tag, box, index_of_link;
+  var i = 0;
   for(link in budding.known_links) {
     var index_of_link = text.indexOf(link);
-    if(index_of_link != -1 && !budding.identified_links[link]) {
+    if(index_of_link != -1) {
       tag = budding.known_links[link];
-      var a = text.substr(0, index_of_link);
       var content = text.substr(index_of_link, link.length);
-      var b = text.substr(index_of_link+link.length);
-      budding.identified_links[link] = true;
-      text = [a, '<', tag, '>', link, '</', tag, '>', b].join('');
+      var deleted, identified;
+      if(budding.ui.text_block_selected) {
+        identified = budding.document.body[budding.ui.current_text_block].identified_links[i] == content;
+        deleted = budding.document.body[budding.ui.current_text_block].identified_links[i] === null;
+      } else {
+        identified = budding.ui.identified_links_in_insertion_point[i] == content;
+        deleted = budding.ui.identified_links_in_insertion_point[i] === null;
+      }
+      if(!identified) {
+        var a = text.substr(0, index_of_link);
+        var b = text.substr(index_of_link+link.length);
+        if(budding.ui.text_block_selected) {
+          budding.document.body[budding.ui.current_text_block].identified_links[i] = content;
+        } else {
+          budding.ui.identified_links_in_insertion_point[i] = content;
+        }
+        text = [a, '<', tag, '>', link, '</', tag, '>', b].join('');
+      }
+      i += 1;
     }
   }
   return text;
 };
 
-budding.make_fragments_clickable = function() {
-  var blocks = $('#text-blocks p');
-  for(var i = 0, len = blocks.length; i < len; i++) {
-    var block = $(blocks[i]);
-    var text = $.trim(block.html());
-    var fragments = [];
-    var pieces = text.split(' ');
-    for(var piece, fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
-      piece = pieces[j];
-      var fragment_nontext = [];
-      while(piece.charAt(piece.length-1).match(/[.,;:!?]/) && piece.length) {
-        fragment_nontext.push(piece.charAt(piece.length-1));
-        piece = piece.substr(0, piece.length-1);
-      }
-      fragment = $('<span></span>');
-      fragment.attr('class', 'selectable');
-      fragment.text(piece);
-      fragments.push(fragment);
-      if(j != jlen-1) {
-        fragment_nontext.push(' ');
-      }
-      fragments.push($('<span></span>').text(fragment_nontext.join('')));
-    }
-    block.text("");
-    block.append.apply(block, fragments);
-  }
-  $('.selectable').click(function(event) {
-    if(budding.ui.shiftKey) {
-      budding.ui.currentFragments.elements.push($(this));
-      $(this).css('background', '#789');
-      budding.ui.currentFragments.text.push($(this).text());
-    } else {
-      var selected_fragment = $("<span>" + $(this).text() + "</span>");
-      selected_fragment.attr('class', 'selected');
-      selected_fragment.draggable();
-      $('#fragments-end').before(selected_fragment);
-    }
-  });
-  $('#wikipedia-dropbox').droppable({
-    drop: function(event, ui) {
-      $(this).append('<br>');
-      $('#wikipedia-fragments-end').before('<span class="selected" style="margin: 2px;">' + ui.draggable.text() + '</span>');
-      ui.draggable.remove();
-    }
-  });
-}
+// budding.make_fragments_clickable = function() {
+//   var blocks = $('#text-blocks p');
+//   for(var i = 0, len = blocks.length; i < len; i++) {
+//     var block = $(blocks[i]);
+//     var text = $.trim(block.html());
+//     var fragments = [];
+//     var pieces = text.split(' ');
+//     for(var piece, fragment, j = 0, jlen = pieces.length; j < jlen; j++) {
+//       piece = pieces[j];
+//       var fragment_nontext = [];
+//       while(piece.charAt(piece.length-1).match(/[.,;:!?]/) && piece.length) {
+//         fragment_nontext.push(piece.charAt(piece.length-1));
+//         piece = piece.substr(0, piece.length-1);
+//       }
+//       fragment = $('<span></span>');
+//       fragment.attr('class', 'selectable');
+//       fragment.text(piece);
+//       fragments.push(fragment);
+//       if(j != jlen-1) {
+//         fragment_nontext.push(' ');
+//       }
+//       fragments.push($('<span></span>').text(fragment_nontext.join('')));
+//     }
+//     block.text("");
+//     block.append.apply(block, fragments);
+//   }
+//   $('.selectable').click(function(event) {
+//     if(budding.ui.shiftKey) {
+//       budding.ui.currentFragments.elements.push($(this));
+//       $(this).css('background', '#789');
+//       budding.ui.currentFragments.text.push($(this).text());
+//     } else {
+//       var selected_fragment = $("<span>" + $(this).text() + "</span>");
+//       selected_fragment.attr('class', 'selected');
+//       selected_fragment.draggable();
+//       $('#fragments-end').before(selected_fragment);
+//     }
+//   });
+//   $('#wikipedia-dropbox').droppable({
+//     drop: function(event, ui) {
+//       $(this).append('<br>');
+//       $('#wikipedia-fragments-end').before('<span class="selected" style="margin: 2px;">' + ui.draggable.text() + '</span>');
+//       ui.draggable.remove();
+//     }
+//   });
+// }
 
 budding.place_editor_controls_at_insertion_point = function(index) {
   var insertion_point = $('#insertion-point-' + index);
@@ -656,6 +682,7 @@ budding.place_editor_controls_at_insertion_point = function(index) {
 
 budding.place_editor_controls_at_insertion_point.click_handler = function(context) {
   
+  budding.ui.identified_links_in_insertion_point = {};
   budding.ui.clean_up_tag_editor();
   $('#text-block-preview').hide();
   budding.ui.last_text_area_val = '';
@@ -735,25 +762,25 @@ budding.init = function() {
     window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
   });
   
-  $('body').keydown(function(e) { 
-    budding.ui.shiftKey = e.shiftKey;
-  });
-  
-  $('body').keyup(function() { 
-    if(budding.ui.shiftKey) {
-      if(budding.ui.currentFragments.elements.length) {
-        for(var span, i = 0, len = budding.ui.currentFragments.elements.length; i < len; i++) {
-          budding.ui.currentFragments.elements[i].css('background', '#fff');
-        }
-        span = $("<span>" + budding.ui.currentFragments.text.join(' ') + "</span>");
-        span.attr('class', 'selected');
-        span.draggable();
-        $('#fragments-end').before(span);
-        budding.ui.currentFragments = {text: [], elements: []};
-      }
-      budding.ui.shiftKey = false;
-    }
-  });
+  // $('body').keydown(function(e) { 
+  //   budding.ui.shiftKey = e.shiftKey;
+  // });
+  // 
+  // $('body').keyup(function() { 
+  //   if(budding.ui.shiftKey) {
+  //     if(budding.ui.currentFragments.elements.length) {
+  //       for(var span, i = 0, len = budding.ui.currentFragments.elements.length; i < len; i++) {
+  //         budding.ui.currentFragments.elements[i].css('background', '#fff');
+  //       }
+  //       span = $("<span>" + budding.ui.currentFragments.text.join(' ') + "</span>");
+  //       span.attr('class', 'selected');
+  //       span.draggable();
+  //       $('#fragments-end').before(span);
+  //       budding.ui.currentFragments = {text: [], elements: []};
+  //     }
+  //     budding.ui.shiftKey = false;
+  //   }
+  // });
   
   $('input[name=radio-text-block-type]').change(budding.ui.handlers.text_block_type_select);
   
