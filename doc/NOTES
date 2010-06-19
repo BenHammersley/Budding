@@ -61,7 +61,6 @@
   - [jonas] Add simple previous/next pagination to the link suggestions list
   - [jonas] Make the new share button work
   - [jonas] Make the last modified input field work
-  - [rafael] Make document titles editable in the dashboard
   - [rafael] Make and admin that lets you add users with a personalized beta code
   - [jonas] Change the home page to let users sign up with a beta code
   
