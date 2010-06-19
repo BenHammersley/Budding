@@ -59,12 +59,10 @@
   - Add link type button set to the right of the URL input field in the link editor
   - Add simple previous/next pagination to the link suggestions list
   - Make the new share button work
-  - Make the new HTML export button work
   - Make the last modified input field work
-  - Make the tagger import actually display all the text from the URL
-  - Implement fragment selector in the tagger's imported text pane
   - Make document titles editable in the dashboard
-  - Make and admin that lets you add users with a personalized beta code.
+  - Make and admin that lets you add users with a personalized beta code
+  - Change the home page to let users sign up with a beta code
   
   To-read
   -------
