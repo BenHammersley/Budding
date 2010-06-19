@@ -508,7 +508,6 @@ budding.add_text_block = function(text, raw_text_import) {
       p.removeClass('text-block-' + classes[i]);
     }
     p.addClass('text-block-' + text_block_hash.tag);
-    console.log("p.attr('class'): " + p.attr('class'));
     budding.place_editor_controls_at_insertion_point(budding.ui.current_text_block);
     // budding.make_fragments_clickable();
   } else {
@@ -582,7 +581,6 @@ budding.save_story = function() {
   var editor_settings = {
     use_first_paragraph_as_title: budding.ui.use_first_paragraph_as_title
   };
-  console.log(JSON.stringify(editor_settings));
   $('#editor-form input[name=editor_settings]').val(JSON.stringify(editor_settings));
   $('#editor-form').submit();
 };
@@ -596,9 +594,9 @@ budding.identify_known_links = function(text) {
       tag = budding.known_links[link];
       var a = text.substr(0, index_of_link);
       var content = text.substr(index_of_link, link.length);
-      var b = text.substr(index_of_link + tag.length);
+      var b = text.substr(index_of_link+link.length);
       budding.identified_links[link] = true;
-      text = [a, '<', tag, '>', link, '</', tag, '>'].join('');
+      text = [a, '<', tag, '>', link, '</', tag, '>', b].join('');
     }
   }
   return text;
@@ -822,7 +820,6 @@ budding.init = function() {
   
   $('#document-title-box').click(function() {
     if(budding.ui.use_first_paragraph_as_title) {
-      console.log('foo');
       $('#document-title-input').attr('disabled', '');
       $('#document-title-input').val(budding.document.title);
       budding.ui.use_first_paragraph_as_title = false;
