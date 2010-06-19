@@ -190,10 +190,12 @@ module Budding
     end
 
     post '/data-only/document' do
+      content_type :json
       document = Document.find(:document_id => params[:id])
       document.update({:title => params[:title]})
       document.save()
-      JSON.dump({:status => "ok"})
+      #JSON.dump({:status => "ok"})
+      "{\"status\":\"ok\"}"
     end
 
     post '/tags' do
