@@ -51,12 +51,16 @@
   color: #000;
 }
 
-#document-title {
+#document-title, .editing-title {
   background: #fff;
   border: 1px solid #bbb;
   margin: 0px -2px 0px -2px;
   padding: 5px 10px 5px 10px;
   width: 650px;
+}
+
+.editing-title {
+    font-size: 16px;
 }
 
 .server_error:before {

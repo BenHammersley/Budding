@@ -21,7 +21,9 @@
     
     budding = {
       ui: {
-      }
+      },
+      editing_title: null,
+      editing_title_container: null
     }
         
     budding.init = function() {
@@ -30,8 +32,38 @@
       $('.top-button').click(function(elem) {
         window.location = '/' + $(elem.target).attr('id').match(/button-(\w+)/)[1];
       });
+
+      $("span#document-title").click(function () {
+        var document_id = $(this).next().attr("href").match(/\d+$/);
+        var input = $('<input type="text" id="title_'+document_id+'" value="'+$(this).html()+'">');
+        budding.editing_title = "input#title_" + document_id;
+        budding.editing_title_container = $(this);
+        var offset = $(this).offset();
+        input.click(function () {
+          event.stopPropagation();
+        });
+        input.keypress(function () {
+          if (event.which == 13) {
+            budding.editing_title_container.html($(this).val());
+            $(this).remove();
+          }
+        })
+        input.css("position", "absolute");
+        input.css("top", offset.top);
+        input.css("left", offset.left);
+        input.addClass("editing-title");
+        $("body").append($(input));
+        input.focus();
+        event.stopPropagation();
+      });
     }
-    
+
+    $(document).click(function () {
+      $(budding.editing_title).remove();
+      budding.editing_title = null;
+      budding.editing_title_container = null;
+    });
+
     $(document).ready(function(){
       budding.init();
     });
