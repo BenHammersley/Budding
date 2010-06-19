@@ -188,7 +188,14 @@ module Budding
       content_type :json, :charset => 'utf-8'
       tags.to_json
     end
-              
+
+    post '/data-only/document' do
+      document = Document.find(:document_id => params[:id])
+      document.update({:title => params[:title]})
+      document.save()
+      JSON.dump({:status => "ok"})
+    end
+
     post '/tags' do
       body = request.body.read
       puts "body: " + body

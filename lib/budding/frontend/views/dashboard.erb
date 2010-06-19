@@ -34,6 +34,9 @@
       });
 
       $("span#document-title").click(function () {
+        if (budding.editing_title) {
+          $(document).click();
+        }
         var document_id = $(this).next().attr("href").match(/\d+$/);
         var input = $('<input type="text" id="title_'+document_id+'" value="'+$(this).html()+'">');
         budding.editing_title = "input#title_" + document_id;
@@ -45,14 +48,30 @@
         input.keypress(function () {
           if (event.which == 13) {
             budding.editing_title_container.html($(this).val());
+            $.post("data-only/document", {
+                                          "id": budding.editing_title.match(/\d+$/),
+                                          "title": $(this).val()
+                                          }, function (response) {
+                                            if (response["status"] == "ok")
+                                              budding.editing_title_container.css("background", "#fffcd1");
+                                              window.setTimeout(function () {
+                                                budding.editing_title_container.css("background", "white");
+                                                window.setTimeout(function () {
+                                                  budding.editing_title_container.css("background", "#fffcd1");
+                                                  window.setTimeout(function () {
+                                                    budding.editing_title_container.css("background", "white");
+                                                  }, 100);
+                                                }, 100);
+                                              }, 100);
+                                          }, "json");
             $(this).remove();
           }
         })
-        input.css("position", "absolute");
-        input.css("top", offset.top);
-        input.css("left", offset.left);
+        //input.css("position", "absolute");
+        //input.css("top", offset.top+10);
+        //input.css("left", offset.left);
         input.addClass("editing-title");
-        $("body").append($(input));
+        $(this).append($(input));
         input.focus();
         event.stopPropagation();
       });
@@ -96,7 +115,7 @@
         <% for document in @documents %>
         <li>
           <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
-          <span id="document-title" class="inline-box"><%= document.title.empty? ? "&nbsp;" : document.title %></span>
+          <span id="document-title" title="Click to edit" class="inline-box"><%= document.title.empty? ? "&nbsp;" : document.title %></span>
           <a id="document-edit-button" href="/documents/<%= document.document_id %>" class="inline-box">edit</a>
           <a id="document-delete-button" href="/documents/<%= document.document_id %>/delete" class="inline-box ui-corner-right">delete</a>
         </li>
