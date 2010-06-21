@@ -322,9 +322,10 @@ module Budding
           else
             block_type = block_type.text.match(/-([^->]+)$/)[1]
           end
+          content = text_block.inner_html.to_s
           for tag_type in @tags
-            content = text_block.inner_html.gsub('<%s' % tag_type[:name], '<a')
-            content = text_block.inner_html.gsub('</%s' % tag_type[:name], '</a')
+            content = content.gsub('<%s' % tag_type[:name], '<a')
+            content = content.gsub('</%s' % tag_type[:name], '</a')
           end
           @html << '<%s>%s</%s>' % [block_type, content, block_type]
         end

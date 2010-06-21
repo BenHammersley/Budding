@@ -115,3 +115,35 @@ task :read_wikipedia_xml do
   potential_keywords = text.scan(/[A-Z]\w+(?:(?: )[A-Z]\w+)/)
   puts set(potential_keywords).to_a
 end
+
+task :html_export do
+  database = Sequel.connect(Budding::CONFIG[:dbparams])
+  @document = Budding::Database::Document.find(:document_id => 45)
+  @tags = database[:tags].all
+  @text_blocks = Nokogiri::HTML(@document.story).xpath('//p')
+  @document_title = @document.title || "Untitled document"
+  @html = []
+  @html << '<!DOCTYPE html>'
+  @html << '<head>'
+  @html << '<meta charset="utf-8">'
+  @html << '<title>%s</title>' % @document_title
+  @html << '</head>'
+  @html << '<body>'
+  @text_blocks = [@text_blocks[2]]
+  for text_block in @text_blocks
+    block_type = text_block.attributes['class']
+    if block_type.text == 'text-block-' # FIXME
+      block_type = 'p' 
+    else
+      block_type = block_type.text.match(/-([^->]+)$/)[1]
+    end
+    content = text_block.inner_html.to_s
+    for tag_type in @tags
+      content = content.gsub('<%s' % tag_type[:name], '<a')
+      content = content.gsub('</%s' % tag_type[:name], '</a')
+    end
+    @html << '<%s>%s</%s>' % [block_type, content, block_type]
+  end
+  @html << '</body>'
+  puts @html.join("\n")
+end
