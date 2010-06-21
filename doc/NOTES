@@ -57,6 +57,8 @@
   To-do
   -----
   - [rafael] Make .doc export work with the new way of storing documents
+  - [rafael] Make .pdf export work with the new way of storing documents
+  - [rafael] Make .rtf export work with the new way of storing documents
   - [jonas] Add link type button set to the right of the URL input field in the link editor
   - [jonas] Add simple previous/next pagination to the link suggestions list
   - [jonas] Make the new share button work
