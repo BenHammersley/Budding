@@ -7,7 +7,7 @@
 
   links = []
   story = ""
-  if @text_block
+  if @text_blocks
     for paragraph in @text_blocks
       paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
         links << $2
