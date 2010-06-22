@@ -20,22 +20,36 @@
     pdf_doc.text @document.short_summary
 
     pdf_doc.text "Teaser:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.teaser
+    pdf_doc.text (@document.teaser || "")
 
     pdf_doc.text "Complete copy:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.story
+
+    links = []
+    @text_blocks.each do |paragraph|
+      paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
+        links << $2
+        "#{$3} [#{links.length}]"
+      end
+      paragraph.gsub!(/<\/?[^>]+>/, "")
+      pdf_doc.text paragraph
+    end
+
+    pdf_doc.text "\n"
+    links.each_with_index do |link, index|
+      pdf_doc.text "[#{index+1}] #{link}"
+    end
 
     pdf_doc.text "Locations:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.locations
+    pdf_doc.text (@document.locations || "")
 
     pdf_doc.text "People:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.people
+    pdf_doc.text (@document.people || "")
 
     pdf_doc.text "Companies:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.companies
+    pdf_doc.text (@document.companies || "")
 
     pdf_doc.text "Keyword:", :style => :bold, :indent_paragraphs => -10
-    pdf_doc.text @document.keywords
+    pdf_doc.text (@document.keywords || "")
 
     pdf_doc.text "Language:", :style => :bold, :indent_paragraphs => -10
     pdf_doc.text @document.language.name

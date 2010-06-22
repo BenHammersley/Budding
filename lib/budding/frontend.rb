@@ -348,6 +348,7 @@ module Budding
         content_type "#{mime_type[params[:filetype]]}; charset=utf-8"
         content_disposition = 'inline; filename="%s.%s"' % [escape_html(@document.title), params[:filetype]]
         response['Content-Disposition'] = content_disposition
+        @text_blocks = Nokogiri::HTML(@document.story).xpath('//p').collect{|p| p.inner_html}
         erb :"document/export/#{params[:filetype]}"
       else
         #erb :"document/not_found"
