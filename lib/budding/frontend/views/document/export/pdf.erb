@@ -25,7 +25,7 @@
     pdf_doc.text "Complete copy:", :style => :bold, :indent_paragraphs => -10
 
     links = []
-    @text_blocks.each do |paragraph|
+    for paragraph in @text_blocks
       paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
         links << $2
         "#{$3} [#{links.length}]"
@@ -34,9 +34,11 @@
       pdf_doc.text paragraph
     end
 
-    pdf_doc.text "\n"
-    links.each_with_index do |link, index|
-      pdf_doc.text "[#{index+1}] #{link}"
+    if links
+      pdf_doc.text "\n"
+      links.each_with_index do |link, index|
+        pdf_doc.text "[#{index+1}] #{link}"
+      end
     end
 
     pdf_doc.text "Locations:", :style => :bold, :indent_paragraphs => -10

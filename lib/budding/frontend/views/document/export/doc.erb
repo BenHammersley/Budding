@@ -7,7 +7,7 @@
 
   links = []
   story = ""
-  @text_blocks.each do |paragraph|
+  for paragraph @text_blocks do
     paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
       links << $2
       "#{$3} [#{links.length}]"
@@ -16,9 +16,11 @@
     story << paragraph
   end
 
-  story << "\n"
-  links.each_with_index do |link, index|
-    story << "[#{index+1}] #{link}"
+  if links
+    story << "\n"
+    links.each_with_index do |link, index|
+      story << "[#{index+1}] #{link}"
+    end
   end
   
   arguments << "--story=\"#{story}\""
