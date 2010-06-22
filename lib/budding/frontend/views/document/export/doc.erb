@@ -7,22 +7,22 @@
 
   links = []
   story = ""
-  for paragraph @text_blocks do
-    paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
-      links << $2
-      "#{$3} [#{links.length}]"
+  if @text_block
+    for paragraph @text_blocks do
+      paragraph.gsub!(/<(\w+) href=\"([^\"]+)\">([^(?:<\/\1)]+)<\/\1>/) do |m|
+        links << $2
+        "#{$3} [#{links.length}]"
+      end
+      paragraph.gsub!(/<\/?[^>]+>/, "")
+      story << paragraph
     end
-    paragraph.gsub!(/<\/?[^>]+>/, "")
-    story << paragraph
-  end
 
-  if links
     story << "\n"
     links.each_with_index do |link, index|
       story << "[#{index+1}] #{link}"
     end
   end
-  
+
   arguments << "--story=\"#{story}\""
   arguments << "--language=\"#{@document.language.name}\""
   file = %x(python #{python_file} #{arguments.join(" ")})
