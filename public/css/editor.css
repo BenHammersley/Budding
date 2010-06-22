@@ -116,7 +116,7 @@
   padding: 6px 7px 5px 7px;
 }
 
-#button-export-html {
+#button-export-html, #button-export-pdf, #button-export-doc {
   float: left;
   border: 1px solid #bbb;
   padding: 5px 7px 5px 7px;
