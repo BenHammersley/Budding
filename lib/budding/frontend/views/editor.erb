@@ -52,8 +52,8 @@
       <div id="export-buttons-box">
         <div id="export-buttons-label">Export as</div>
         <a href="/documents/<%= @document.document_id %>/as/html" id="button-export-html" class="ui-corner-left editor-bar-button">HTML</a>
-        <div id="button-export-pdf" class="ui-corner-right editor-bar-button">PDF</div>
-        <div id="button-export-doc" class="ui-corner-right editor-bar-button">DOC</div>          
+        <a href="/documents/<%= @document.document_id %>/as/pdf" id="button-export-pdf" class="ui-corner-left editor-bar-button">PDF</a>
+        <a href="/documents/<%= @document.document_id %>/as/doc" id="button-export-doc" class="ui-corner-left editor-bar-button">DOC</a>
       </div>
     </div>
     <div id="content">

@@ -172,6 +172,9 @@ module Budding
       migration "fix links primary key" do
         database.run("alter table links change column link_id link_id bigint(20) auto_increment not null;")
       end
+      migration "add user's role" do
+        database.add_column(:users, :role, :text)
+      end
     end
     class User < Sequel::Model
       one_to_many :documents
@@ -183,6 +186,9 @@ module Budding
         unless self.email.nil? or self.password.nil?
           self.email == email and BCrypt::Password.new(self.password) == password
         end
+      end
+      def admin?
+        self.role == "admin"
       end
     end
     class Language < Sequel::Model
