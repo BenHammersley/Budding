@@ -75,3 +75,53 @@
   color: #A52A2A;
   letter-spacing: 3px;
 }
+
+#text-overview-0 {
+  font-size: 20px;
+  margin-top: 20px;
+  padding: 10px 10px 10px 10px;
+  background: #ccc;
+}
+
+#text-overview-1 {
+  padding: 10px 10px 10px 10px;
+  background: #ececec;
+}
+
+#text-overview-2 {
+  padding: 10px 10px 10px 10px;
+  background: #ccc;
+}
+
+#text-overview-3 {
+  padding: 10px 10px 10px 10px;
+  background: #ececec;  
+}
+
+#text-overview-4 {
+  padding: 10px 10px 10px 10px;
+  background: #ccc;
+}
+
+.text-image-1 {
+  float: left;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #000;
+}
+
+.text-image-2 {
+  margin-left: 5px;
+  float: left;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #000;
+}
+
+.text-content {
+  width: 625px;
+  margin-left: 10px;
+  font-size: 18px;
+  float: left;
+  overflow: hidden;
+}

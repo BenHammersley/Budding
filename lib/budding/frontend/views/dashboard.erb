@@ -111,7 +111,7 @@
       <% end %>
 		</div>
     <div id="content">
-    <ul style="list-style: none; padding: 0px; margin: 0px;">
+      <ul style="list-style: none; padding: 0px; margin: 0px;">
         <% for document in @documents %>
         <li>
           <span id="document-created-at" class="inline-box ui-corner-left"><%= document.created_on.strftime("%b %d %H:%M") %></span>
@@ -121,7 +121,54 @@
         </li>
         <% end %>
       </ul>
-      <div id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></div>
+      <h1 id="text-overview-0" class="ui-corner-top">
+        Budding is essentialy a web-based news story editor. Here's what it can do:
+      </h1>
+      <div id="text-overview-1" class="ui-helper-clearfix">
+        <div class="text-image-1"></div>
+        <div class="text-image-2"></div>
+        <div class="text-content">
+          Budding is unlike any other text editor. The goal is to give you 
+          what-you-see-is-what-you-get to some extent, but not so much that
+          you don't know what's exactly happening under the hood. It lets you
+          write and edit paragraphs individually, and soon as you stop editing
+          a paragraph, it is displayed like final copy in the page.
+        </div>
+      </div>
+      <div id="text-overview-2" class=" ui-helper-clearfix">
+        <div class="text-image-1"></div>
+        <div class="text-image-2"></div>
+        <div class="text-content">
+          Budding works a minimal set of HTML tags as to reduce complexity. You can 
+          set what kind of paragraph you want in the inline editor, but it won't bother
+          giving you a list of trivial styling markup tags, such as &lt;b&gt; for bold and &lt;i&gt;
+          for italics as to avoid clutter in the interface.
+        </div>
+      </div>
+      <div id="text-overview-3" class="ui-helper-clearfix">
+        <div class="text-image-1"></div>
+        <div class="text-image-2"></div>
+        <div class="text-content">
+          Budding makes it easy to enrich your news stories with links and metadata. You
+          can create special link tags and use them in your text to automatically get
+          customized link suggestions. You can also use a special Tagger application to
+          feed known links and metadata to the system, so that when you get down to writing
+          your article, you won't have to waste time chasing all those references.
+        </div>
+      </div>
+      <div id="text-overview-4" class="ui-corner-bottom ui-helper-clearfix">
+        <div class="text-image-1"></div>
+        <div class="text-image-2"></div>
+        <div class="text-content">
+          Budding's ultimate goal is to provide you with an intelligent text editor, capable
+          of identifying names, companies, locations, and other relevant pieces of information
+          as you type them, allowing them to easily becoming links, and enabling you to search
+          them in the future. Budding provides several ways to publish and export stories to 
+          several formats, including a rich API that could be integrated to any existing content management system.
+        </div>
+      </div>
+
+      <p id="blurb"><span class="blurb">A <a href="http://www.dangerousprecedent.com/">Dangerous Precedent</a> product.</span></p>
     </div>
   </body>
 </html>
