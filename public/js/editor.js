@@ -149,6 +149,7 @@ budding.ui.handlers.editor_textarea = {
   keyup: function(e) {
     budding.update_live_preview();
     var ta_val = budding.identify_known_links($('#text-block-ta').val());
+    console.log("ta_val from identify_known_links(): " + ta_val);
     $('#text-block-ta').val(ta_val);
     // if(text_with_identified_tags != budding.document.body[budding.ui.current_text_block].text) {
     //   budding.document.body[budding.ui.current_text_block].text = text_with_identified_tags;
@@ -242,11 +243,17 @@ budding.ui.handlers.link_editor_link_button = {
 budding.ui.handlers.link_editor_link_remove_button = {
   click: function() {
     var tag_id = $(this).parent().attr('id').match(/(\d+)$/)[1];
-    console.log(tag_id);
     var tag_obj = budding.ui.tag_editor_links.list[tag_id];
     var ta_val = $('#text-block-ta').val();
     var a = ta_val.substr(0, tag_obj.start_index);
     var b = ta_val.substr(tag_obj.end_index);
+    var diff = tag_obj.start_index - tag_obj.end_index;
+    for(var i = 0, len = budding.ui.tag_editor_links.list.length; i < len; i++) {
+      if(i != tag_id) {
+        budding.ui.tag_editor_links.list[i].start_index -= diff;
+        budding.ui.tag_editor_links.list[i].end_index -= diff;
+      }
+    }
     ta_val = a + tag_obj.content + b;
     if(budding.ui.text_block_selected) {
       budding.document.body[budding.ui.current_text_block].identified_links[tag_id] = null;
@@ -260,25 +267,30 @@ budding.ui.handlers.link_editor_link_remove_button = {
 
 budding.render_link_editor = function(text) {
   var links = budding.utils.parse_tags(text)[0];
+  console.log("links from parse_tag():");
+  console.log(links);
   if(links && links.length) {
+    $('.editor-tag').remove();
     var tag_editor = $('#tag-editor-box').detach();
     var tag_editor_links = tag_editor.find('#tag-editor-tags');
     var new_link, content, tag_id;
-    var total_current_links = budding.ui.tag_editor_links.list.length;
+    // var total_current_links = budding.ui.tag_editor_links.list.length;
+    // console.log(total_current_links);
+    budding.ui.tag_editor_links = {list: []};
     for(var i = 0, len = links.length; i < len; i++) {
       new_link = links[i];
       content = new_link.content.replace(' ', '&nbsp;');
       tag_id = ['editor-tag-', i].join('');
-      if(budding.ui.tag_editor_enabled && i < total_current_links) {
-        var current_link = budding.ui.tag_editor_links.list[i];
-        if(current_link.content != new_link.content) {
-          $('#' + tag_id).html(content);
-          current_link.content = new_link.content;
-        }
-        current_link.start_index = new_link.start_index;
-        current_link.end_index = new_link.end_index;
-        current_link.href = new_link.href;
-      } else {
+      // if(budding.ui.tag_editor_enabled && i < total_current_links) {
+      //   var current_link = budding.ui.tag_editor_links.list[i];
+      //   if(current_link.content != new_link.content) {
+      //     $('#' + tag_id).html(content);
+      //     current_link.content = new_link.content;
+      //   }
+      //   current_link.start_index = new_link.start_index;
+      //   current_link.end_index = new_link.end_index;
+      //   current_link.href = new_link.href;
+      // } else {
         budding.ui.tag_editor_links.list.push(links[i]);
         budding.ui.tag_editor_links[tag_id] = links[i];
         var tag_elem = '<div id="' + tag_id + '" class="editor-tag ui-corner-all">';
@@ -286,7 +298,7 @@ budding.render_link_editor = function(text) {
         tag_elem += '<div class="editor-tag-close"></div>';
         tag_elem += '</div>';
         tag_editor_links.append($(tag_elem));
-      }
+      // }
     }
     if(budding.ui.text_block_selected) {
       $('#text-block-' + budding.ui.current_text_block).before(tag_editor);
@@ -341,15 +353,27 @@ budding.utils.parse_tags = function(s) {
   var extract_tag = arguments.callee.extract_tag;
   var current_tag = null;
   var tags = [];
+  var p = 0;
   for(var c, i = 0, len = s.length; i < len; i++) {
     c = s.charAt(i);
     if(c == '<') {
       var tag = extract_tag(i, s.substr(i));
       if(tag) {
         if(tag.start) {
-          tags.push(tag);
-          current_tag = tags.length-1;
-          tags[current_tag].content = [];
+          // var deleted = false;
+          // if(tags.length) {
+          //   if(budding.ui.text_block_selected) {
+          //     deleted = budding.document.body[budding.ui.current_text_block].identified_links[p] === null;
+          //   } else {
+          //     deleted = budding.ui.identified_links_in_insertion_point[p] === null;
+          //   }
+          // }
+          // if(!deleted) {
+            tags.push(tag);
+            current_tag = tags.length-1;
+            tags[current_tag].content = [];
+            p++;
+          // }
         } else if(tag.end) {
           try {
             if(tag.name == tags[current_tag].name){
@@ -599,30 +623,40 @@ budding.save_story = function() {
 budding.identify_known_links = function(text) {
   var link, tag, box, index_of_link;
   var i = 0;
-  for(link in budding.known_links) {
-    var index_of_link = text.indexOf(link);
-    if(index_of_link != -1) {
-      tag = budding.known_links[link];
-      var content = text.substr(index_of_link, link.length);
-      var deleted, identified;
-      if(budding.ui.text_block_selected) {
-        identified = budding.document.body[budding.ui.current_text_block].identified_links[i] == content;
-        deleted = budding.document.body[budding.ui.current_text_block].identified_links[i] === null;
-      } else {
-        identified = budding.ui.identified_links_in_insertion_point[i] == content;
-        deleted = budding.ui.identified_links_in_insertion_point[i] === null;
-      }
-      if(!identified) {
-        var a = text.substr(0, index_of_link);
-        var b = text.substr(index_of_link+link.length);
-        if(budding.ui.text_block_selected) {
-          budding.document.body[budding.ui.current_text_block].identified_links[i] = content;
-        } else {
-          budding.ui.identified_links_in_insertion_point[i] = content;
+  for(var p = 0; p < text.length; p++) {
+    for(link in budding.known_links) {
+      var index_of_link = text.indexOf(link, p);
+      if(index_of_link != -1) {
+        p = index_of_link+1;
+        if(index_of_link != -1) {
+          tag = budding.known_links[link];
+          var content = text.substr(index_of_link, link.length);
+          var deleted, identified;
+          if(budding.ui.text_block_selected) {
+            identified = budding.document.body[budding.ui.current_text_block].identified_links[i] == content;
+            deleted = budding.document.body[budding.ui.current_text_block].identified_links[i] === null;
+          } else {
+            identified = budding.ui.identified_links_in_insertion_point[i] == content;
+            deleted = budding.ui.identified_links_in_insertion_point[i] === null;
+          }
+          console.log('content: ' + content);
+          console.log('identified: ' + identified);
+          console.log('deleted: ' + deleted);
+          if(!identified && !deleted) {
+            var a = text.substr(0, index_of_link);
+            var b = text.substr(index_of_link+link.length);
+            text = [a, '<', tag, '>', link, '</', tag, '>', b].join('');
+            p = index_of_link + (['<', tag, '>', link, '</', tag, '>'].join('').length-1); 
+          }
+          if(budding.ui.text_block_selected) {
+            console.log("budding.document.body[" + budding.ui.current_text_block + "].identified_links[" + i + "] = " + content);
+            budding.document.body[budding.ui.current_text_block].identified_links[i] = content;
+          } else {
+            budding.ui.identified_links_in_insertion_point[i] = content;
+          }
+          i += 1;
         }
-        text = [a, '<', tag, '>', link, '</', tag, '>', b].join('');
       }
-      i += 1;
     }
   }
   return text;
