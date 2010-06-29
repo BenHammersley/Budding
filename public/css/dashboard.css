@@ -101,19 +101,12 @@
 #text-overview-4 {
   padding: 10px 10px 10px 10px;
   background: #ccc;
+  font-size: 20px;
 }
 
-.text-image-1 {
+.text-image {
   float: left;
-  width: 100px;
-  height: 100px;
-  border: 1px solid #000;
-}
-
-.text-image-2 {
-  margin-left: 5px;
-  float: left;
-  width: 100px;
+  width: 200px;
   height: 100px;
   border: 1px solid #000;
 }
@@ -124,4 +117,8 @@
   font-size: 18px;
   float: left;
   overflow: hidden;
+}
+
+.not_done {
+  color: #A52A2A;
 }
